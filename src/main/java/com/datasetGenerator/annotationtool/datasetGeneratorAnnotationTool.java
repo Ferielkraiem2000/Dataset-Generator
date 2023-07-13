@@ -1,4 +1,4 @@
-package com.example.UploadFile;
+package com.datasetGenerator.annotationtool;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -8,11 +8,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @OpenAPIDefinition(
-		info = @Info(title="Dataset Generator Project"))
+		info = @Info(title="Annotation Tool Dataset Generator"))
 
-public class UploadFileApplication {
+public class datasetGeneratorAnnotationTool {
 	public static void main(String[] args) {
-		SpringApplication.run(UploadFileApplication.class, args);
+		SpringApplication.run(datasetGeneratorAnnotationTool.class, args);
 	}
 
 }

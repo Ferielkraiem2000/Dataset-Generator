@@ -1,4 +1,4 @@
-FROM openjdk:7-alpine
+FROM oadoptopenjdk:17-jdk-hotspot
 WORKDIR /app
 COPY out/artifacts/UploadFile_jar/UploadFile.jar /app/app.jar
 EXPOSE 8080
