@@ -1,9 +1,9 @@
-package com.datasetGenerator.controller;
+package com.datasetgenerator.annotationtool.controller;
 
 
-import com.datasetGenerator.service.FileParseService;
-import com.datasetGenerator.service.FileExtractContentService;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import com.datasetgenerator.annotationtool.service.FileExtractContentService;
+import com.datasetgenerator.annotationtool.service.FileParseService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-@RequestMapping("/file-parsing")
+@RequestMapping("/file_parsing")
 @RestController
 public class FileReadController {
 
@@ -25,12 +25,9 @@ public class FileReadController {
         this.fileService = fileService;
         this.dataService = dataService;
     }
-
-    //    @ApiResponse(responseCode = "200", description = "File content retrieved successfully")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @ApiResponse(responseCode = "200", description = "File contents extracted successfully !")
+    @Operation(summary = "File Parsing")
     public ResponseEntity<String> readFile(@RequestParam("file") MultipartFile file) throws IOException {
-
         return ResponseEntity.ok(String.valueOf(dataService.extractFields(file)));
     }
 

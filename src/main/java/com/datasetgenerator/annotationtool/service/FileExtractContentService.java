@@ -1,4 +1,4 @@
-package com.datasetGenerator.service;
+package com.datasetgenerator.annotationtool.service;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;

@@ -1,4 +1,4 @@
-package com.datasetGenerator;
+package com.datasetgenerator.annotationtool;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,4 +1,4 @@
-package com.datasetGenerator.service;
+package com.datasetgenerator.annotationtool.service;
 
 
 import org.apache.commons.io.IOUtils;
