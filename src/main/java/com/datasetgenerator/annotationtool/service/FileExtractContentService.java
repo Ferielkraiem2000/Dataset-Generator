@@ -6,5 +6,5 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 public interface FileExtractContentService {
-   ResponseEntity<String> readFileContent(MultipartFile file) throws IOException;
+    ResponseEntity<String> readFileContent(MultipartFile file) throws IOException;
 }
