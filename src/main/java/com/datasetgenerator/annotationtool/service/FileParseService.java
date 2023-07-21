@@ -11,11 +11,8 @@ public interface FileParseService {
 
 
     ResponseEntity<List<String>> extractValidLines(MultipartFile file) throws IOException;
-
-    ResponseEntity<String> extractFileName(Map<String, String> fields) throws IOException;
-
-    ResponseEntity<List<Map<String, String>>> extractLineContent(MultipartFile file) throws IOException;
-
+    ResponseEntity<List<List<String>>> extractLineContent(MultipartFile file) throws IOException;
+    ResponseEntity<String> extractFileName(List<String> fields) throws IOException;
     ResponseEntity<List<Map<String, String>>> extractFields(MultipartFile file) throws IOException;
-
+    public ResponseEntity <Map<String, Object>> getDetailsForEachFile(Long file_id);
 }
