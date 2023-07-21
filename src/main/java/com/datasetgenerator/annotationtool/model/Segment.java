@@ -20,10 +20,6 @@ public class Segment {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "segment_sequence")
     @Column(name = "segment_id")
     private Long segment_id;
-    @NotBlank
-    @Column(name = "file_name")
-    private String file_name;
-
     @Column(name = "speaker")
     private String speaker;
     @NotNull
@@ -32,14 +28,13 @@ public class Segment {
     @NotNull
     @Column(name = "segment_end")
     private double segment_end;
-
     @NotBlank
     @Column(name = "transcription")
     private String transcription;
+    @Column(name = "duration")
+    private double duration;
 
     @ManyToOne
     @JoinColumn(name = "file_id")
     private File file;
-
-
 }

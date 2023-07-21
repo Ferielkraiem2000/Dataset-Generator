@@ -1,10 +1,15 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/datasetgenerator
+    url: jdbc:postgresql://localhost:5432/dataset_generator
     username: root
     password: root
+
   jpa:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         ddl-auto: update
+
+file:
+  extensions: .wav, .mp3
+minimumFields: 7

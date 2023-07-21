@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,9 @@ public class File {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "file_sequence")
     @Column(name = "file_id")
     private Long file_id;
+    @NotBlank
+    @Column(name = "gfile_name")
+    private String file_name;
     @OneToMany(mappedBy = "file")
     private List<Segment> segments = new ArrayList<>();
 }
