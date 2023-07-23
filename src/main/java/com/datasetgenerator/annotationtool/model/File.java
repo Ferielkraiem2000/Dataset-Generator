@@ -23,7 +23,7 @@ public class File {
     @Column(name = "file_id")
     private Long file_id;
     @NotBlank
-    @Column(name = "gfile_name")
+    @Column(name = "file_name")
     private String file_name;
     @OneToMany(mappedBy = "file")
     private List<Segment> segments = new ArrayList<>();

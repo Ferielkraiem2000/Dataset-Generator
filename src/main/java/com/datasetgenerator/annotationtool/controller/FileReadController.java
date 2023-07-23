@@ -1,9 +1,9 @@
 package com.datasetgenerator.annotationtool.controller;
 
+import com.datasetgenerator.annotationtool.model.HistogramData;
 import com.datasetgenerator.annotationtool.repository.FileRepository;
 import com.datasetgenerator.annotationtool.service.FileExtractContentService;
 import com.datasetgenerator.annotationtool.service.FileParseService;
-import com.datasetgenerator.annotationtool.service.HistogramService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ public class FileReadController {
 
     private final FileParseService dataService;
     private final FileExtractContentService fileService;
-    private HistogramService histogramService;
+
     public FileReadController(FileParseService dataService, FileExtractContentService fileService, FileRepository fileRepository) {
 
         this.dataService = dataService;
@@ -44,10 +44,15 @@ public class FileReadController {
     }
 
     @GetMapping("/file/{id}")
-
     public ResponseEntity<String> getStatisticsForEachFile(@PathParam("file_id") Long file_id) {
-       Map<String,Object> detailsFile = dataService.getDetailsForEachFile(file_id).getBody();
+        Map<String, Object> detailsFile = dataService.getDetailsForEachFile(file_id).getBody();
         return ResponseEntity.ok(detailsFile.toString());
+    }
+
+    @GetMapping("/histogram/file/{id}")
+    public ResponseEntity<HistogramData> getHistogramData(@PathParam("file_id") Long file_id) {
+        ResponseEntity<HistogramData> histogramDataResponseEntity = dataService.getHistogramData(file_id);
+        return ResponseEntity.ok(histogramDataResponseEntity.getBody());
     }
 
 }
