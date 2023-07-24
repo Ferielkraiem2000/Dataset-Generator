@@ -25,7 +25,7 @@ class FileParseServiceImplTest {
     void initTest() {
         System.out.println("appel avant chaque test");
         fileExtractContentService = mock(FileExtractContentService.class);
-        this.fileParseService = new FileParseServiceImpl(fileExtractContentService, null, null, 7);
+        this.fileParseService = new FileParseServiceImpl(fileExtractContentService, null, null, null, 7);
     }
 
     @Test
@@ -62,6 +62,7 @@ class FileParseServiceImplTest {
         List<String> validLines = response.getBody();
         assertEquals(1, validLines.size());
     }
+
     @AfterEach
     void endTest() {
         System.out.println("appel après chaque test");

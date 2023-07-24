@@ -33,7 +33,6 @@ public class Segment {
     private String transcription;
     @Column(name = "duration")
     private double duration;
-
     @ManyToOne
     @JoinColumn(name = "file_id")
     private File file;

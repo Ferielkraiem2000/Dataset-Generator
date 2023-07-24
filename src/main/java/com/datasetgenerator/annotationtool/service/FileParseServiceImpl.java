@@ -2,13 +2,9 @@ package com.datasetgenerator.annotationtool.service;
 
 
 import com.datasetgenerator.annotationtool.model.File;
-import com.datasetgenerator.annotationtool.model.HistogramData;
-import com.datasetgenerator.annotationtool.model.IntervalData;
 import com.datasetgenerator.annotationtool.model.Segment;
 import com.datasetgenerator.annotationtool.repository.FileRepository;
-import com.datasetgenerator.annotationtool.repository.IntervalDataRepository;
 import com.datasetgenerator.annotationtool.repository.SegmentRepository;
-import com.datasetgenerator.annotationtool.util.Interval;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,16 +20,14 @@ public class FileParseServiceImpl implements FileParseService {
     private final FileExtractContentService fileExtractContentService;
     private final FileRepository fileRepository;
     private final SegmentRepository segmentRepository;
-    private final IntervalDataRepository intervalDataRepository;
     @Value("${file.extensions}")
     private String fileExtensions;
     private int minimumFields;
 
-    public FileParseServiceImpl(FileExtractContentService fileExtractContentService, FileRepository fileRepository, SegmentRepository segmentRepository, IntervalDataRepository intervalDataRepository, @Value("${minimumFields}") int minimumFields) {
+    public FileParseServiceImpl(FileExtractContentService fileExtractContentService, FileRepository fileRepository, SegmentRepository segmentRepository, @Value("${minimumFields}") int minimumFields) {
         this.fileExtractContentService = fileExtractContentService;
         this.fileRepository = fileRepository;
         this.segmentRepository = segmentRepository;
-        this.intervalDataRepository = intervalDataRepository;
         this.minimumFields = minimumFields;
     }
 
@@ -149,97 +143,6 @@ public class FileParseServiceImpl implements FileParseService {
         }
 
         return ResponseEntity.ok(outputLines);
-    }
-
-    public ResponseEntity<Map<String, Object>> getDetailsForEachFile(Long file_id) {
-        List<Object[]> result = fileRepository.getDetailsForEachFile(file_id);
-        Map<String, Object> fileDetails = new LinkedHashMap<>();
-        for (Object[] row : result) {
-            Long segmentCount = (Long) row[0];
-            Double averageDuration = (Double) row[1];
-            Double totalDuration = (Double) row[2];
-            fileDetails.put("segmentCount", segmentCount);
-            fileDetails.put("averageDuration", averageDuration);
-            fileDetails.put("totalDuration", totalDuration);
-        }
-
-        return ResponseEntity.ok(fileDetails);
-    }
-
-    public ResponseEntity<HistogramData> getHistogramData(Long file_id) {
-        List<Object[]> result = fileRepository.getDetailsForEachFile(file_id);
-        List<Interval> durationIntervals = new ArrayList<>();
-        List<Long> fileCountPerInterval = new ArrayList<>();
-        double intervalSize = 0.1;
-        double startInterval = 0.0;
-        double endInterval = intervalSize;
-        int intervalFileCount = 0;
-
-        for (Object[] row : result) {
-            double fileDuration = (double) row[2];
-            while (fileDuration >= endInterval) {
-                startInterval = Math.round(startInterval * 10.0) / 10.0;
-                endInterval = Math.round(endInterval * 10.0) / 10.0;
-                durationIntervals.add(new Interval(startInterval, endInterval));
-                fileCountPerInterval.add((long) intervalFileCount);
-                IntervalData existingIntervalData = intervalDataRepository.findByStartIntervalAndEndInterval(startInterval, endInterval);
-                if (existingIntervalData == null) {
-                    IntervalData intervalData = new IntervalData();
-                    intervalData.setStartInterval(startInterval);
-                    intervalData.setEndInterval(endInterval);
-                    intervalData.setFileCount((long) intervalFileCount);
-                    intervalDataRepository.save(intervalData);
-                } else {
-                    existingIntervalData.setFileCount(existingIntervalData.getFileCount() + intervalFileCount);
-                    intervalDataRepository.save(existingIntervalData);
-                }
-
-                startInterval = endInterval;
-                endInterval += intervalSize;
-            }
-            if (fileDuration >= startInterval) {
-                intervalFileCount++;
-            }
-        }
-        startInterval = Math.round(startInterval * 10.0) / 10.0;
-        endInterval = Math.round(endInterval * 10.0) / 10.0;
-        durationIntervals.add(new Interval(startInterval, endInterval));
-        fileCountPerInterval.add((long) intervalFileCount);
-        IntervalData existingIntervalData = intervalDataRepository.findByStartIntervalAndEndInterval(startInterval, endInterval);
-        if (existingIntervalData == null) {
-            IntervalData intervalData = new IntervalData();
-            intervalData.setStartInterval(startInterval);
-            intervalData.setEndInterval(endInterval);
-            intervalData.setFileCount((long) intervalFileCount);
-            intervalDataRepository.save(intervalData);
-        } else {
-            existingIntervalData.setFileCount(existingIntervalData.getFileCount() + intervalFileCount);
-            intervalDataRepository.save(existingIntervalData);
-        }
-        HistogramData histogramData = new HistogramData();
-        histogramData.setIntervals(durationIntervals);
-        histogramData.setFileCountPerInterval(fileCountPerInterval);
-        return ResponseEntity.ok(histogramData);
-    }
-
-    public ResponseEntity<List<Double>> calculateQuartiles(Long file_id) {
-        List<Double> values = fileRepository.getSegmentDurations(file_id);
-        if (values == null || values.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.emptyList());
-        }
-        Collections.sort(values);
-        int n = values.size();
-        int indexQ1 = n / 4;
-        int indexQ2 = n / 2;
-        int indexQ3 = (3 * n) / 4;
-        double q1 = values.get(indexQ1);
-        double q2 = values.get(indexQ2);
-        double q3 = values.get(indexQ3);
-        if (n % 2 == 1) {
-            q2 = values.get(indexQ2 + 1);
-        }
-        List<Double> quartiles = List.of(q1, q2, q3);
-        return ResponseEntity.ok(quartiles);
     }
 }
 

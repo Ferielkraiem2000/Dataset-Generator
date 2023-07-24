@@ -1,6 +1,5 @@
 package com.datasetgenerator.annotationtool.service;
 
-import com.datasetgenerator.annotationtool.model.HistogramData;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,12 +16,8 @@ public interface FileParseService {
 
     ResponseEntity<String> extractFileName(List<String> fields) throws IOException;
 
+    ResponseEntity<StringBuilder> extractTranscription(List<String> fields);
+
     ResponseEntity<List<Map<String, String>>> extractFields(MultipartFile file) throws IOException;
-
-    ResponseEntity<Map<String, Object>> getDetailsForEachFile(Long file_id);
-
-    ResponseEntity<HistogramData> getHistogramData(Long file_id);
-
-    ResponseEntity<List<Double>> calculateQuartiles(Long file_id);
 
 }

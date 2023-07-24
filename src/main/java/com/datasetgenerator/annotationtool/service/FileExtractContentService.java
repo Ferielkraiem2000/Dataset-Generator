@@ -7,5 +7,5 @@ import java.io.IOException;
 
 public interface FileExtractContentService {
     ResponseEntity<String> readFileContent(MultipartFile file) throws IOException;
-    public boolean verifyType(MultipartFile file);
+    boolean verifyType(MultipartFile file);
 }
