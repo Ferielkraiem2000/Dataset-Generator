@@ -222,6 +222,25 @@ public class FileParseServiceImpl implements FileParseService {
         return ResponseEntity.ok(histogramData);
     }
 
+    public ResponseEntity<List<Double>> calculateQuartiles(Long file_id) {
+        List<Double> values = fileRepository.getSegmentDurations(file_id);
+        if (values == null || values.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.emptyList());
+        }
+        Collections.sort(values);
+        int n = values.size();
+        int indexQ1 = n / 4;
+        int indexQ2 = n / 2;
+        int indexQ3 = (3 * n) / 4;
+        double q1 = values.get(indexQ1);
+        double q2 = values.get(indexQ2);
+        double q3 = values.get(indexQ3);
+        if (n % 2 == 1) {
+            q2 = values.get(indexQ2 + 1);
+        }
+        List<Double> quartiles = List.of(q1, q2, q3);
+        return ResponseEntity.ok(quartiles);
+    }
 }
 
 

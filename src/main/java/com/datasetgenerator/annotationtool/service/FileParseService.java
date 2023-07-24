@@ -20,6 +20,9 @@ public interface FileParseService {
     ResponseEntity<List<Map<String, String>>> extractFields(MultipartFile file) throws IOException;
 
     ResponseEntity<Map<String, Object>> getDetailsForEachFile(Long file_id);
-    public ResponseEntity<HistogramData> getHistogramData(Long file_id);
+
+    ResponseEntity<HistogramData> getHistogramData(Long file_id);
+
+    ResponseEntity<List<Double>> calculateQuartiles(Long file_id);
 
 }

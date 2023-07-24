@@ -16,5 +16,6 @@ public interface FileRepository extends JpaRepository<File,Long> {
     boolean existsByFileName(String fileName);
     @Query("SELECT COUNT(s.segment_id), AVG(s.segment_end - s.segment_start), SUM(s.segment_end -s.segment_start) FROM Segment s JOIN s.file f where f.file_id= :file_id")
     List< Object[]> getDetailsForEachFile(@Param("file_id") Long file_id);
-
+    @Query("SELECT s.duration from Segment s join s.file f where f.file_id=:file_id")
+    List<Double> getSegmentDurations(@Param("file_id")Long file_id);
 }

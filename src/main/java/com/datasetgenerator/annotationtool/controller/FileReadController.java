@@ -55,4 +55,10 @@ public class FileReadController {
         return ResponseEntity.ok(histogramDataResponseEntity.getBody());
     }
 
+    @GetMapping("/quartiles/{id}")
+    @Operation(summary = "la distribution des durées des segments du fichier ")
+    public ResponseEntity<List<Double>> calculateQuartiles(@PathParam("file_id") Long file_id) {
+        ResponseEntity<List<Double>> quartiles = dataService.calculateQuartiles(file_id);
+        return ResponseEntity.ok(quartiles.getBody());
+    }
 }
