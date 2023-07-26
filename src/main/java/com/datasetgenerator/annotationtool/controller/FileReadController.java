@@ -62,5 +62,13 @@ public class FileReadController {
         return downloadManifestFileService.downloadFileCompatibleWithESPnet();
     }
 
+    @GetMapping("/dataset-statistics")
+    public ResponseEntity<Map<String, Object>> getStatistics() {
+        return statisticsService.getStatistics();
+    }
 
+    @GetMapping("get-histogram-data")
+    public ResponseEntity<HistogramData> getHistogramData() {
+        return statisticsService.getHistogramData();
+    }
 }
