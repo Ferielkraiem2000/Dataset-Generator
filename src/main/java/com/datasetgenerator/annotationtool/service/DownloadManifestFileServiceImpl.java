@@ -106,6 +106,7 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
                 .body(new ByteArrayResource(content));
     }
 
+
     public ResponseEntity<ByteArrayResource> downloadUtt2SpkFile() throws IOException {
         List<Segment> segments = segmentRepository.findAll();
         Path filePath = Files.createTempFile("utt2spk", ".txt");
@@ -114,7 +115,7 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
         for (Segment segment : segments) {
             String segmentId = String.valueOf(segment.getSegment_id());
             String speaker = segment.getSpeaker();
-            writer.write(segmentId + " " + speaker);
+            writer.write("segment_id=" + segmentId + " " + "speaker=" + speaker);
             writer.newLine();
         }
 
@@ -123,6 +124,33 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.TEXT_PLAIN);
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=utt2spk.txt");
+
+        byte[] content = Files.readAllBytes(filePath);
+        Files.delete(filePath);
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .body(new ByteArrayResource(content));
+    }
+
+    public ResponseEntity<ByteArrayResource> downloadSpk2UttFile() throws IOException {
+        List<Segment> segments = segmentRepository.findAll();
+        Path filePath = Files.createTempFile("spk2utt", ".txt");
+        BufferedWriter writer = new BufferedWriter(new FileWriter(filePath.toFile()));
+
+        for (Segment segment : segments) {
+            String segmentId = String.valueOf(segment.getSegment_id());
+            String speaker = segment.getSpeaker();
+            writer.write("speaker=" + speaker + " " + "segment_id=" + segmentId);
+            writer.newLine();
+        }
+
+        writer.close();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_PLAIN);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=spk2utt.txt");
 
         byte[] content = Files.readAllBytes(filePath);
         Files.delete(filePath);
@@ -143,7 +171,7 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
             Long wav_id = segment.getFile().getFile_id();
             double start_time = segment.getSegment_start();
             double end_time = segment.getSegment_end();
-            writer.write(utterance_id + " " + wav_id + " " + start_time + " " + end_time);
+            writer.write("utterance_id =" + utterance_id + " " + "wav_id =" + wav_id + " " + " start_time =" + start_time + " " + "end_time =" + end_time);
             writer.newLine();
         }
 
@@ -161,23 +189,23 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
                 .headers(headers)
                 .body(new ByteArrayResource(content));
     }
+
     public ResponseEntity<ByteArrayResource> downloadFileCompatibleWithESPnet() throws IOException {
         ByteArrayOutputStream zipOutput = new ByteArrayOutputStream();
         ZipOutputStream zipOutputStream = new ZipOutputStream(zipOutput);
 
         ResponseEntity<ByteArrayResource> transcriptionsFile = downloadTextFileForTranscriptions();
         ResponseEntity<ByteArrayResource> utt2SpkFile = downloadUtt2SpkFile();
+        ResponseEntity<ByteArrayResource> spk2UttFile = downloadSpk2UttFile();
         ResponseEntity<ByteArrayResource> segmentsFile = downloadFileForSegmentsDescription();
 
         addToZip(zipOutputStream, "transcriptions.txt", transcriptionsFile.getBody().getByteArray());
-
         addToZip(zipOutputStream, "utt2spk.txt", utt2SpkFile.getBody().getByteArray());
-
+        addToZip(zipOutputStream, "spk2utt.txt", spk2UttFile.getBody().getByteArray());
         addToZip(zipOutputStream, "segments.txt", segmentsFile.getBody().getByteArray());
 
         zipOutputStream.close();
         byte[] zipContent = zipOutput.toByteArray();
-
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.setContentLength(zipContent.length);
