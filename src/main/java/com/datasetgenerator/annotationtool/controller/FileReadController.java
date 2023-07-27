@@ -5,7 +5,6 @@ import com.datasetgenerator.annotationtool.service.FileExtractContentService;
 import com.datasetgenerator.annotationtool.service.FileParseService;
 import com.datasetgenerator.annotationtool.service.StatisticsService;
 import com.datasetgenerator.annotationtool.util.HistogramData;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,28 +46,39 @@ public class FileReadController {
         return ResponseEntity.ok(String.valueOf(results));
     }
 
-    @GetMapping("/download-manifest-file-Json-format")
-    public ResponseEntity<String> downloadCombinedManifestInJsonFormat() {
-        return downloadManifestFileService.downloadCombinedManifestInJsonFormat();
-    }
+    @GetMapping("/get-manifest-file")
+    public ResponseEntity<?> getManifestFile(
+            @RequestParam(name = "format", required = true) String format,
+            @RequestParam(name = "file_id") List<String> fileIds,
+            @RequestParam(name = "path", required = false) String path) throws IOException {
 
-    @GetMapping("/download-manifest-file-Csv-format")
-    public ResponseEntity<String> downloadCombinedManifestInCsvFormat() throws IOException {
-        return downloadManifestFileService.downloadCombinedManifestInCsvFormat();
-    }
+        if (format.equalsIgnoreCase("Json")) {
+            return downloadManifestFileService.downloadCombinedManifestInJsonFormat(path,fileIds);
+        }
 
-    @GetMapping("download-manifest-file-for-ESPnet")
-    public ResponseEntity<ByteArrayResource> downloadFileCompatibleWithESPnet() throws IOException {
-        return downloadManifestFileService.downloadFileCompatibleWithESPnet();
+        if (format.equalsIgnoreCase("Csv")) {
+            return downloadManifestFileService.downloadCombinedManifestInCsvFormat(path,fileIds);
+        }
+
+        if (format.equalsIgnoreCase("ESPnet")) {
+            return downloadManifestFileService.downloadFileCompatibleWithESPnet(path, fileIds);
+        }
+
+        return ResponseEntity.badRequest().body("Format :" + format+ " not supported!");
     }
 
     @GetMapping("/dataset-statistics")
     public ResponseEntity<Map<String, Object>> getStatistics() {
         return statisticsService.getStatistics();
     }
+    @GetMapping("/file-statistics")
+    public ResponseEntity<Map<String, Object>> getStatisticsForEachFile(@RequestParam(name="file_id") List<Long> fileIds) {
+        return statisticsService.getStatisticsForEachFile(fileIds);
+    }
 
     @GetMapping("get-histogram-data")
     public ResponseEntity<HistogramData> getHistogramData() {
         return statisticsService.getHistogramData();
     }
+
 }

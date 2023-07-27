@@ -32,14 +32,28 @@ public class StatisticsServiceImpl implements StatisticsService {
             Double totalDuration = (Double) row[0];
             Double averageDuration = (Double) row[1];
             Long segmentCount = (Long) row[2];
-            Long speakerCount = (Long) row[3];
             fileDetails.put("totalDuration", totalDuration);
             fileDetails.put("averageDuration", averageDuration);
             fileDetails.put("segmentCount", segmentCount);
-            fileDetails.put("speakerCount", speakerCount);
         }
         return ResponseEntity.ok(fileDetails);
     }
+
+    public ResponseEntity<Map<String, Object>> getStatisticsForEachFile(List<Long> fileIds) {
+        List<Object[]> result = segmentRepository.getStatisticsForEachFile(fileIds);
+        Map<String, Object> fileDetails = new LinkedHashMap<>();
+        for (Object[] row : result) {
+
+            Double totalDuration = (Double) row[0];
+            Double averageDuration = (Double) row[1];
+            Long segmentCount = (Long) row[2];
+            fileDetails.put("totalDuration", totalDuration);
+            fileDetails.put("averageDuration", averageDuration);
+            fileDetails.put("segmentCount", segmentCount);
+        }
+        return ResponseEntity.ok(fileDetails);
+    }
+
 
     public ResponseEntity<HistogramData> getHistogramData() {
         List<Segment> segments = segmentRepository.findAll();
@@ -69,9 +83,9 @@ public class StatisticsServiceImpl implements StatisticsService {
                 }
                 startInterval = endInterval;
                 endInterval += intervalSize;
-                intervalSegmentCount=0;
+                intervalSegmentCount = 0;
             }
-            if (segmentDuration >= startInterval && segmentDuration<endInterval) {
+            if (segmentDuration >= startInterval && segmentDuration < endInterval) {
                 intervalSegmentCount++;
                 startInterval = Math.round(startInterval * 10.0) / 10.0;
                 endInterval = Math.round(endInterval * 10.0) / 10.0;
