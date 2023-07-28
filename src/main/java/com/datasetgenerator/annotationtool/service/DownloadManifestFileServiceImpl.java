@@ -5,14 +5,12 @@ import com.datasetgenerator.annotationtool.repository.SegmentRepository;
 import com.google.gson.Gson;
 import com.opencsv.CSVWriter;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -27,7 +25,7 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
         this.segmentRepository = segmentRepository;
     }
 
-    public ResponseEntity<String> downloadCombinedManifestInJsonFormat(String path, List<String> fileIds) {
+    public String createCombinedManifestInJsonFormat(String path, List<String> fileIds) {
         List<Segment> segments = segmentRepository.findAll();
         List<Segment> filteredSegments = new ArrayList<>();
 
@@ -51,16 +49,10 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
             combinedManifest.put(segmentId, combinedEntry);
         }
         String combinedManifestJson = new Gson().toJson(combinedManifest);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=combined_manifest.json");
-        return ResponseEntity
-                .ok()
-                .headers(headers)
-                .body(combinedManifestJson);
+        return combinedManifestJson;
     }
 
-    public ResponseEntity<String> downloadCombinedManifestInCsvFormat(String path, List<String> fileIds) throws IOException {
+    public String createCombinedManifestInCsvFormat(String path, List<String> fileIds) throws IOException {
         List<Segment> segments = segmentRepository.findAll();
         List<Segment> filteredSegments = new ArrayList<>();
         for (Segment segment : segments) {
@@ -74,29 +66,26 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
         for (Segment segment : filteredSegments) {
             String segmentId = String.valueOf(segment.getSegment_id());
             String fileName = segment.getFile().getFile_name();
-            String escapedTranscription = segment.getTranscription();
+            Path concatenatedPath = Paths.get(path, fileName);
+            String wav_id = concatenatedPath.toString();
+            String transcription = segment.getTranscription();
+
             String[] rowData = new String[]{
                     segmentId,
-                    path + "/" + fileName,
+                    wav_id,
                     String.valueOf(segment.getSegment_start()),
                     String.valueOf(segment.getSegment_end()),
                     String.valueOf(segment.getDuration()),
-                    escapedTranscription,
+                    transcription,
                     segment.getSpeaker()
             };
             csvWriter.writeNext(rowData);
         }
         csvWriter.close();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=combined_manifest.csv");
-        return ResponseEntity
-                .ok()
-                .headers(headers)
-                .body(writer.toString());
+        return writer.toString();
     }
 
-    public ResponseEntity<ByteArrayResource> downloadTextFileForTranscriptions(List<String> fileIds) throws IOException {
+    private ByteArrayResource createTextFileForTranscriptions(List<String> fileIds) throws IOException {
         List<Segment> segments = segmentRepository.findAll();
         List<Segment> filteredSegments = new ArrayList<>();
         for (Segment segment : segments) {
@@ -113,19 +102,14 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
             writer.newLine();
         }
         writer.close();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=transcriptions.txt");
+
         byte[] content = Files.readAllBytes(filePath);
         Files.delete(filePath);
-        return ResponseEntity
-                .ok()
-                .headers(headers)
-                .body(new ByteArrayResource(content));
+        return new ByteArrayResource(content);
     }
 
 
-    public ResponseEntity<ByteArrayResource> downloadUtt2SpkFile(List<String> fileIds) throws IOException {
+    private ByteArrayResource createUtt2SpkFile(List<String> fileIds) throws IOException {
         List<Segment> segments = segmentRepository.findAll();
         List<Segment> filteredSegments = new ArrayList<>();
         for (Segment segment : segments) {
@@ -142,18 +126,12 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
             writer.newLine();
         }
         writer.close();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=utt2spk.txt");
         byte[] content = Files.readAllBytes(filePath);
         Files.delete(filePath);
-        return ResponseEntity
-                .ok()
-                .headers(headers)
-                .body(new ByteArrayResource(content));
+        return new ByteArrayResource(content);
     }
 
-    public ResponseEntity<ByteArrayResource> downloadSpk2UttFile(List<String> fileIds) throws IOException {
+    private ByteArrayResource createSpk2UttFile(List<String> fileIds) throws IOException {
         List<Segment> segments = segmentRepository.findAll();
         List<Segment> filteredSegments = new ArrayList<>();
         for (Segment segment : segments) {
@@ -177,22 +155,13 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
             writer.newLine();
         }
         writer.close();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=spk2utt.txt");
-
         byte[] content = Files.readAllBytes(filePath);
         Files.delete(filePath);
-
-        return ResponseEntity
-                .ok()
-                .headers(headers)
-                .body(new ByteArrayResource(content));
+        return new ByteArrayResource(content);
     }
 
 
-    public ResponseEntity<ByteArrayResource> downloadPathsFile(String path, List<String> fileIds) throws IOException {
+    private ByteArrayResource createPathsFile(String path, List<String> fileIds) throws IOException {
         List<Segment> segments = segmentRepository.findAll();
         List<Segment> filteredSegments = new ArrayList<>();
         for (Segment segment : segments) {
@@ -206,26 +175,19 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
         for (Segment segment : filteredSegments) {
             String segment_id = String.valueOf(segment.getSegment_id());
             String file_name = String.valueOf(segment.getFile().getFile_name());
-            writer.write(segment_id + " " + path + "/" + file_name);
+            Path concatenatedPath = Paths.get(path, file_name);
+            String wav_id = concatenatedPath.toString();
+            writer.write(segment_id + " " + wav_id);
             writer.newLine();
         }
         writer.close();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=spk2utt.txt");
-
         byte[] content = Files.readAllBytes(filePath);
         Files.delete(filePath);
-
-        return ResponseEntity
-                .ok()
-                .headers(headers)
-                .body(new ByteArrayResource(content));
+        return new ByteArrayResource(content);
     }
 
 
-    public ResponseEntity<ByteArrayResource> downloadFileForSegmentsDescription(String path, List<String> fileIds) throws IOException {
+    private ByteArrayResource createFileForSegmentsDescription(String path, List<String> fileIds) throws IOException {
         List<Segment> segments = segmentRepository.findAll();
         List<Segment> filteredSegments = new ArrayList<>();
         for (Segment segment : segments) {
@@ -238,55 +200,38 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
         for (Segment segment : filteredSegments) {
             String utterance_id = String.valueOf(segment.getSegment_id());
             String file_name = segment.getFile().getFile_name();
-            String wav_id = path + "/" + file_name;
+            Path concatenatedPath = Paths.get(path, file_name);
+            String wav_id = concatenatedPath.toString();
             double start_time = segment.getSegment_start();
             double end_time = segment.getSegment_end();
             writer.write(utterance_id + " " + wav_id + " " + start_time + " " + end_time);
             writer.newLine();
         }
-
         writer.close();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=segments.txt");
-
         byte[] content = Files.readAllBytes(filePath);
         Files.delete(filePath);
-
-        return ResponseEntity
-                .ok()
-                .headers(headers)
-                .body(new ByteArrayResource(content));
+        return new ByteArrayResource(content);
     }
 
-    public ResponseEntity<ByteArrayResource> downloadFileCompatibleWithESPnet(String path, List<String> fileIds) throws IOException {
+    public ByteArrayResource createFileCompatibleWithESPnet(String path, List<String> fileIds) throws IOException {
         ByteArrayOutputStream zipOutput = new ByteArrayOutputStream();
         ZipOutputStream zipOutputStream = new ZipOutputStream(zipOutput);
 
-        ResponseEntity<ByteArrayResource> transcriptionsFile = downloadTextFileForTranscriptions(fileIds);
-        ResponseEntity<ByteArrayResource> pathsFile = downloadPathsFile(path, fileIds);
-        ResponseEntity<ByteArrayResource> utt2SpkFile = downloadUtt2SpkFile(fileIds);
-        ResponseEntity<ByteArrayResource> spk2UttFile = downloadSpk2UttFile(fileIds);
-        ResponseEntity<ByteArrayResource> segmentsFile = downloadFileForSegmentsDescription(path, fileIds);
+        ByteArrayResource transcriptionsFile = createTextFileForTranscriptions(fileIds);
+        ByteArrayResource pathsFile = createPathsFile(path, fileIds);
+        ByteArrayResource utt2SpkFile = createUtt2SpkFile(fileIds);
+        ByteArrayResource spk2UttFile = createSpk2UttFile(fileIds);
+        ByteArrayResource segmentsFile = createFileForSegmentsDescription(path, fileIds);
 
-        addToZip(zipOutputStream, "transcriptions.txt", transcriptionsFile.getBody().getByteArray());
-        addToZip(zipOutputStream, "wav.scp", pathsFile.getBody().getByteArray());
-        addToZip(zipOutputStream, "utt2spk.txt", utt2SpkFile.getBody().getByteArray());
-        addToZip(zipOutputStream, "spk2utt.txt", spk2UttFile.getBody().getByteArray());
-        addToZip(zipOutputStream, "segments.txt", segmentsFile.getBody().getByteArray());
+        addToZip(zipOutputStream, "transcriptions.txt", transcriptionsFile.getByteArray());
+        addToZip(zipOutputStream, "wav.scp", pathsFile.getByteArray());
+        addToZip(zipOutputStream, "utt2spk.txt", utt2SpkFile.getByteArray());
+        addToZip(zipOutputStream, "spk2utt.txt", spk2UttFile.getByteArray());
+        addToZip(zipOutputStream, "segments.txt", segmentsFile.getByteArray());
 
         zipOutputStream.close();
         byte[] zipContent = zipOutput.toByteArray();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentLength(zipContent.length);
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=FileForESPnet.zip");
-
-        return ResponseEntity
-                .ok()
-                .headers(headers)
-                .body(new ByteArrayResource(zipContent));
+        return new ByteArrayResource(zipContent);
     }
 
     private void addToZip(ZipOutputStream zipOutputStream, String fileName, byte[] content) throws IOException {
