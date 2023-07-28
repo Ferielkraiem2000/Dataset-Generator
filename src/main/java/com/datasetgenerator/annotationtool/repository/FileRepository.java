@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface FileRepository extends JpaRepository<File,Long> {
     @Query("select count(f)>0 from File f where f.file_name= :fileName")
     boolean existsByFileName(String fileName);
+    @Query("select f from File f where f.file_name= :fileName")
+    File findByFileName(String fileName);
 }

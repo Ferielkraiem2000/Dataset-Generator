@@ -30,7 +30,6 @@ public class FileExtractContentServiceImpl implements FileExtractContentService 
         InputStream inputStream = file.getInputStream();
         String fileContent = IOUtils.toString(inputStream, "UTF-8");
         inputStream.close();
-        System.out.println(fileContent);
         return ResponseEntity.ok(fileContent);
     }
 }
