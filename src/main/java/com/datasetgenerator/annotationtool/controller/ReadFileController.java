@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-public class FileReadController {
+public class ReadFileController {
 
     private final FileParseService dataService;
     private final ExtractFileContentsService fileService;
@@ -24,7 +24,7 @@ public class FileReadController {
     private final StatisticsService statisticsService;
     private final DeleteService deleteService;
 
-    public FileReadController(FileParseService dataService, ExtractFileContentsService fileService, DownloadManifestFileService downloadManifestFileService, UpdateUploadedFileService updateUploadedFileService, StatisticsService statisticsService, DeleteService deleteService) {
+    public ReadFileController(FileParseService dataService, ExtractFileContentsService fileService, DownloadManifestFileService downloadManifestFileService, UpdateUploadedFileService updateUploadedFileService, StatisticsService statisticsService, DeleteService deleteService) {
         this.dataService = dataService;
         this.fileService = fileService;
         this.downloadManifestFileService = downloadManifestFileService;
@@ -80,7 +80,7 @@ public class FileReadController {
         }
     }
 
-    @DeleteMapping("/deleteFiles")
+    @DeleteMapping("/file-parsing")
     public ResponseEntity<String> deleteFiles(@RequestParam List<Long> fileIds) {
         deleteService.deleteSegmentsByFileIds(fileIds);
         return ResponseEntity.ok("Files deleted successfully.");

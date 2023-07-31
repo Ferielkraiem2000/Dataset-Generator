@@ -2,7 +2,7 @@ package com.datasetgenerator.annotationtool.service;
 
 import com.datasetgenerator.annotationtool.model.Segment;
 import com.datasetgenerator.annotationtool.repository.SegmentRepository;
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.CSVWriter;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
@@ -20,9 +20,11 @@ import java.util.zip.ZipOutputStream;
 public class DownloadManifestFileServiceImpl implements DownloadManifestFileService {
 
     SegmentRepository segmentRepository;
+    ObjectMapper objectMapper;
 
-    public DownloadManifestFileServiceImpl(SegmentRepository segmentRepository) {
+    public DownloadManifestFileServiceImpl(SegmentRepository segmentRepository,ObjectMapper objectMapper) {
         this.segmentRepository = segmentRepository;
+        this.objectMapper=objectMapper;
     }
 
     public String createCombinedManifestInJsonFormat(String path, List<Long> fileIds) {
@@ -53,8 +55,13 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
             combinedEntry.put("transcription", transcription);
             combinedManifest.put(segmentId, combinedEntry);
         }
-        String combinedManifestJson = new Gson().toJson(combinedManifest);
-        return combinedManifestJson;
+        String combinedManifestJson;
+        try {
+            combinedManifestJson = objectMapper.writeValueAsString(combinedManifest);
+        } catch (Exception e) {
+            e.printStackTrace();
+            combinedManifestJson = "{}";
+        }        return combinedManifestJson;
     }
 
     public String createCombinedManifestInCsvFormat(String path, List<Long> fileIds) throws IOException {

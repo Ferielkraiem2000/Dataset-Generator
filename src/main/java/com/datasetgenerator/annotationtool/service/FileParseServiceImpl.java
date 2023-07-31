@@ -98,10 +98,9 @@ public class FileParseServiceImpl implements FileParseService {
         List<List<String>> lineContentResponse = extractLineContent(file);
         List<List<String>> lineContent = lineContentResponse;
         List<Map<String, String>> outputLines = new ArrayList<>();
-        boolean fileExists = false;
+        String fileName = "";
         File fileEntity = new File();
         fileRepository.save(fileEntity);
-        String fileName = "";
         for (int i = 0; i < Objects.requireNonNull(validLines).size(); i++) {
             assert lineContent != null;
             List<String> fields = lineContent.get(i);
@@ -117,11 +116,20 @@ public class FileParseServiceImpl implements FileParseService {
             StringBuilder transcription = extractTranscription(fields);
             outputLine.put("transcription", String.valueOf(transcription));
             outputLines.add(outputLine);
-            if (fileRepository.existsByFileName(fileName)) {
-                fileExists = true;
-                throw new IllegalArgumentException("file already exists!");
-            }
-            if (!fileRepository.existsByFileName(fileName)) {
+            File existingFile=fileRepository.existsByFileName(fileName);
+            if (existingFile!=null) {
+                fileRepository.deleteSegmentsByFileId(existingFile.getFile_id());
+                fileRepository.deleteByFileName(fileName);
+                Segment segment = new Segment();
+                segment.setSpeaker(outputLine.get("speaker"));
+                segment.setSegment_start(Double.parseDouble(outputLine.get("segment_start")));
+                segment.setSegment_end(Double.parseDouble(outputLine.get("segment_end")));
+                segment.setDuration(duration);
+                segment.setTranscription(outputLine.get("transcription"));
+                segment.setFile(fileEntity);
+                segment.setDuration(duration);
+                segmentRepository.save(segment);
+            } else {
                 Segment segment = new Segment();
                 segment.setSpeaker(outputLine.get("speaker"));
                 segment.setSegment_start(Double.parseDouble(outputLine.get("segment_start")));
@@ -133,11 +141,9 @@ public class FileParseServiceImpl implements FileParseService {
                 segmentRepository.save(segment);
             }
         }
-        if (!fileExists) {
-            fileEntity.setFile_name(fileName);
-            fileEntity.setUpload_time(LocalDateTime.now());
-            fileRepository.save(fileEntity);
-        }
+        fileEntity.setFile_name(fileName);
+        fileEntity.setUpload_time(LocalDateTime.now());
+        fileRepository.save(fileEntity);
         return outputLines;
     }
 }

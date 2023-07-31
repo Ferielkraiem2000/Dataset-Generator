@@ -12,8 +12,8 @@ import javax.transaction.Transactional;
 
 @Repository
 public interface FileRepository extends JpaRepository<File, Long> {
-    @Query("select count(f)>0 from File f where f.file_name= :fileName")
-    boolean existsByFileName(@Param("fileName") String fileName);
+    @Query("select f from File f where f.file_name= :fileName")
+    File existsByFileName(@Param("fileName") String fileName);
 
     @Query("select count(f)>0 from File f where f.file_id= :fileId")
     boolean findByFileId(@Param("fileId") Long fileId);
@@ -22,6 +22,10 @@ public interface FileRepository extends JpaRepository<File, Long> {
     @Modifying
     @Query("update File f set f.file_name= :fileName where f.file_id= :fileId")
     void updateFileName(@Param("fileId") Long fileId, @Param("fileName") String fileName);
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM File f WHERE f.file_name= :fileName")
+    void deleteByFileName(@Param("fileName") String fileName);
 
     @Transactional
     @Modifying
