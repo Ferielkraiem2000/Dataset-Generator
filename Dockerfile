@@ -1,5 +1,5 @@
-FROM openjdk:7-alpine
+FROM azul/zulu-openjdk:17
 WORKDIR /app
-COPY out/artifacts/UploadFile_jar/UploadFile.jar /app/app.jar
-EXPOSE 8080
+COPY target/UploadFile-0.0.1-SNAPSHOT.jar /app/app.jar
+EXPOSE 80
 CMD ["java","-jar","app.jar"]
