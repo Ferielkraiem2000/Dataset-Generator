@@ -26,7 +26,7 @@ public class File {
     @NotBlank
     @Column(name = "file_name")
     private String file_name;
-    @Column(name="upload_time")
+    @Column(name = "upload_time")
     private LocalDateTime upload_time;
     @OneToMany(mappedBy = "file")
     private List<Segment> segments = new ArrayList<>();

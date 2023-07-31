@@ -33,7 +33,6 @@ public class FileReadController {
         this.deleteService = deleteService;
     }
 
-
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/file-parsing")
     public ResponseEntity<String> readFile(@RequestParam("files") List<MultipartFile> files) throws IOException {
         List<String> results = new ArrayList<>();
@@ -71,8 +70,14 @@ public class FileReadController {
     }
 
     @PutMapping(path = "/file-parsing")
-    public void updateFileName(@RequestParam("fileId") Long fileId, @RequestParam("fileName") String fileName) {
-        updateUploadedFileService.updateFileName(fileId, fileName);
+    public ResponseEntity<String> updateFileName(@RequestParam("fileId") Long fileId, @RequestParam("fileName") String fileName) {
+        try {
+            updateUploadedFileService.updateFileName(fileId, fileName);
+            return ResponseEntity.ok("fileName updated successfully!");
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity.badRequest().body("fileId doesn't exist!");
+
+        }
     }
 
     @DeleteMapping("/deleteFiles")

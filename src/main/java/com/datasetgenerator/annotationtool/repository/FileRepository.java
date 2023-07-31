@@ -11,19 +11,23 @@ import javax.transaction.Transactional;
 
 
 @Repository
-public interface FileRepository extends JpaRepository<File,Long> {
+public interface FileRepository extends JpaRepository<File, Long> {
     @Query("select count(f)>0 from File f where f.file_name= :fileName")
     boolean existsByFileName(@Param("fileName") String fileName);
+
     @Query("select count(f)>0 from File f where f.file_id= :fileId")
-    boolean findByFileId(@Param("fileId")Long fileId);
+    boolean findByFileId(@Param("fileId") Long fileId);
+
     @Transactional
     @Modifying
     @Query("update File f set f.file_name= :fileName where f.file_id= :fileId")
-    void updateFileName(@Param("fileId") Long fileId ,@Param("fileName") String fileName );
+    void updateFileName(@Param("fileId") Long fileId, @Param("fileName") String fileName);
+
     @Transactional
     @Modifying
     @Query("DELETE FROM Segment s WHERE s.file.file_id= :fileId")
     void deleteSegmentsByFileId(@Param("fileId") Long fileId);
 
-
+//    @Query("select f from File f where f.original_file_name= :fileName")
+//    File findByOriginalFileName( String fileName);
 }
