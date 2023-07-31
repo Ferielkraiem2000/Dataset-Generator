@@ -1,7 +1,7 @@
 package com.datasetgenerator.annotationtool.controller;
 
 import com.datasetgenerator.annotationtool.service.*;
-import com.datasetgenerator.annotationtool.util.HistogramData;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -18,19 +18,21 @@ import java.util.Map;
 public class FileReadController {
 
     private final FileParseService dataService;
-    private final FileExtractContentService fileService;
+    private final ExtractFileContentsService fileService;
     private final DownloadManifestFileService downloadManifestFileService;
     private final UpdateUploadedFileService updateUploadedFileService;
     private final StatisticsService statisticsService;
+    private final DeleteService deleteService;
 
-    public FileReadController(FileParseService dataService, FileExtractContentService fileService, DownloadManifestFileService downloadManifestFileService, UpdateUploadedFileService updateUploadedFileService, StatisticsService statisticsService) {
-
+    public FileReadController(FileParseService dataService, ExtractFileContentsService fileService, DownloadManifestFileService downloadManifestFileService, UpdateUploadedFileService updateUploadedFileService, StatisticsService statisticsService, DeleteService deleteService) {
         this.dataService = dataService;
         this.fileService = fileService;
         this.downloadManifestFileService = downloadManifestFileService;
         this.updateUploadedFileService = updateUploadedFileService;
         this.statisticsService = statisticsService;
+        this.deleteService = deleteService;
     }
+
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/file-parsing")
     public ResponseEntity<String> readFile(@RequestParam("files") List<MultipartFile> files) throws IOException {
@@ -44,65 +46,38 @@ public class FileReadController {
         return ResponseEntity.ok(String.valueOf(results));
     }
 
-    @GetMapping("/file-parsing")
-    public ResponseEntity<?> downloadManifestFile(
-            @RequestParam(name = "format", required = true) String format,
-            @RequestParam(name = "file_id") List<String> fileIds,
-            @RequestParam(name = "path", required = false) String path) throws IOException {
+    @Operation(summary = "Download Manifest File")
+    @GetMapping(path = "/file-parsing")
+    public ResponseEntity<?> downloadManifestFile(@RequestParam(name = "format", required = true) String format, @RequestParam(name = "file_id") List<Long> fileIds, @RequestParam(name = "path") String path) throws IOException {
 
+        ByteArrayResource combinedManifest = downloadManifestFileService.createCombinedManifest(format, path, fileIds);
+        HttpHeaders headers = new HttpHeaders();
         if (format.equalsIgnoreCase("JSON")) {
-            HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=combined_manifest.json");
-            String combinedManifestJson = downloadManifestFileService.createCombinedManifestInJsonFormat(path, fileIds);
-            return ResponseEntity
-                    .ok()
-                    .headers(headers)
-                    .body(combinedManifestJson);
-
-        }
-
-        if (format.equalsIgnoreCase("CSV")) {
-            HttpHeaders headers = new HttpHeaders();
+        } else if (format.equalsIgnoreCase("CSV")) {
             headers.setContentType(MediaType.TEXT_PLAIN);
             headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=combined_manifest.csv");
-            String combinedManifestCsv = downloadManifestFileService.createCombinedManifestInCsvFormat(path, fileIds);
-            return ResponseEntity
-                    .ok()
-                    .headers(headers)
-                    .body(combinedManifestCsv);
-
-        }
-
-        if (format.equalsIgnoreCase("ESPnet")) {
-            HttpHeaders headers = new HttpHeaders();
+        } else if (format.equalsIgnoreCase("ESPnet")) {
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=FileForESPnet.zip");
-            ByteArrayResource combinedManifestESPnet = downloadManifestFileService.createFileCompatibleWithESPnet(path, fileIds);
-            return ResponseEntity
-                    .ok()
-                    .headers(headers)
-                    .body(combinedManifestESPnet);
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=fileForESPnet.zip");
         }
-        return ResponseEntity.badRequest().body("Format :" + format + " not supported!");
-    }
-    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,path="/file-parsing")
-    public void updateFile(@RequestParam("file") MultipartFile file) throws IOException {
-        updateUploadedFileService.updateFile(file);
+        return ResponseEntity.ok().headers(headers).body(combinedManifest);
     }
 
     @GetMapping("/statistics")
-    public ResponseEntity<Map<String, Object>> getStatistics(@RequestParam(name = "file_id", required = false) List<Long> fileIds) {
-
-      if(fileIds!=null){
-            return statisticsService.getStatisticsForEachFile(fileIds);
-        }
-      return statisticsService.getStatistics();
+    public ResponseEntity<List<Map<String, Object>>> getStatistics() {
+        return ResponseEntity.ok(statisticsService.getStatistics());
     }
 
-    @GetMapping("/histogram")
-    public ResponseEntity<HistogramData> getHistogramData() {
-        return statisticsService.getHistogramData();
+    @PutMapping(path = "/file-parsing")
+    public void updateFileName(@RequestParam("fileId") Long fileId, @RequestParam("fileName") String fileName) {
+        updateUploadedFileService.updateFileName(fileId, fileName);
     }
 
+    @DeleteMapping("/deleteFiles")
+    public ResponseEntity<String> deleteFiles(@RequestParam List<Long> fileIds) {
+        deleteService.deleteSegmentsByFileIds(fileIds);
+        return ResponseEntity.ok("Files deleted successfully.");
+    }
 }

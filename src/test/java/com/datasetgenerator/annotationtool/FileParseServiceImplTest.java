@@ -1,6 +1,6 @@
 package com.datasetgenerator.annotationtool;
 
-import com.datasetgenerator.annotationtool.service.FileExtractContentService;
+import com.datasetgenerator.annotationtool.service.ExtractFileContentsService;
 import com.datasetgenerator.annotationtool.service.FileParseServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,13 +19,13 @@ import static org.mockito.Mockito.when;
 class FileParseServiceImplTest {
 
     FileParseServiceImpl fileParseService;
-    FileExtractContentService fileExtractContentService;
+    ExtractFileContentsService fileExtractContentService;
 
     @BeforeEach
     void initTest() {
         System.out.println("appel avant chaque test");
-        fileExtractContentService = mock(FileExtractContentService.class);
-        this.fileParseService = new FileParseServiceImpl(fileExtractContentService, null, null, null, 7);
+        fileExtractContentService = mock(ExtractFileContentsService.class);
+        this.fileParseService = new FileParseServiceImpl(fileExtractContentService, null, null, 7);
     }
 
     @Test
@@ -33,9 +33,8 @@ class FileParseServiceImplTest {
         String fileContent = "Ghadames_a_crossing_into_the_future_Raied_Gheblawi_TEDxMisurata.wav 1 Ghadames_a_crossing_into_the_future_Raied_Gheblawi_TEDxMisurata.wav_Raied_Gheblawi 17.344 26.264 <o,f0,unknown> ماتوقعوش الواقع اللي حني صايرلنا حاليا توقعوا إنّ الوضع حيكون أقل من هكي لكن ح#الوضع اللي حني فيه حاليا سيّئ جدًّا\nGhadames_a_crossing_into_the_future_Raied_Gheblawi_TEDxMisurata.wav 1 inter_segment_gap 26.264 27.706 <o,f0,>\nGhadames_a_crossing_into_the_future_Raied_Gheblawi_TEDxMisurata.wav 1 Ghadames_a_crossing_into_the_future_Raied_Gheblawi_TEDxMisurata.wav_Raied_Gheblawi 27.706 32.679 <o,f0,unknown> طبعا بالنسبة لبلاد زي ليبيااللي هي تقع في منطفة حارة";
         MockMultipartFile file = new MockMultipartFile("file1", fileContent.getBytes());
         when(fileExtractContentService.readFileContent(file))
-                .thenReturn(ResponseEntity.ok().body(fileContent));
-        ResponseEntity<List<String>> response = this.fileParseService.extractValidLines(file);
-        List<String> validLines = response.getBody();
+                .thenReturn(String.valueOf(ResponseEntity.ok().body(fileContent)));
+        List<String> validLines = this.fileParseService.extractValidLines(file);
         assertEquals(2, validLines.size());
     }
 
@@ -44,9 +43,8 @@ class FileParseServiceImplTest {
         String fileContent = ";; Transcriber conversion by parsetrs v0.74 on 10:59:17 2022/01/14 with encoding UTF-8";
         MockMultipartFile file = new MockMultipartFile("file2", fileContent.getBytes());
         when(fileExtractContentService.readFileContent(file))
-                .thenReturn(ResponseEntity.ok().body(fileContent));
-        ResponseEntity<List<String>> response = this.fileParseService.extractValidLines(file);
-        List<String> validLines = response.getBody();
+                .thenReturn(String.valueOf(ResponseEntity.ok().body(fileContent)));
+        List<String> validLines = this.fileParseService.extractValidLines(file);
         assertEquals(0, validLines.size());
     }
 
@@ -57,9 +55,8 @@ class FileParseServiceImplTest {
                 "Ghadames_a_crossing_into_the_future_Raied_Gheblawi_TEDxMisurata 1 Ghadames_a_crossing_into_the_future_Raied_Gheblawi_TEDxMisurata_Raied_Gheblawi 17.344 26.264 <o,f0,unknown> ماتوقعوش الواقع اللي حني صايرلنا حاليا توقعوا إنّ الوضع حيكون أقل من هكي لكن ح#الوضع اللي حني فيه حاليا سيّئ جدًّا\n";
         MockMultipartFile file = new MockMultipartFile("file3", fileContent.getBytes());
         when(fileExtractContentService.readFileContent(file))
-                .thenReturn(ResponseEntity.ok().body(fileContent));
-        ResponseEntity<List<String>> response = this.fileParseService.extractValidLines(file);
-        List<String> validLines = response.getBody();
+                .thenReturn(String.valueOf(ResponseEntity.ok().body(fileContent)));
+        List<String> validLines = this.fileParseService.extractValidLines(file);
         assertEquals(1, validLines.size());
     }
 

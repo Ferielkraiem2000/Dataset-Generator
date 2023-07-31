@@ -1,6 +1,5 @@
 package com.datasetgenerator.annotationtool.service;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -10,14 +9,14 @@ import java.util.Map;
 public interface FileParseService {
 
 
-    ResponseEntity<List<String>> extractValidLines(MultipartFile file) throws IOException;
+    List<String> extractValidLines(MultipartFile file) throws IOException;
 
-    ResponseEntity<List<List<String>>> extractLineContent(MultipartFile file) throws IOException;
+    List<List<String>> extractLineContent(MultipartFile file) throws IOException;
 
-    ResponseEntity<String> extractFileName(List<String> fields) throws IOException;
+    String extractFileName(List<String> fields) throws IOException;
 
-    ResponseEntity<StringBuilder> extractTranscription(List<String> fields);
+    StringBuilder extractTranscription(List<String> fields);
 
-    ResponseEntity<List<Map<String, String>>> extractFields(MultipartFile file) throws IOException;
+    List<Map<String, String>> extractFields(MultipartFile file) throws IOException;
 
 }

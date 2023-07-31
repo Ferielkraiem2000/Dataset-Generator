@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.util.List;
 
 public interface DownloadManifestFileService {
-    String createCombinedManifestInJsonFormat(String path, List<String> fileIds);
+    String createCombinedManifestInJsonFormat(String path, List<Long> fileIds);
 
-    String createCombinedManifestInCsvFormat(String path, List<String> fileIds) throws IOException;
+    String createCombinedManifestInCsvFormat(String path, List<Long> fileIds) throws IOException;
 
-    ByteArrayResource createFileCompatibleWithESPnet(String path, List<String> fileIds) throws IOException;
-
+    ByteArrayResource createFileCompatibleWithESPnet(String path, List<Long> fileIds) throws IOException;
+    ByteArrayResource createCombinedManifest(String format, String path, List<Long> fileIds) throws IOException ;
 }

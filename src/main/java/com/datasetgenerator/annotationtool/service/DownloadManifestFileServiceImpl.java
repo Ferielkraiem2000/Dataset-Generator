@@ -25,18 +25,23 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
         this.segmentRepository = segmentRepository;
     }
 
-    public String createCombinedManifestInJsonFormat(String path, List<String> fileIds) {
+    public String createCombinedManifestInJsonFormat(String path, List<Long> fileIds) {
         List<Segment> segments = segmentRepository.findAll();
         List<Segment> filteredSegments = new ArrayList<>();
-
+        for (Long fileId : fileIds) {
+            boolean fileIdExists = segments.stream().anyMatch(segment -> segment.getFile().getFile_id().equals(fileId));
+            if (!fileIdExists) {
+                throw new IllegalArgumentException("fileId " + fileId + " doesn't exist!");
+            }
+        }
         for (Segment segment : segments) {
-            if (fileIds.contains(String.valueOf(segment.getFile().getFile_id()))) {
+            if (fileIds.contains(segment.getFile().getFile_id())) {
                 filteredSegments.add(segment);
             }
         }
-        Map<String, Map<String, String>> combinedManifest = new LinkedHashMap<>();
+        Map<Long, Map<String, String>> combinedManifest = new LinkedHashMap<>();
         for (Segment segment : filteredSegments) {
-            String segmentId = String.valueOf(segment.getSegment_id());
+            Long segmentId = segment.getSegment_id();
             String fileName = segment.getFile().getFile_name();
             Map<String, String> combinedEntry = new LinkedHashMap<>();
             combinedEntry.put("path", path + "/" + fileName);
@@ -52,11 +57,17 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
         return combinedManifestJson;
     }
 
-    public String createCombinedManifestInCsvFormat(String path, List<String> fileIds) throws IOException {
+    public String createCombinedManifestInCsvFormat(String path, List<Long> fileIds) throws IOException {
         List<Segment> segments = segmentRepository.findAll();
         List<Segment> filteredSegments = new ArrayList<>();
+        for (Long fileId : fileIds) {
+            boolean fileIdExists = segments.stream().anyMatch(segment -> segment.getFile().getFile_id().equals(fileId));
+            if (!fileIdExists) {
+                throw new IllegalArgumentException("fileId " + fileId + " doesn't exist!");
+            }
+        }
         for (Segment segment : segments) {
-            if (fileIds.contains(String.valueOf(segment.getFile().getFile_id()))) {
+            if (fileIds.contains(segment.getFile().getFile_id())) {
                 filteredSegments.add(segment);
             }
         }
@@ -64,14 +75,14 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
         CSVWriter csvWriter = new CSVWriter(writer);
         csvWriter.writeNext(new String[]{"ID", "path", "start", "stop", "duration", "transcription", "speaker"});
         for (Segment segment : filteredSegments) {
-            String segmentId = String.valueOf(segment.getSegment_id());
+            Long segmentId = segment.getSegment_id();
             String fileName = segment.getFile().getFile_name();
             Path concatenatedPath = Paths.get(path, fileName);
             String wav_id = concatenatedPath.toString();
             String transcription = segment.getTranscription();
 
             String[] rowData = new String[]{
-                    segmentId,
+                    String.valueOf(segmentId),
                     wav_id,
                     String.valueOf(segment.getSegment_start()),
                     String.valueOf(segment.getSegment_end()),
@@ -85,18 +96,24 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
         return writer.toString();
     }
 
-    private ByteArrayResource createTextFileForTranscriptions(List<String> fileIds) throws IOException {
+    private ByteArrayResource createTextFileForTranscriptions(List<Long> fileIds) throws IOException {
         List<Segment> segments = segmentRepository.findAll();
         List<Segment> filteredSegments = new ArrayList<>();
+        for (Long fileId : fileIds) {
+            boolean fileIdExists = segments.stream().anyMatch(segment -> segment.getFile().getFile_id().equals(fileId));
+            if (!fileIdExists) {
+                throw new IllegalArgumentException("fileId " + fileId + " doesn't exist!");
+            }
+        }
         for (Segment segment : segments) {
-            if (fileIds.contains(String.valueOf(segment.getFile().getFile_id()))) {
+            if (fileIds.contains(segment.getFile().getFile_id())) {
                 filteredSegments.add(segment);
             }
         }
         Path filePath = Files.createTempFile("transcriptions", ".txt");
         BufferedWriter writer = new BufferedWriter(new FileWriter(filePath.toFile()));
         for (Segment segment : filteredSegments) {
-            String segment_id = String.valueOf(segment.getSegment_id());
+            Long segment_id = segment.getSegment_id();
             String transcription = segment.getTranscription();
             writer.write(segment_id + " " + transcription);
             writer.newLine();
@@ -108,19 +125,24 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
         return new ByteArrayResource(content);
     }
 
-
-    private ByteArrayResource createUtt2SpkFile(List<String> fileIds) throws IOException {
+    private ByteArrayResource createUtt2SpkFile(List<Long> fileIds) throws IOException {
         List<Segment> segments = segmentRepository.findAll();
         List<Segment> filteredSegments = new ArrayList<>();
+        for (Long fileId : fileIds) {
+            boolean fileIdExists = segments.stream().anyMatch(segment -> segment.getFile().getFile_id().equals(fileId));
+            if (!fileIdExists) {
+                throw new IllegalArgumentException("fileId " + fileId + " doesn't exist!");
+            }
+        }
         for (Segment segment : segments) {
-            if (fileIds.contains(String.valueOf(segment.getFile().getFile_id()))) {
+            if (fileIds.contains(segment.getFile().getFile_id())) {
                 filteredSegments.add(segment);
             }
         }
         Path filePath = Files.createTempFile("utt2spk", ".txt");
         BufferedWriter writer = new BufferedWriter(new FileWriter(filePath.toFile()));
         for (Segment segment : filteredSegments) {
-            String segmentId = String.valueOf(segment.getSegment_id());
+            Long segmentId = segment.getSegment_id();
             String speaker = segment.getSpeaker();
             writer.write(segmentId + " " + speaker);
             writer.newLine();
@@ -131,26 +153,32 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
         return new ByteArrayResource(content);
     }
 
-    private ByteArrayResource createSpk2UttFile(List<String> fileIds) throws IOException {
+    private ByteArrayResource createSpk2UttFile(List<Long> fileIds) throws IOException {
         List<Segment> segments = segmentRepository.findAll();
         List<Segment> filteredSegments = new ArrayList<>();
+        for (Long fileId : fileIds) {
+            boolean fileIdExists = segments.stream().anyMatch(segment -> segment.getFile().getFile_id().equals(fileId));
+            if (!fileIdExists) {
+                throw new IllegalArgumentException("fileId " + fileId + " doesn't exist!");
+            }
+        }
         for (Segment segment : segments) {
-            if (fileIds.contains(String.valueOf(segment.getFile().getFile_id()))) {
+            if (fileIds.contains(segment.getFile().getFile_id())) {
                 filteredSegments.add(segment);
             }
         }
-        Map<String, List<String>> speakerToSegmentIdsMap = new HashMap<>();
+        Map<String, List<Long>> speakerToSegmentIdsMap = new HashMap<>();
 
         for (Segment segment : filteredSegments) {
             String speaker = segment.getSpeaker();
             speakerToSegmentIdsMap.putIfAbsent(speaker, new ArrayList<>());
-            speakerToSegmentIdsMap.get(speaker).add(String.valueOf(segment.getSegment_id()));
+            speakerToSegmentIdsMap.get(speaker).add(segment.getSegment_id());
         }
         Path filePath = Files.createTempFile("spk2utt", ".txt");
         BufferedWriter writer = new BufferedWriter(new FileWriter(filePath.toFile()));
-        for (Map.Entry<String, List<String>> entry : speakerToSegmentIdsMap.entrySet()) {
+        for (Map.Entry<String, List<Long>> entry : speakerToSegmentIdsMap.entrySet()) {
             String speaker = entry.getKey();
-            List<String> segmentIds = entry.getValue();
+            List<Long> segmentIds = entry.getValue();
             writer.write(speaker + " " + segmentIds);
             writer.newLine();
         }
@@ -160,12 +188,17 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
         return new ByteArrayResource(content);
     }
 
-
-    private ByteArrayResource createPathsFile(String path, List<String> fileIds) throws IOException {
+    private ByteArrayResource createPathsFile(String path, List<Long> fileIds) throws IOException {
         List<Segment> segments = segmentRepository.findAll();
         List<Segment> filteredSegments = new ArrayList<>();
+        for (Long fileId : fileIds) {
+            boolean fileIdExists = segments.stream().anyMatch(segment -> segment.getFile().getFile_id().equals(fileId));
+            if (!fileIdExists) {
+                throw new IllegalArgumentException("fileId " + fileId + " doesn't exist!");
+            }
+        }
         for (Segment segment : segments) {
-            if (fileIds.contains(String.valueOf(segment.getFile().getFile_id()))) {
+            if (fileIds.contains(segment.getFile().getFile_id())) {
                 filteredSegments.add(segment);
             }
         }
@@ -173,7 +206,7 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
         BufferedWriter writer = new BufferedWriter(new FileWriter(filePath.toFile()));
         List<String> segmentIds = new ArrayList<>();
         for (Segment segment : filteredSegments) {
-            String segment_id = String.valueOf(segment.getSegment_id());
+            Long segment_id = segment.getSegment_id();
             String file_name = String.valueOf(segment.getFile().getFile_name());
             Path concatenatedPath = Paths.get(path, file_name);
             String wav_id = concatenatedPath.toString();
@@ -187,18 +220,24 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
     }
 
 
-    private ByteArrayResource createFileForSegmentsDescription(String path, List<String> fileIds) throws IOException {
+    private ByteArrayResource createFileForSegmentsDescription(String path, List<Long> fileIds) throws IOException {
         List<Segment> segments = segmentRepository.findAll();
         List<Segment> filteredSegments = new ArrayList<>();
+        for (Long fileId : fileIds) {
+            boolean fileIdExists = segments.stream().anyMatch(segment -> segment.getFile().getFile_id().equals(fileId));
+            if (!fileIdExists) {
+                throw new IllegalArgumentException("fileId " + fileId + " doesn't exist!");
+            }
+        }
         for (Segment segment : segments) {
-            if (fileIds.contains(String.valueOf(segment.getFile().getFile_id()))) {
+            if (fileIds.contains(segment.getFile().getFile_id())) {
                 filteredSegments.add(segment);
             }
         }
         Path filePath = Files.createTempFile("segments", ".txt");
         BufferedWriter writer = new BufferedWriter(new FileWriter(filePath.toFile()));
         for (Segment segment : filteredSegments) {
-            String utterance_id = String.valueOf(segment.getSegment_id());
+            Long utterance_id = segment.getSegment_id();
             String file_name = segment.getFile().getFile_name();
             Path concatenatedPath = Paths.get(path, file_name);
             String wav_id = concatenatedPath.toString();
@@ -213,7 +252,7 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
         return new ByteArrayResource(content);
     }
 
-    public ByteArrayResource createFileCompatibleWithESPnet(String path, List<String> fileIds) throws IOException {
+    public ByteArrayResource createFileCompatibleWithESPnet(String path, List<Long> fileIds) throws IOException {
         ByteArrayOutputStream zipOutput = new ByteArrayOutputStream();
         ZipOutputStream zipOutputStream = new ZipOutputStream(zipOutput);
 
@@ -241,4 +280,16 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
         zipOutputStream.closeEntry();
     }
 
+    public ByteArrayResource createCombinedManifest(String format, String path, List<Long> fileIds) throws IOException {
+
+        if (format.equalsIgnoreCase("JSON")) {
+            return new ByteArrayResource(createCombinedManifestInJsonFormat(path, fileIds).getBytes());
+        } else if (format.equalsIgnoreCase("CSV")) {
+            return new ByteArrayResource(createCombinedManifestInCsvFormat(path, fileIds).getBytes());
+        } else if (format.equalsIgnoreCase("ESPnet")) {
+            return createFileCompatibleWithESPnet(path, fileIds);
+        } else {
+            throw new IllegalArgumentException("Format: " + format + " not supported!");
+        }
+    }
 }

@@ -6,34 +6,32 @@ import com.datasetgenerator.annotationtool.model.Segment;
 import com.datasetgenerator.annotationtool.repository.FileRepository;
 import com.datasetgenerator.annotationtool.repository.SegmentRepository;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
 public class FileParseServiceImpl implements FileParseService {
 
-    private final FileExtractContentService fileExtractContentService;
+    private final ExtractFileContentsService fileExtractContentService;
     private final FileRepository fileRepository;
     private final SegmentRepository segmentRepository;
     @Value("${file.extensions}")
     private String fileExtensions;
     private int minimumFields;
 
-    public FileParseServiceImpl(FileExtractContentService fileExtractContentService, FileRepository fileRepository, SegmentRepository segmentRepository, @Value("${minimumFields}") int minimumFields) {
+    public FileParseServiceImpl(ExtractFileContentsService fileExtractContentService, FileRepository fileRepository, SegmentRepository segmentRepository, @Value("${minimumFields}") int minimumFields) {
         this.fileExtractContentService = fileExtractContentService;
         this.fileRepository = fileRepository;
         this.segmentRepository = segmentRepository;
         this.minimumFields = minimumFields;
     }
 
-    public ResponseEntity<List<String>> extractValidLines(MultipartFile file) throws IOException {
-        ResponseEntity<String> response = fileExtractContentService.readFileContent(file);
-        String fileContent = response.getBody();
+    public List<String> extractValidLines(MultipartFile file) throws IOException {
+        String fileContent = fileExtractContentService.readFileContent(file);
         List<String> validLines = new ArrayList<>();
         String[] lines = fileContent.split("\n");
         for (String line : lines) {
@@ -42,15 +40,13 @@ public class FileParseServiceImpl implements FileParseService {
                 validLines.add(line);
             }
         }
-        System.out.println(validLines);
-        return ResponseEntity.ok().body(validLines);
+        return validLines;
     }
 
 
-    public ResponseEntity<List<List<String>>> extractLineContent(MultipartFile file) throws IOException {
+    public List<List<String>> extractLineContent(MultipartFile file) throws IOException {
 
-        ResponseEntity<List<String>> responseEntity = extractValidLines(file);
-        List<String> validLines = responseEntity.getBody();
+        List<String> validLines = extractValidLines(file);
         List<List<String>> lineContent = new ArrayList<>();
         assert validLines != null;
         for (String line : validLines) {
@@ -64,10 +60,10 @@ public class FileParseServiceImpl implements FileParseService {
             }
             lineContent.add(currentLineContent);
         }
-        return ResponseEntity.ok(lineContent);
+        return lineContent;
     }
 
-    public ResponseEntity<String> extractFileName(List<String> fields) throws IOException {
+    public String extractFileName(List<String> fields) throws IOException {
         List<String> extensions = Arrays.asList(fileExtensions.split(","));
         String fileName = "";
         for (String field : fields) {
@@ -80,10 +76,10 @@ public class FileParseServiceImpl implements FileParseService {
             }
         }
 
-        return ResponseEntity.ok(fileName);
+        return fileName;
     }
 
-    public ResponseEntity<StringBuilder> extractTranscription(List<String> fields) {
+    public StringBuilder extractTranscription(List<String> fields) {
         StringBuilder transcription = new StringBuilder();
         boolean afterField4 = false;
         for (String field : fields) {
@@ -94,23 +90,23 @@ public class FileParseServiceImpl implements FileParseService {
                 afterField4 = true;
             }
         }
-        return ResponseEntity.ok(transcription);
+        return transcription;
     }
 
-    public ResponseEntity<List<Map<String, String>>> extractFields(MultipartFile file) throws IOException {
-        List<String> validLines = extractValidLines(file).getBody();
-        ResponseEntity<List<List<String>>> lineContentResponse = extractLineContent(file);
-        List<List<String>> lineContent = lineContentResponse.getBody();
+    public List<Map<String, String>> extractFields(MultipartFile file) throws IOException {
+        List<String> validLines = extractValidLines(file);
+        List<List<String>> lineContentResponse = extractLineContent(file);
+        List<List<String>> lineContent = lineContentResponse;
         List<Map<String, String>> outputLines = new ArrayList<>();
+        boolean fileExists = false;
         File fileEntity = new File();
         fileRepository.save(fileEntity);
-        boolean fileExists = false;
         String fileName = "";
         for (int i = 0; i < Objects.requireNonNull(validLines).size(); i++) {
             assert lineContent != null;
             List<String> fields = lineContent.get(i);
             Map<String, String> outputLine = new LinkedHashMap<>();
-            fileName = extractFileName(fields).getBody();
+            fileName = extractFileName(fields);
             outputLine.put("file_name", fileName);
             outputLine.put("speaker", fields.get(1));
             outputLine.put("segment_start", fields.get(2));
@@ -118,31 +114,31 @@ public class FileParseServiceImpl implements FileParseService {
             double segmentStart = Double.parseDouble(outputLine.get("segment_start"));
             double segmentEnd = Double.parseDouble(outputLine.get("segment_end"));
             double duration = segmentEnd - segmentStart;
-            StringBuilder transcription = extractTranscription(fields).getBody();
+            StringBuilder transcription = extractTranscription(fields);
             outputLine.put("transcription", String.valueOf(transcription));
             outputLines.add(outputLine);
             if (fileRepository.existsByFileName(fileName)) {
                 fileExists = true;
-                Map<String, String> errorResponse = new LinkedHashMap<>();
-                errorResponse.put("error", "File already exists!");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonList(errorResponse));
+                throw new IllegalArgumentException("file already exists!");
             }
-            Segment segment = new Segment();
-            segment.setSpeaker(outputLine.get("speaker"));
-            segment.setSegment_start(Double.parseDouble(outputLine.get("segment_start")));
-            segment.setSegment_end(Double.parseDouble(outputLine.get("segment_end")));
-            segment.setDuration(duration);
-            segment.setTranscription(outputLine.get("transcription"));
-            segment.setFile(fileEntity);
-            segment.setDuration(duration);
-            segmentRepository.save(segment);
+            if (!fileRepository.existsByFileName(fileName)) {
+                Segment segment = new Segment();
+                segment.setSpeaker(outputLine.get("speaker"));
+                segment.setSegment_start(Double.parseDouble(outputLine.get("segment_start")));
+                segment.setSegment_end(Double.parseDouble(outputLine.get("segment_end")));
+                segment.setDuration(duration);
+                segment.setTranscription(outputLine.get("transcription"));
+                segment.setFile(fileEntity);
+                segment.setDuration(duration);
+                segmentRepository.save(segment);
+            }
         }
         if (!fileExists) {
             fileEntity.setFile_name(fileName);
+            fileEntity.setUpload_time(LocalDateTime.now());
             fileRepository.save(fileEntity);
         }
-
-        return ResponseEntity.ok(outputLines);
+        return outputLines;
     }
 }
 
