@@ -28,6 +28,4 @@ public interface FileRepository extends JpaRepository<File, Long> {
     @Query("DELETE FROM Segment s WHERE s.file.file_id= :fileId")
     void deleteSegmentsByFileId(@Param("fileId") Long fileId);
 
-//    @Query("select f from File f where f.original_file_name= :fileName")
-//    File findByOriginalFileName( String fileName);
 }
