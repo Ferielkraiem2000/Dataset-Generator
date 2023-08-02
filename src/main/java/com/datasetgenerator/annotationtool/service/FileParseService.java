@@ -17,6 +17,6 @@ public interface FileParseService {
 
     StringBuilder extractTranscription(List<String> fields);
 
-    List<Map<String, String>> extractFields(MultipartFile file) throws IOException;
+    List<Map<String, String>> extractFields(MultipartFile file,boolean overwrite) throws IOException;
 
 }

@@ -33,14 +33,15 @@ public class ReadFileController {
         this.deleteService = deleteService;
     }
 
+    @Operation(summary = "Parse File")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/file-parsing")
-    public ResponseEntity<String> readFile(@RequestParam("files") List<MultipartFile> files) throws IOException {
+    public ResponseEntity<String> readFile(@RequestParam("files") List<MultipartFile> files,@RequestParam(value = "overwrite") Boolean overwrite) throws IOException {
         List<String> results = new ArrayList<>();
         for (MultipartFile file : files) {
             if (!fileService.verifyType(file)) {
                 return ResponseEntity.badRequest().body("File extension not allowed. Only '.txt' and '.stm' files are accepted!");
             }
-            results.add(String.valueOf(dataService.extractFields(file)));
+            results.add(String.valueOf(dataService.extractFields(file,overwrite)));
         }
         return ResponseEntity.ok(String.valueOf(results));
     }
@@ -63,12 +64,12 @@ public class ReadFileController {
         }
         return ResponseEntity.ok().headers(headers).body(combinedManifest);
     }
-
+    @Operation(summary = "Get File's statistics")
     @GetMapping("/statistics")
     public ResponseEntity<List<Map<String, Object>>> getStatistics() {
         return ResponseEntity.ok(statisticsService.getStatistics());
     }
-
+    @Operation(summary = "Update File's name")
     @PutMapping(path = "/file-parsing")
     public ResponseEntity<String> updateFileName(@RequestParam("fileId") Long fileId, @RequestParam("fileName") String fileName) {
         try {
@@ -79,7 +80,7 @@ public class ReadFileController {
 
         }
     }
-
+    @Operation(summary = "Delete file")
     @DeleteMapping("/file-parsing")
     public ResponseEntity<String> deleteFiles(@RequestParam List<Long> fileIds) {
         deleteService.deleteSegmentsByFileIds(fileIds);
