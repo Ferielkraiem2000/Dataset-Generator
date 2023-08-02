@@ -35,7 +35,7 @@ public class ReadFileController {
 
     @Operation(summary = "Parse File")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/file-parsing")
-    public ResponseEntity<String> readFile(@RequestParam("files") List<MultipartFile> files,@RequestParam("overwrite") Boolean overwrite) throws IOException {
+    public ResponseEntity<String> readFile(@RequestParam("files") List<MultipartFile> files,@RequestParam(value = "overwrite") Boolean overwrite) throws IOException {
         List<String> results = new ArrayList<>();
         for (MultipartFile file : files) {
             if (!fileService.verifyType(file)) {
