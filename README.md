@@ -39,7 +39,7 @@ CoreUI is meant to be the UX game changer. Pure & transparent code is devoid of 
 ## Versions
 
 * [CoreUI Free Bootstrap Admin Template](https://github.com/coreui/coreui-free-bootstrap-admin-template)
-* [CoreUI Free Angular Admin Template](https://github.com/coreui/coreui-free-angular-admin-template)
+* [CoreUI Free Angular Admin Template](https://github.com/coreui/datasetGeneratorAnnotationFrontendTool)
 * [CoreUI Free React.js Admin Template](https://github.com/coreui/coreui-free-react-admin-template)
 * [CoreUI Free Vue.js Admin Template](https://github.com/coreui/coreui-free-vue-admin-template)
 
@@ -55,8 +55,8 @@ CoreUI is meant to be the UX game changer. Pure & transparent code is devoid of 
 
 ## Quick Start
 
-- [Download the latest release](https://github.com/coreui/coreui-free-angular-admin-template/)
-- Clone the repo: `git clone https://github.com/coreui/coreui-free-angular-admin-template.git`
+- [Download the latest release](https://github.com/coreui/datasetGeneratorAnnotationFrontendTool/)
+- Clone the repo: `git clone https://github.com/coreui/datasetGeneratorAnnotationFrontendTool.git`
 
 #### <i>Prerequisites</i>
 Before you begin, make sure your development environment includes `Node.js®` and an `npm` package manager.
@@ -102,10 +102,10 @@ $ npm run build
 Within the download you'll find the following directories and files, logically grouping common assets and providing both compiled and minified variations. You'll see something like this:
 
 ```
-coreui-free-angular-admin-template
+datasetGeneratorAnnotationFrontendTool
 ├── src/                         # project root
 │   ├── app/                     # main app directory
-|   │   ├── containers/          # layout containers
+|   │   ├── /          # layout containers
 |   |   │   └── default-layout/  # layout containers
 |   |   |       └── _nav.js      # sidebar navigation config
 |   │   ├── icons/               # icons set for the app
@@ -114,7 +114,7 @@ coreui-free-angular-admin-template
 │   ├── components/              # components for demo only
 │   ├── scss/                    # scss styles
 │   └── index.html               # html template
-│
+containers│
 ├── angular.json
 ├── README.md
 └── package.json
@@ -132,7 +132,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 For transparency into our release cycle and in striving to maintain backward compatibility, CoreUI Free Admin Template is maintained under [the Semantic Versioning guidelines](http://semver.org/).
 
-See [the Releases section of our project](https://github.com/coreui/coreui-free-angular-admin-template/releases) for changelogs for each release version.
+See [the Releases section of our project](https://github.com/coreui/datasetGeneratorAnnotationFrontendTool/releases) for changelogs for each release version.
 
 ## Development server
 
