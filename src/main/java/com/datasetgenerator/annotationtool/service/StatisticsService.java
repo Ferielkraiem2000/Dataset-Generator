@@ -4,5 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface StatisticsService {
-    List<Map<String, Object>> getStatistics();
+    public List<Map<String, Object>> getDatasetStatistics();
+    List<Map<String, Object>> getFilesStatistics();
+    List<Map<String, Object>> getFilesStatistics(List<Long> fileIds);
 }

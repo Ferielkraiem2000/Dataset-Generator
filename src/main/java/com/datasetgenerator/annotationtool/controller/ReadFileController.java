@@ -24,6 +24,7 @@ public class ReadFileController {
     private final StatisticsService statisticsService;
     private final DeleteService deleteService;
 
+
     public ReadFileController(FileParseService dataService, ExtractFileContentsService fileService, DownloadManifestFileService downloadManifestFileService, UpdateUploadedFileService updateUploadedFileService, StatisticsService statisticsService, DeleteService deleteService) {
         this.dataService = dataService;
         this.fileService = fileService;
@@ -65,11 +66,22 @@ public class ReadFileController {
         }
         return ResponseEntity.ok().headers(headers).body(combinedManifest);
     }
-    @Operation(summary = "Get File's statistics")
-    @GetMapping("/statistics")
-    public ResponseEntity<List<Map<String, Object>>> getStatistics() {
-        return ResponseEntity.ok(statisticsService.getStatistics());
+    @Operation(summary = "Get Dataset's statistics")
+    @GetMapping("/dataset/statistics")
+    public ResponseEntity<List<Map<String, Object>>> getDatasetStatistics() {
+        return ResponseEntity.ok(statisticsService.getDatasetStatistics());
     }
+
+    @Operation(summary = "Get Files' statistics")
+    @GetMapping("/files/statistics")
+    public ResponseEntity<List<Map<String, Object>>> getFilesStatistics() {
+        return ResponseEntity.ok(statisticsService.getFilesStatistics());
+    }
+    @GetMapping("/files/statistics/{ids}")
+    public ResponseEntity<List<Map<String, Object>>> getFilesStatistics(@RequestParam("fileIds")List<Long>fileIds) {
+        return ResponseEntity.ok(statisticsService.getFilesStatistics(fileIds));
+    }
+
     @Operation(summary = "Update File's name")
     @PutMapping(path = "/file-parsing")
     public ResponseEntity<String> updateFileName(@RequestParam("fileId") Long fileId, @RequestParam("fileName") String fileName) {

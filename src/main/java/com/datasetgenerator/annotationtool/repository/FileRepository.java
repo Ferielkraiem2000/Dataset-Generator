@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 
 @Repository
@@ -17,6 +18,8 @@ public interface FileRepository extends JpaRepository<File, Long> {
 
     @Query("select count(f)>0 from File f where f.file_id= :fileId")
     boolean findByFileId(@Param("fileId") Long fileId);
+    @Query("SELECT  SUM(s.duration), AVG(s.duration), COUNT(s.segment_id), COUNT(distinct s.speaker) FROM Segment s JOIN s.file f ")
+    List<Object[]> getDatasetStatistics();
 
     @Transactional
     @Modifying
