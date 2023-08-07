@@ -1,0 +1,35 @@
+
+.container {
+    display: flex;
+    gap: 10px; 
+  }
+  [nzType="pie-chart"] {
+   
+    color:rgb(190, 44, 151);
+    font-size: 50px; 
+justify-content: center;
+align-items: center;
+  }
+  [nzType="sound"] {
+   
+    color:rgb(190, 44, 151);
+    font-size: 50px; 
+  }
+  [nzType="clock-circle"] {
+   
+    color:rgb(190, 44, 151);
+    font-size: 50px; 
+  }
+  .nz-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 210px;
+    border-color: black;
+    border-radius: 10px;
+  }
+  
+  .nz-card-meta {
+    margin-top: 20px;
+  }
+  
