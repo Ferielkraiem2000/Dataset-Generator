@@ -66,32 +66,30 @@ public class ReadFileController {
         }
         return ResponseEntity.ok().headers(headers).body(combinedManifest);
     }
-    @Operation(summary = "Get Dataset's statistics")
+    @Operation(summary = "Get Dataset statistics")
     @GetMapping("/dataset/statistics")
     public ResponseEntity<List<Map<String, Object>>> getDatasetStatistics() {
         return ResponseEntity.ok(statisticsService.getDatasetStatistics());
     }
 
-    @Operation(summary = "Get Files' statistics")
+
+    @Operation(summary = "Get Files statistics")
     @GetMapping("/files/statistics")
     public ResponseEntity<List<Map<String, Object>>> getFilesStatistics() {
         return ResponseEntity.ok(statisticsService.getFilesStatistics());
     }
+    @Operation(summary = "Get the statistics of one or more selected uploaded dataset  manifests")
     @GetMapping("/files/statistics/{ids}")
     public ResponseEntity<List<Map<String, Object>>> getFilesStatistics(@RequestParam("fileIds")List<Long>fileIds) {
         return ResponseEntity.ok(statisticsService.getFilesStatistics(fileIds));
     }
 
-    @Operation(summary = "Update File's name")
+    @Operation(summary = "Update File name")
     @PutMapping(path = "/file-parsing")
     public ResponseEntity<String> updateFileName(@RequestParam("fileId") Long fileId, @RequestParam("fileName") String fileName) {
-        try {
             updateUploadedFileService.updateFileName(fileId, fileName);
             return ResponseEntity.ok("fileName updated successfully!");
-        } catch (IllegalArgumentException exception) {
-            return ResponseEntity.badRequest().body("fileId doesn't exist!");
 
-        }
     }
     @Operation(summary = "Delete file")
     @DeleteMapping("/file-parsing")

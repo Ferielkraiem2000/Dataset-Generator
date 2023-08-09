@@ -1,5 +1,6 @@
 package com.datasetgenerator.annotationtool.service;
 
+import com.datasetgenerator.annotationtool.model.Segment;
 import com.datasetgenerator.annotationtool.repository.FileRepository;
 import com.datasetgenerator.annotationtool.repository.IntervalDataRepository;
 import com.datasetgenerator.annotationtool.repository.SegmentRepository;
@@ -51,6 +52,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             Long segmentCount = (Long) row[3];
             Long speakerCount = (Long) row[4];
             LocalDateTime uploadTime = (LocalDateTime) row[5];
+           Long fileId=(Long) row[6];
             Map<String, Object> fileDetails = new LinkedHashMap<>();
             fileDetails.put("fileName", fileName);
             fileDetails.put("totalDuration", totalDuration);
@@ -58,11 +60,19 @@ public class StatisticsServiceImpl implements StatisticsService {
             fileDetails.put("segmentCount", segmentCount);
             fileDetails.put("speakerCount", speakerCount);
             fileDetails.put("uploadTime", uploadTime);
+            fileDetails.put("fileId", fileId);
             filesStatistics.add(fileDetails);
         }
         return filesStatistics;
     }
     public List<Map<String, Object>> getFilesStatistics(List<Long> fileIds) {
+        List<Segment> segments = segmentRepository.findAll();
+        for (Long fileId : fileIds) {
+            boolean fileIdExists = segments.stream().anyMatch(segment -> segment.getFile().getFile_id().equals(fileId));
+            if (!fileIdExists) {
+                throw new IllegalArgumentException("fileId " + fileId + " doesn't exist!");
+            }
+        }
         List<Object[]> result = segmentRepository.getFilesStatistics(fileIds);
         List<Map<String, Object>> filesStatistics = new ArrayList<>();
         for (Object[] row : result) {
@@ -72,6 +82,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             Long segmentCount = (Long) row[3];
             Long speakerCount = (Long) row[4];
             LocalDateTime uploadTime = (LocalDateTime) row[5];
+            Long fileId=(Long) row[6];
             Map<String, Object> fileDetails = new LinkedHashMap<>();
             fileDetails.put("fileName", fileName);
             fileDetails.put("totalDuration", totalDuration);
@@ -79,6 +90,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             fileDetails.put("segmentCount", segmentCount);
             fileDetails.put("speakerCount", speakerCount);
             fileDetails.put("uploadTime", uploadTime);
+            fileDetails.put("fileId", fileId);
             filesStatistics.add(fileDetails);
         }
         return filesStatistics;
