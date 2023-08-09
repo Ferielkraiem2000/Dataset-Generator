@@ -50,7 +50,7 @@ public class ReadFileController {
 
     @Operation(summary = "Download Manifest File")
     @GetMapping(path = "/file-parsing")
-    public ResponseEntity<?> downloadManifestFile(@RequestParam(name = "format", required = true) String format, @RequestParam(name = "file_id") List<Long> fileIds, @RequestParam(name = "path") String path) throws IOException {
+    public ResponseEntity<?> downloadManifestFile(@RequestParam(name = "format", required = true) String format, @RequestParam(name = "file_id") List<Long> fileIds, @RequestParam(name = "path", required = false) String path) throws IOException {
 
         ByteArrayResource combinedManifest = downloadManifestFileService.createCombinedManifest(format, path, fileIds);
         HttpHeaders headers = new HttpHeaders();

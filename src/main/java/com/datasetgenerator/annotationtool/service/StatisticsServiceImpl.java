@@ -76,21 +76,15 @@ public class StatisticsServiceImpl implements StatisticsService {
         List<Object[]> result = segmentRepository.getFilesStatistics(fileIds);
         List<Map<String, Object>> filesStatistics = new ArrayList<>();
         for (Object[] row : result) {
-            String fileName = (String) row[0];
-            Double totalDuration = (Double) row[1];
-            Double averageDuration = (Double) row[2];
-            Long segmentCount = (Long) row[3];
-            Long speakerCount = (Long) row[4];
-            LocalDateTime uploadTime = (LocalDateTime) row[5];
-            Long fileId=(Long) row[6];
+            Double totalDuration = (Double) row[0];
+            Double averageDuration = (Double) row[1];
+            Long segmentCount = (Long) row[2];
+            Long speakerCount = (Long) row[3];
             Map<String, Object> fileDetails = new LinkedHashMap<>();
-            fileDetails.put("fileName", fileName);
             fileDetails.put("totalDuration", totalDuration);
             fileDetails.put("averageDuration", averageDuration);
             fileDetails.put("segmentCount", segmentCount);
             fileDetails.put("speakerCount", speakerCount);
-            fileDetails.put("uploadTime", uploadTime);
-            fileDetails.put("fileId", fileId);
             filesStatistics.add(fileDetails);
         }
         return filesStatistics;
