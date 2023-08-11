@@ -36,15 +36,23 @@ public class ReadFileController {
 
     @Operation(summary = "Parse File")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/file-parsing")
-    public ResponseEntity<String> readFile(@RequestParam("files") List<MultipartFile> files,@RequestParam(value = "overwrite") Boolean overwrite)
-             throws IOException {
+    public ResponseEntity<String> readFile(@RequestParam("files") List<MultipartFile> files, @RequestParam(value = "overwrite") Boolean overwrite)
+            throws IOException {
         List<String> results = new ArrayList<>();
         for (MultipartFile file : files) {
             if (!fileService.verifyType(file)) {
                 return ResponseEntity.badRequest().body("File extension not allowed. Only '.txt' and '.stm' files are accepted!");
             }
-            results.add(String.valueOf(dataService.extractFields(file,overwrite)));
+            results.add(String.valueOf(dataService.extractFields(file, overwrite)));
         }
+        return ResponseEntity.ok(String.valueOf(results));
+    }
+
+    @Operation(summary = "Get File Content ")
+    @GetMapping(path = "/file-parsing/{id}")
+    public ResponseEntity<String> showContent(@RequestParam("fileId") Long fileId) {
+        List<String> results = new ArrayList<>();
+        results.add(String.valueOf(dataService.showContent(fileId)));
         return ResponseEntity.ok(String.valueOf(results));
     }
 
@@ -66,6 +74,7 @@ public class ReadFileController {
         }
         return ResponseEntity.ok().headers(headers).body(combinedManifest);
     }
+
     @Operation(summary = "Get Dataset statistics")
     @GetMapping("/dataset/statistics")
     public ResponseEntity<List<Map<String, Object>>> getDatasetStatistics() {
@@ -78,19 +87,21 @@ public class ReadFileController {
     public ResponseEntity<List<Map<String, Object>>> getFilesStatistics() {
         return ResponseEntity.ok(statisticsService.getFilesStatistics());
     }
+
     @Operation(summary = "Get the statistics of one or more selected uploaded dataset  manifests")
     @GetMapping("/files/statistics/{ids}")
-    public ResponseEntity<List<Map<String, Object>>> getFilesStatistics(@RequestParam("fileIds")List<Long>fileIds) {
+    public ResponseEntity<List<Map<String, Object>>> getFilesStatistics(@RequestParam("fileIds") List<Long> fileIds) {
         return ResponseEntity.ok(statisticsService.getFilesStatistics(fileIds));
     }
 
     @Operation(summary = "Update File name")
     @PutMapping(path = "/file-parsing/{id}/{name}")
     public ResponseEntity<String> updateFileName(@RequestParam("fileId") Long fileId, @RequestParam("fileName") String fileName) {
-            updateUploadedFileService.updateFileName(fileId, fileName);
-            return ResponseEntity.ok("fileName updated successfully!");
+        updateUploadedFileService.updateFileName(fileId, fileName);
+        return ResponseEntity.ok("fileName updated successfully!");
 
     }
+
     @Operation(summary = "Delete file")
     @DeleteMapping("/file-parsing/{ids}")
     public ResponseEntity<String> deleteFiles(@RequestParam List<Long> fileIds) {

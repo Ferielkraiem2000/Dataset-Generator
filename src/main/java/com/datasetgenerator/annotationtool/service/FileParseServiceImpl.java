@@ -157,6 +157,21 @@ public class FileParseServiceImpl implements FileParseService {
         }
         return outputLines;
     }
+    public List<Map<String, String>> showContent(Long fileId){
+        List<Segment> segments=segmentRepository.findAllById(fileId);
+        List<Map<String, String>> outputLines = new ArrayList<>();
+        for(Segment segment : segments){
+            Map<String, String> outputLine = new LinkedHashMap<>();
+            outputLine.put("file name", segment.getFile().getFile_name());
+            outputLine.put("speaker", segment.getSpeaker());
+            outputLine.put("segment_start", String.valueOf(segment.getSegment_start()));
+            outputLine.put("segment_end", String.valueOf(segment.getSegment_end()));
+            outputLine.put("transcription", segment.getTranscription());
+            outputLines.add(outputLine);
+
+        }
+        return outputLines;
+    }
 }
 
 
