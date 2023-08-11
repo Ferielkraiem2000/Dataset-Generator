@@ -49,7 +49,7 @@ public class ReadFileController {
     }
 
     @Operation(summary = "Download Manifest File")
-    @GetMapping(path = "/file-parsing")
+    @GetMapping(path = "/file-parsing/{format}/{ids}/{path}")
     public ResponseEntity<?> downloadManifestFile(@RequestParam(name = "format", required = true) String format, @RequestParam(name = "file_id") List<Long> fileIds, @RequestParam(name = "path", required = false) String path) throws IOException {
 
         ByteArrayResource combinedManifest = downloadManifestFileService.createCombinedManifest(format, path, fileIds);
@@ -85,14 +85,14 @@ public class ReadFileController {
     }
 
     @Operation(summary = "Update File name")
-    @PutMapping(path = "/file-parsing")
+    @PutMapping(path = "/file-parsing/{id}/{name}")
     public ResponseEntity<String> updateFileName(@RequestParam("fileId") Long fileId, @RequestParam("fileName") String fileName) {
             updateUploadedFileService.updateFileName(fileId, fileName);
             return ResponseEntity.ok("fileName updated successfully!");
 
     }
     @Operation(summary = "Delete file")
-    @DeleteMapping("/file-parsing")
+    @DeleteMapping("/file-parsing/{ids}")
     public ResponseEntity<String> deleteFiles(@RequestParam List<Long> fileIds) {
         deleteService.deleteSegmentsByFileIds(fileIds);
         return ResponseEntity.ok("Files deleted successfully.");

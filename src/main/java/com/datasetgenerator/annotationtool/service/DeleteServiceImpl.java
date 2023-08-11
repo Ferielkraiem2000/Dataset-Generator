@@ -17,7 +17,6 @@ public class DeleteServiceImpl implements DeleteService {
                 fileRepository.deleteSegmentsByFileId(fileId);
                 fileRepository.deleteById(fileId);
             }
-            throw new IllegalArgumentException("fileId dosen't exists!");
         }
     }
 }

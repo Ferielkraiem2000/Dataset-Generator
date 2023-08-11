@@ -46,7 +46,11 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
             Long segmentId = segment.getSegment_id();
             String fileName = segment.getFile().getFile_name();
             Map<String, String> combinedEntry = new LinkedHashMap<>();
-            combinedEntry.put("path", path + "/" + fileName);
+            if(path==null){
+            combinedEntry.put("path", fileName);}
+            else {
+                combinedEntry.put("path", path + "/" + fileName);
+            }
             combinedEntry.put("start", String.valueOf(segment.getSegment_start()));
             combinedEntry.put("stop", String.valueOf(segment.getSegment_end()));
             combinedEntry.put("duration", String.valueOf(segment.getDuration()));
@@ -67,6 +71,7 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
     public String createCombinedManifestInCsvFormat(String path, List<Long> fileIds) throws IOException {
         List<Segment> segments = segmentRepository.findAll();
         List<Segment> filteredSegments = new ArrayList<>();
+        String wav_id="";
         for (Long fileId : fileIds) {
             boolean fileIdExists = segments.stream().anyMatch(segment -> segment.getFile().getFile_id().equals(fileId));
             if (!fileIdExists) {
@@ -84,8 +89,10 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
         for (Segment segment : filteredSegments) {
             Long segmentId = segment.getSegment_id();
             String fileName = segment.getFile().getFile_name();
+            if(path==null){ wav_id=fileName;}
+            else{
             Path concatenatedPath = Paths.get(path, fileName);
-            String wav_id = concatenatedPath.toString();
+             wav_id = concatenatedPath.toString();}
             String transcription = segment.getTranscription();
 
             String[] rowData = new String[]{
@@ -198,6 +205,7 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
     private ByteArrayResource createPathsFile(String path, List<Long> fileIds) throws IOException {
         List<Segment> segments = segmentRepository.findAll();
         List<Segment> filteredSegments = new ArrayList<>();
+        String wav_id="";
         for (Long fileId : fileIds) {
             boolean fileIdExists = segments.stream().anyMatch(segment -> segment.getFile().getFile_id().equals(fileId));
             if (!fileIdExists) {
@@ -215,8 +223,9 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
         for (Segment segment : filteredSegments) {
             Long segment_id = segment.getSegment_id();
             String file_name = String.valueOf(segment.getFile().getFile_name());
-            Path concatenatedPath = Paths.get(path, file_name);
-            String wav_id = concatenatedPath.toString();
+            if(path==null){wav_id=file_name;}
+          else{  Path concatenatedPath = Paths.get(path, file_name);
+            wav_id = concatenatedPath.toString();}
             writer.write(segment_id + " " + wav_id);
             writer.newLine();
         }
@@ -230,6 +239,7 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
     private ByteArrayResource createFileForSegmentsDescription(String path, List<Long> fileIds) throws IOException {
         List<Segment> segments = segmentRepository.findAll();
         List<Segment> filteredSegments = new ArrayList<>();
+        String wav_id="";
         for (Long fileId : fileIds) {
             boolean fileIdExists = segments.stream().anyMatch(segment -> segment.getFile().getFile_id().equals(fileId));
             if (!fileIdExists) {
@@ -246,8 +256,9 @@ public class DownloadManifestFileServiceImpl implements DownloadManifestFileServ
         for (Segment segment : filteredSegments) {
             Long utterance_id = segment.getSegment_id();
             String file_name = segment.getFile().getFile_name();
-            Path concatenatedPath = Paths.get(path, file_name);
-            String wav_id = concatenatedPath.toString();
+            if(path==null){wav_id=file_name;}
+           else{ Path concatenatedPath = Paths.get(path, file_name);
+            wav_id = concatenatedPath.toString();}
             double start_time = segment.getSegment_start();
             double end_time = segment.getSegment_end();
             writer.write(utterance_id + " " + wav_id + " " + start_time + " " + end_time);
