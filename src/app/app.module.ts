@@ -25,7 +25,6 @@ import en from '@angular/common/locales/en';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { TimeConverterPipe } from './pipes/time-converter.pipe';
 import { DownloadFormatDialogComponent } from './components/download-format-dialog/download-format-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -44,7 +43,6 @@ FileUploaderComponent, AppTitleComponent,
  StatisticCardComponent,
 FilesComponent,
 DashboardComponent,
-TimeConverterPipe,
 DownloadFormatDialogComponent,
 
    ],
