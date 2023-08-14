@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Statistics } from '../interfaces/statistics.interface'
-import { TimeConverterPipe } from '../pipes/time-converter.pipe';
 @Injectable({
   providedIn: 'root'
 })
