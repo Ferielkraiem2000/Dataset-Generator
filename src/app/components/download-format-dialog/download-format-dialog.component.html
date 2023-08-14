@@ -1,0 +1,15 @@
+<nz-form-item>
+    <input nz-input placeholder="Tap destination" [(ngModel)]="path" />
+  </nz-form-item>
+  <nz-form-item style="margin-top: 10px;">
+    <nz-select [(ngModel)]="selectedFormat" [nzPlaceHolder]="'Select Format'" style="width: 350px;">
+      <nz-option nzValue="ESPnet" nzLabel="ESPnet"></nz-option>
+      <nz-option nzValue="JSON" nzLabel="JSON"></nz-option>
+      <nz-option nzValue="CSV" nzLabel="CSV"></nz-option>
+    </nz-select>
+  </nz-form-item>
+  <div style="margin-top: 20px;">
+    <button nz-button nzType="primary" (click)="onDownloadClick()">Download</button>
+    <button nz-button nzType="default" style="margin-right: 10px;" (click)="onNoClick()">Cancel</button>
+  </div>
+  

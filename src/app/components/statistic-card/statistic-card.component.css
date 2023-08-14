@@ -1,7 +1,8 @@
-
 .container {
     display: flex;
-    gap: 10px; 
+    gap: 70px; 
+    padding-top :50px;
+    padding-right: 250px;
   }
   [nzType="pie-chart"] {
    
@@ -20,16 +21,39 @@ align-items: center;
     color:rgb(190, 44, 151);
     font-size: 50px; 
   }
-  .nz-card {
+  nz-card {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 210px;
     border-color: black;
     border-radius: 10px;
+
   }
   
-  .nz-card-meta {
+  .card-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: max-content;
+  }
+  
+  .card-icon {
+    font-size: 55px;
+    margin-bottom: 8px;
+  margin-left: 10px;
+  margin-right:3px;
+  }
+  
+  .card-title {
     margin-top: 20px;
-  }
   
+    font-size: 24px;
+  }
+  .value{
+    font-weight:bold;
+    font-size: 25px;
+    margin-left: 23px;
+  }

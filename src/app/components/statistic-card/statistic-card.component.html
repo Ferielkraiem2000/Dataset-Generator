@@ -1,23 +1,31 @@
 <div class="container">
-
-          <nz-card style="width:210px; height: 210px; border-color: black; border-radius: 10px;">
+          <nz-card style="width:210px; height: 210px; border-color: black; border-radius: 10px;"  *ngFor="let stat of statistics">
         <nz-card-meta
-         nz-icon nzType="pie-chart"  nzTitle="Segments" >
-      </nz-card-meta>        
+         nz-icon nzType="pie-chart"   class="card-icon">
+      </nz-card-meta>  
+      <p class="value">{{ stat.segmentCount }}</p>
+      <p class="card-title">Segments</p>      
       </nz-card>
-      <nz-card style="width: 210px;; height: 210px; border-color: black; border-radius: 10px;">
-        <nz-card-meta
-          nz-icon nzType="sound"
-          nzTitle="Speakers">
+      <nz-card style="width: 210px;; height: 210px; border-color: black; border-radius: 10px;" *ngFor="let stat of statistics">
+      <nz-card-meta
+          nz-icon nzType="sound" class="card-icon">
         </nz-card-meta>
+        <p class="value">{{ stat.speakerCount }}</p>
+        <p class="card-title">Speakers</p>
       </nz-card>
       
-      <nz-card style="width:210px; height: 210px; border-color: black; border-radius: 10px;">
-        <nz-card-meta nz-icon nzType="clock-circle"
-          nzTitle="Total Duration" >
+      <nz-card style="width:210px; height: 210px; border-color: black; border-radius: 10px;" *ngFor="let stat of statistics">
+        <nz-card-meta nz-icon nzType="clock-circle" class="card-icon" >
         </nz-card-meta>
+        <p class="value">{{ stat.totalDuration }}</p>
+        <p class="card-title"> Total duration (s)</p>
       </nz-card>
-      
+      <nz-card style="width:210px; height: 210px; border-color: black; border-radius: 10px;" *ngFor="let stat of statistics">
+        <nz-card-meta nz-icon nzType="clock-circle" class="card-icon" >
+        </nz-card-meta>
+        <p class="value">{{ stat.averageDuration }}</p>
+        <p class="card-title"> Average duration (s)</p>
+      </nz-card>
      </div>
   
 

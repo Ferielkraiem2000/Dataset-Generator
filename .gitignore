@@ -51,3 +51,7 @@ aio/content/examples/.DS_Store
 # VSCode
 
 .vscode/*
+
+
+#angular
+.angular/*

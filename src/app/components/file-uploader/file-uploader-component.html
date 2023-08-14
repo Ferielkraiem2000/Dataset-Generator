@@ -1,3 +1,4 @@
+
 <div class="drag-area" (dragover)="onDragOver($event)" (dragleave)="onDragLeave()" (drop)="onFileDropped($event)">
    <div class="icon"><i class="fas fa-cloud-upload-alt"></i></div>
    <header *ngIf="!selectedFiles.length" class="center-content">
@@ -5,20 +6,18 @@
       <button nz-button nzType="default" (click)="openFileInput()" class="plus-button">+</button>
       <div class="drop-text">Drop STM Files Here</div>
    </header>   
-   <div *ngIf="selectedFiles.length">
+   <div *ngIf="selectedFiles.length>0 ">
       <p *ngFor="let file of selectedFiles">{{ file.name }}</p>
    </div>
    
 </div>
-
- <div class="cord">
-   <button nz-button nzType="primary" (click)="onConfirm()">
-      <i nz-icon nzType="check"></i> Confirm
-    </button>
-    <button nz-button nzType="primary" (click)="onCancel()">
-      <i nz-icon nzType="close"></i> Cancel
-    </button>
-    
+<div class="cord">
+   <button nz-button (click)="onConfirm()">
+     <i nz-icon nzType="check" style="margin-right: 10px;"></i> Confirm
+   </button>
+   <button nz-button  (click)="onCancel()">
+     <i nz-icon nzType="close" style="margin-left: 10px;"></i> Cancel
+   </button>
  </div>
  
 

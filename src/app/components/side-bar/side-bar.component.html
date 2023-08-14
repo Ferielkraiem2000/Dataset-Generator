@@ -9,18 +9,20 @@
     <nz-sider nzCollapsible [(nzCollapsed)]="isCollapsed"  nzWidth="200px">
       
       <ul  nz-menu nzTheme="dark" nzMode="inline">
-        <li nz-menu-item routerLink="/dashboard" routerLinkActive="active">
-          <span nz-icon nzType="home"></span>
-          <span>Dashboard</span>
+        <li nz-menu-item>
+          <a routerLink="/dashboard" ><span nz-icon nzType="home"   routerLinkActive="active"></span>
+          <span>Dashboard</span></a>
         
         </li>
         <li nz-menu-item>
-          <span nz-icon nzType="file" routerLink="/files"  ></span>
-          <span>Files</span>
+          <a routerLink="/files">   <span nz-icon nzType="file"  routerLink="/files"   routerLinkActive="active"></span>
+            <span>Files</span></a>
+      
         </li>
         <li nz-menu-item>
+          <a routerLink="/about"> 
           <span nz-icon nzType="flag"></span>
-          <span>About Us</span>
+          <span>About Us</span></a>
         </li>
       </ul>
     </nz-sider>
