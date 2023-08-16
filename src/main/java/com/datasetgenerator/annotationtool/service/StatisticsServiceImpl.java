@@ -44,4 +44,5 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
         return filesStatistics;
     }
+    
 }
