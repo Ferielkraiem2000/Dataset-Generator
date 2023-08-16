@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -93,7 +94,8 @@ public class FileParseServiceImpl implements FileParseService {
         return transcription;
     }
 
-    public List<Map<String, String>> extractFields(MultipartFile file) throws IOException {
+
+    public List<Map<String, String>> extractFields(MultipartFile file, boolean overwrite) throws IOException {
         List<String> validLines = extractValidLines(file);
         List<List<String>> lineContentResponse = extractLineContent(file);
         List<List<String>> lineContent = lineContentResponse;
@@ -116,19 +118,23 @@ public class FileParseServiceImpl implements FileParseService {
             StringBuilder transcription = extractTranscription(fields);
             outputLine.put("transcription", String.valueOf(transcription));
             outputLines.add(outputLine);
-            File existingFile=fileRepository.existsByFileName(fileName);
-            if (existingFile!=null) {
-                fileRepository.deleteSegmentsByFileId(existingFile.getFile_id());
-                fileRepository.deleteByFileName(fileName);
-                Segment segment = new Segment();
-                segment.setSpeaker(outputLine.get("speaker"));
-                segment.setSegment_start(Double.parseDouble(outputLine.get("segment_start")));
-                segment.setSegment_end(Double.parseDouble(outputLine.get("segment_end")));
-                segment.setDuration(duration);
-                segment.setTranscription(outputLine.get("transcription"));
-                segment.setFile(fileEntity);
-                segment.setDuration(duration);
-                segmentRepository.save(segment);
+            File existingFile = fileRepository.existsByFileName(fileName);
+            if (existingFile != null) {
+                if (overwrite) {
+                    fileRepository.deleteSegmentsByFileId(existingFile.getFile_id());
+                    fileRepository.deleteByFileName(fileName);
+                    Segment segment = new Segment();
+                    segment.setSpeaker(outputLine.get("speaker"));
+                    segment.setSegment_start(Double.parseDouble(outputLine.get("segment_start")));
+                    segment.setSegment_end(Double.parseDouble(outputLine.get("segment_end")));
+                    segment.setDuration(duration);
+                    segment.setTranscription(outputLine.get("transcription"));
+                    segment.setFile(fileEntity);
+                    segment.setDuration(duration);
+                    segmentRepository.save(segment);
+                } else {
+                    throw new RuntimeException("File already exists!");
+                }
             } else {
                 Segment segment = new Segment();
                 segment.setSpeaker(outputLine.get("speaker"));
@@ -141,9 +147,30 @@ public class FileParseServiceImpl implements FileParseService {
                 segmentRepository.save(segment);
             }
         }
-        fileEntity.setFile_name(fileName);
-        fileEntity.setUpload_time(LocalDateTime.now());
-        fileRepository.save(fileEntity);
+
+        if (overwrite || fileRepository.existsByFileName(fileName) == null) {
+            fileEntity.setFile_name(fileName);
+            fileEntity.setUpload_time(LocalDateTime.now());
+            fileRepository.save(fileEntity);
+        }
+        else{
+            throw new RuntimeException("File already exists!");
+        }
+        return outputLines;
+    }
+    public List<Map<String, String>> showContent(Long fileId){
+        List<Segment> segments=segmentRepository.findAllById(fileId);
+        List<Map<String, String>> outputLines = new ArrayList<>();
+        for(Segment segment : segments){
+            Map<String, String> outputLine = new LinkedHashMap<>();
+            outputLine.put("file_name", segment.getFile().getFile_name());
+            outputLine.put("speaker", segment.getSpeaker());
+            outputLine.put("segment_start", String.valueOf(segment.getSegment_start()));
+            outputLine.put("segment_end", String.valueOf(segment.getSegment_end()));
+            outputLine.put("transcription", segment.getTranscription());
+            outputLines.add(outputLine);
+
+        }
         return outputLines;
     }
 }

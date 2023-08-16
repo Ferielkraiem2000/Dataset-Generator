@@ -14,6 +14,5 @@ public class UpdateUploadedFileServiceImpl implements UpdateUploadedFileService 
         if (fileRepository.findByFileId(file_id)) {
             fileRepository.updateFileName(file_id, fileName);
         }
-        throw new IllegalArgumentException();
     }
 }
