@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -162,7 +163,7 @@ public class FileParseServiceImpl implements FileParseService {
         List<Map<String, String>> outputLines = new ArrayList<>();
         for(Segment segment : segments){
             Map<String, String> outputLine = new LinkedHashMap<>();
-            outputLine.put("file name", segment.getFile().getFile_name());
+            outputLine.put("file_name", segment.getFile().getFile_name());
             outputLine.put("speaker", segment.getSpeaker());
             outputLine.put("segment_start", String.valueOf(segment.getSegment_start()));
             outputLine.put("segment_end", String.valueOf(segment.getSegment_end()));

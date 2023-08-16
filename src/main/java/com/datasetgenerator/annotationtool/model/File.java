@@ -1,6 +1,5 @@
 package com.datasetgenerator.annotationtool.model;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

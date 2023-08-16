@@ -4,6 +4,8 @@ import com.datasetgenerator.annotationtool.model.Segment;
 import com.datasetgenerator.annotationtool.repository.FileRepository;
 import com.datasetgenerator.annotationtool.repository.IntervalDataRepository;
 import com.datasetgenerator.annotationtool.repository.SegmentRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,6 +19,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     SegmentRepository segmentRepository;
     FileRepository fileRepository;
     IntervalDataRepository intervalDataRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     StatisticsServiceImpl(SegmentRepository segmentRepository, IntervalDataRepository intervalDataRepository, FileRepository fileRepository) {
         this.segmentRepository = segmentRepository;
@@ -53,7 +57,6 @@ public class StatisticsServiceImpl implements StatisticsService {
             Long segmentCount = (Long) row[4];
             Long speakerCount = (Long) row[5];
             LocalDateTime uploadTime = (LocalDateTime) row[6];
-System.out.println(uploadTime);
             Map<String, Object> fileDetails = new LinkedHashMap<>();
             fileDetails.put("fileId", fileId);
             fileDetails.put("fileName", fileName);
@@ -61,7 +64,7 @@ System.out.println(uploadTime);
             fileDetails.put("averageDuration", averageDuration);
             fileDetails.put("segmentCount", segmentCount);
             fileDetails.put("speakerCount", speakerCount);
-            fileDetails.put("uploadTime", uploadTime);
+            fileDetails.put("uploadTime", objectMapper.convertValue(uploadTime, String.class));
             filesStatistics.add(fileDetails);
         }
         return filesStatistics;

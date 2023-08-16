@@ -1,5 +1,6 @@
 package com.datasetgenerator.annotationtool.controller;
 
+import com.datasetgenerator.annotationtool.datasetGenerator;
 import com.datasetgenerator.annotationtool.service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.core.io.ByteArrayResource;
@@ -50,10 +51,8 @@ public class ReadFileController {
 
     @Operation(summary = "Get File Content ")
     @GetMapping(path = "/file-parsing/{id}")
-    public ResponseEntity<String> showContent(@RequestParam("fileId") Long fileId) {
-        List<String> results = new ArrayList<>();
-        results.add(String.valueOf(dataService.showContent(fileId)));
-        return ResponseEntity.ok(String.valueOf(results));
+    public ResponseEntity<List<Map<String, String>>>showContent(@RequestParam("fileId") Long fileId) {
+        return ResponseEntity.ok(dataService.showContent(fileId));
     }
 
     @Operation(summary = "Download Manifest File")
