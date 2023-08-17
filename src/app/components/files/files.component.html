@@ -1,7 +1,8 @@
 <nz-content>
-  <p class="title-card">Download Combined manifest file</p>
-  <div class="glass-effect shadow">
   <ng-container *ngIf="isDownloadView()">
+  <p class="title-card">Download Combined manifest file</p></ng-container>
+  <div class="glass-effect shadow">
+   <ng-container *ngIf="isDownloadView()">
     <input nz-input placeholder="Tap the file's path" [(ngModel)]="path" class="input"/>
     <div >
       <nz-select [(ngModel)]="selectedFormat" [nzPlaceHolder]="'Select Format'"  class="select" >
@@ -13,8 +14,7 @@
     <div>
         <button class="button-glass" nz-button nzType="primary" (click)="selectedFormat?openProgressView():showTapMessage()" >Download</button>
     </div>
-  </ng-container>
- 
+   </ng-container>
   <ng-container *ngIf="isProgressView()">
     <div class="download-container">
       <img src="./assets/download.png" class="file-icon">
@@ -32,7 +32,6 @@
   </ng-container>
   
 </div>
-
   <p class="title-card">Selected Files Statistics</p>
     <div class="row">
       <div class="col-lg-3 col-md-6 col-sm-6">

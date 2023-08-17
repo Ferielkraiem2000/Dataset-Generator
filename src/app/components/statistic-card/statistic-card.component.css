@@ -1,59 +1,79 @@
 .container {
-    display: flex;
-    gap: 70px; 
-    padding-top :50px;
-    padding-right: 250px;
-  }
-  [nzType="pie-chart"] {
-   
-    color:rgb(190, 44, 151);
-    font-size: 50px; 
-justify-content: center;
-align-items: center;
-  }
-  [nzType="sound"] {
-   
-    color:rgb(190, 44, 151);
-    font-size: 50px; 
-  }
-  [nzType="clock-circle"] {
-   
-    color:rgb(190, 44, 151);
-    font-size: 50px; 
-  }
-  nz-card {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 210px;
-    border-color: black;
-    border-radius: 10px;
+  display: flex;
+  gap: 25px; 
+margin-right:35%;
+margin-left:1%
+}
 
-  }
-  
-  .card-meta {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    height: max-content;
-  }
-  
-  .card-icon {
-    font-size: 55px;
-    margin-bottom: 8px;
-  margin-left: 10px;
-  margin-right:3px;
-  }
-  
-  .card-title {
-    margin-top: 20px;
-  
-    font-size: 24px;
-  }
-  .value{
-    font-weight:bold;
-    font-size: 25px;
-    margin-left: 23px;
-  }
+nz-card {
+  margin-top:2%;
+  border-radius: 10px;
+  background-color: transparent;
+ border-width: 0px;
+  width:280px;
+  height:230px;
+  box-shadow: 30px 30px 37px rgba(0, 0, 0, 0.3);
+
+}
+.title-card {
+  color:rgb(146, 142, 142);
+margin-top :-2%;  font-size: 30px;
+margin-left:-217%;
+}
+.card-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: max-content;
+}
+
+.card-icon {
+  font-size: 60px;
+margin-right:10%;
+margin-left:30%;
+margin-top:-5%;
+color:white;
+
+}
+
+.card-title {
+  margin-top: 8%;
+  font-size: 24px;
+  margin-right:-50%;
+  margin-left:10%;
+}
+.value{
+  margin-right:10%;
+margin-left:30%;
+  font-weight:bold;
+  font-size: 25px;
+ 
+}
+
+.hoverable-card {
+  transition: transform 0.3s ease; 
+}
+
+.hoverable-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translate(-5px, -5px); 
+}
+.seg{
+
+  background-color:rgb(190, 44, 151);
+}
+
+.speak{
+  background-color: blue;
+
+}
+.total{
+  background-color: rgb(86, 188, 228)
+
+}
+.average{
+  background-color:rgb(243, 97, 197);
+
+}

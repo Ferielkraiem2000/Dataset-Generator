@@ -16,20 +16,9 @@ width: 1100px;}
   .shadow {
     box-shadow: -5px 100px 120px rgba(0, 0, 0, 0.2);
   }
-  .title-file {
-    font-size: 30px;
-    font-weight: bold;
-    margin-bottom: -150px;
-    margin-left:-250px;
-  }
-  .title-card {
-    font-weight: bold;
-    font-size: 30px;
-    margin-bottom: -120px;
-    margin-left:-250px
-  }
+
   .cards{
-    display: flex; flex-direction: column; align-items: center; margin-top: 100px;
+    display: flex; flex-direction: column; align-items: center;margin-top:5%; margin-left:40%; margin-right:5%
   }
   .drag-area{
   display: flex; flex-direction: column; align-items: center;  margin-top: 180px;

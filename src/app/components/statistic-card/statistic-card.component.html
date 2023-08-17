@@ -1,31 +1,33 @@
+<p class="title-card">Overview</p>
 <div class="container">
-          <nz-card style="width:210px; height: 210px; border-color: black; border-radius: 10px;"  *ngFor="let stat of statistics">
-        <nz-card-meta
-         nz-icon nzType="pie-chart"   class="card-icon">
-      </nz-card-meta>  
-      <p class="value">{{ stat.segmentCount }}</p>
-      <p class="card-title">Segments</p>      
-      </nz-card>
-      <nz-card style="width: 210px;; height: 210px; border-color: black; border-radius: 10px;" *ngFor="let stat of statistics">
-      <nz-card-meta
-          nz-icon nzType="sound" class="card-icon">
-        </nz-card-meta>
-        <p class="value">{{ stat.speakerCount }}</p>
-        <p class="card-title">Speakers</p>
-      </nz-card>
-      
-      <nz-card style="width:210px; height: 210px; border-color: black; border-radius: 10px;" *ngFor="let stat of statistics">
-        <nz-card-meta nz-icon nzType="clock-circle" class="card-icon" >
-        </nz-card-meta>
-        <p class="value">{{ stat.totalDuration }}</p>
-        <p class="card-title"> Total duration (s)</p>
-      </nz-card>
-      <nz-card style="width:210px; height: 210px; border-color: black; border-radius: 10px;" *ngFor="let stat of statistics">
-        <nz-card-meta nz-icon nzType="clock-circle" class="card-icon" >
-        </nz-card-meta>
-        <p class="value">{{ stat.averageDuration }}</p>
-        <p class="card-title"> Average duration (s)</p>
-      </nz-card>
-     </div>
   
+  <nz-card  
+    *ngFor="let stat of statistics"class="seg" class="seg hoverable-card">
+    <p class="value">{{ stat.segmentCount }}</p>
+    <p class="card-title">Segments</p>
+    <div class="card-icon"> <i nz-icon nzType="pie-chart" nzTheme="outline"></i> </div>
+  </nz-card>
+  <nz-card 
+    *ngFor="let stat of statistics" class="speak" class="speak hoverable-card">
 
+    <p class="value">{{ stat.speakerCount }}</p>
+    <p class="card-title">Speakers</p>
+    <div class="card-icon"> <i nz-icon nzType="bar-chart" nzTheme="outline"></i></div>
+  </nz-card>
+
+  <nz-card 
+    *ngFor="let stat of statistics" class="total" class="total hoverable-card">
+
+    <p class="value">{{ stat.totalDuration }}</p>
+    <p class="card-title"> Total duration(s)</p>
+    <div class="card-icon"> <i nz-icon nzType="line-chart" nzTheme="outline"></i></div>
+  </nz-card>
+  <nz-card 
+    *ngFor="let stat of statistics" class="average" class="average hoverable-card">
+
+    <p class="value">{{ stat.averageDuration }}</p>
+    <p class="card-title"> Average duration(s)</p>
+    <div class="card-icon"> <i nz-icon nzType="line-chart" nzTheme="outline" ></i></div>
+
+  </nz-card>
+</div>

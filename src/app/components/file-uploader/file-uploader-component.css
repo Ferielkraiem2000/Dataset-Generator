@@ -17,8 +17,8 @@
   justify-content: center;
   flex-direction: column;
   background: #E9EBEE; 
-margin-right:250px;
-margin-left: -20px;
+margin-right:10%;
+margin-left:25%;
 }
 .drag-area:hover {
   border:solid;
@@ -74,6 +74,7 @@ justify-content: center;
   display: flex;
   gap: 1px;
   margin-top: 20px;
+ 
 
 }
 
@@ -88,4 +89,16 @@ justify-content: center;
 }
 
 
-
+.title-file {
+  color:rgb(146, 142, 142);
+  margin-top :-5%;  font-size: 30px;
+  margin-left:-80%;
+}
+.confirmbutton{
+  margin-right:-20%;
+  margin-left:-20%
+}
+.cancelbutton{
+  margin-right:2%;
+  margin-left:-20%
+}

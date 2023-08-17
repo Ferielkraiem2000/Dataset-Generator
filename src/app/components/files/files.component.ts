@@ -1,6 +1,5 @@
 import {  Component, OnInit , TemplateRef, ViewChild} from '@angular/core';
 import { Statistics } from 'src/app/interfaces/statistics.interface';
-import { Content } from 'src/app/interfaces/filecontent.interface';
 import { DeleteFileService } from 'src/app/services/delete-file.service';
 import { FilesService } from 'src/app/services/files.service';
 import { UpdateFileService } from 'src/app/services/update-file.service';
@@ -34,6 +33,7 @@ export class FilesComponent implements OnInit {
   isCanceled: boolean = false;
    isDownloadInProgress: boolean = false;
     downloadSubscription: Subscription | undefined;
+    content:any[]=[];
    percent = 0;
     interval: any;
     constructor(
@@ -69,6 +69,7 @@ export class FilesComponent implements OnInit {
   }
   
   openProgressView(): void {
+    this.communicationService.showDownloadInputs=false;
     this.communicationService.showProgress = true;
     this.isCanceled = false; 
     this.updatePercentAutomatically();
@@ -228,7 +229,7 @@ onConfirm(stat:Statistics){
     showContent(stat: Statistics) {
       this.fileContentService.showContent(stat.fileId).subscribe(
         (response) => {
-          this.communicationService.content = response;
+          this.content = response;
           this.openContentDialog(); 
         },
         error => {
@@ -239,13 +240,67 @@ onConfirm(stat:Statistics){
     
     
     openContentDialog(): void {
-        this.modalService.create({
-          nzTitle: 'Audio File',
-          nzContent:ContentFileComponent,
-          nzFooter: null,
-          nzStyle: { width: '800px', height: '800px' },
-        });
-      }
+      const tableRows = this.content.map(item => `
+        <tr>
+          <td>${item.file_name}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>${item.speaker}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>${item.segment_start}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>${item.segment_end}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+
+          <td>${item.transcription}</td>
+        </tr>
+      `).join('');
+    
+      const tableHtml = `
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>File Name</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th>Speaker</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th>Segment Start</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th>Segment End</th>
+                <th></th>
+                <th></th><th></th>
+                <th>Transcription</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${tableRows}
+            </tbody>
+          </table>
+        </div>
+      `;
+    
+      this.modalService.create({
+        nzTitle: 'Audio File',
+        nzContent: tableHtml,
+        nzFooter: null,
+        nzStyle: { width: '1300px', height: '800px' },
+      });
+    }
+    
     
     
     showDeletionAlert(stat:Statistics): void {

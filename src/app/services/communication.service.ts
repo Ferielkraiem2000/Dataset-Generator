@@ -7,5 +7,4 @@ export class CommunicationService {
   selectedStats: Statistics[] = [];
   showDownloadInputs = false;
   showProgress=false;
-  content:any[]=[];
 }

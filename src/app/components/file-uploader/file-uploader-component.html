@@ -1,3 +1,4 @@
+<p class="title-file">Upload Files</p>
 
 <div class="drag-area" (dragover)="onDragOver($event)" (dragleave)="onDragLeave()" (drop)="onFileDropped($event)">
    <div class="icon"><i class="fas fa-cloud-upload-alt"></i></div>
@@ -12,10 +13,10 @@
    
 </div>
 <div class="cord">
-   <button nz-button (click)="onConfirm()">
+   <button nz-button (click)="onConfirm()" class="confirmbutton">
      <i nz-icon nzType="check" style="margin-right: 10px;"></i> Confirm
    </button>
-   <button nz-button  (click)="onCancel()">
+   <button nz-button  (click)="onCancel()" class="cancelbutton">
      <i nz-icon nzType="close" style="margin-left: 10px;"></i> Cancel
    </button>
  </div>
