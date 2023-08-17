@@ -12,7 +12,7 @@
 
     <p class="value">{{ stat.speakerCount }}</p>
     <p class="card-title">Speakers</p>
-    <div class="card-icon"> <i nz-icon nzType="bar-chart" nzTheme="outline"></i></div>
+    <div class="card-icon"> <i nz-icon nzType="sound" nzTheme="outline"></i></div>
   </nz-card>
 
   <nz-card 
@@ -20,14 +20,14 @@
 
     <p class="value">{{ stat.totalDuration }}</p>
     <p class="card-title"> Total duration(s)</p>
-    <div class="card-icon"> <i nz-icon nzType="line-chart" nzTheme="outline"></i></div>
+    <div class="card-icon"> <i nz-icon nzType="clock-circle" nzTheme="outline"></i></div>
   </nz-card>
   <nz-card 
     *ngFor="let stat of statistics" class="average" class="average hoverable-card">
 
     <p class="value">{{ stat.averageDuration }}</p>
     <p class="card-title"> Average duration(s)</p>
-    <div class="card-icon"> <i nz-icon nzType="line-chart" nzTheme="outline" ></i></div>
+    <div class="card-icon"> <i nz-icon nzType="clock-circle" nzTheme="outline" ></i></div>
 
   </nz-card>
 </div>

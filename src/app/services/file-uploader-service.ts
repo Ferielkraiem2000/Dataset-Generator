@@ -22,4 +22,11 @@ export class FileUploaderService {
     const params = new HttpParams().set('overwrite', this.overwriteValue.toString());
     return this.http.post(`${this.baseUrl}`, formData, { params: params });
   }
+
+
+isValidFileType(file: File): boolean {
+  const allowedExtensions = ['.txt', '.stm'];
+  const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+  return allowedExtensions.includes(fileExtension);
+}
 }
