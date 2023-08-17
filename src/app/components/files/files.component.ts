@@ -12,7 +12,6 @@ import { FileDownloaderService } from 'src/app/services/file-downloader.service'
 import { HttpEventType } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { ContentFileComponent } from '../content-file/content-file.component';
 @Component({
   selector: 'app-files',
   templateUrl: './files.component.html',

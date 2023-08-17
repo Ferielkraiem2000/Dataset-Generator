@@ -1,24 +1,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
 
 * {
- 
+
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
+  align-items: center;
+  justify-content: center;
+  padding: 0%;
+  margin:0%;
+
 }
 
 .drag-area {
   display: flex;
   gap: 10px; 
   border: 2px dashed black;
-  height: 250px; 
+  height: 350px; 
   width: 777px; 
   border-radius: 5px;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  background: #E9EBEE; 
-margin-right:10%;
-margin-left:25%;
+  background:transparent; 
+  margin-right:10%;
+  margin-left:25%;
+  margin-top:10%;
+  margin-bottom:5%;
+ 
+  background-color: transparent;
 }
 .drag-area:hover {
   border:solid;
@@ -71,10 +80,11 @@ margin-left:25%;
 
 .cord {
   justify-content: center;
+  align-items: center;
   display: flex;
-  margin-top: 20px;
-  margin-left:15%;
+  margin-left:50%;
   margin-right: 10%;
+  padding: 5%;
 }
 .cord button{
   width: 150px; 
@@ -91,6 +101,6 @@ margin-left:25%;
 
 .title-file {
   color:rgb(146, 142, 142);
-  margin-top :-5%;  font-size: 30px;
-  margin-left:-80%;
+  margin-top :5%;  font-size: 30px;
+  margin-left:3%;
 }

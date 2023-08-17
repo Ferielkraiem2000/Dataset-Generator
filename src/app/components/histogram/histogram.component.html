@@ -1,0 +1,15 @@
+<p class="title-histogram">Distribution of Segment Counts by Duration Intervals</p>
+   <div class="chart-container">
+    <ngx-charts-bar-vertical
+      [view]="[250, 400]"
+      [results]="single"
+      [xAxis]="true"
+      [yAxis]="true"
+      [showXAxisLabel]="true"
+      [showYAxisLabel]="true"
+      [xAxisLabel]="'Interval Durations'"
+      [yAxisLabel]="'SegmentCount Per Interval'"
+      [legend]="true" 
+    ></ngx-charts-bar-vertical>
+  </div>
+  

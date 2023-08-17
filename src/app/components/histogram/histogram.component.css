@@ -1,0 +1,17 @@
+.chart-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  ngx-charts {
+    width: 100%;
+    height: 100%;
+  }
+  .title-histogram {
+    color:rgb(146, 142, 142);
+  margin-top :10%;  font-size: 30px;
+  margin-left:2.5%;
+  margin-bottom: -5%;
+  }

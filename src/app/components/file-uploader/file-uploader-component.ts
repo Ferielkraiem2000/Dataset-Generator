@@ -41,18 +41,19 @@ export class FileUploaderComponent {
     if (this.selectedFiles.length > 0) {
       this.fileUploadService.uploadFiles(this.selectedFiles).subscribe(
         (response) => {
-       
         },
         (error) => {
-          console.error('Error uploading files', error);
+          if (error.status === 400) {
+            this.nzMessageService.error('Only STM Files are allowed!');
+          } else {
+            console.error('Error uploading files', error);
+          }
         }
       );
     } else {
-      this.nzMessageService.info('Choose Files!'); 
-
+      this.nzMessageService.info('Choose Files!');
     }
   }
- 
 
   onCancel(): void {
     this.showConfirmationAlert();

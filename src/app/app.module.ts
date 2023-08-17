@@ -31,7 +31,9 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { CommunicationService } from './services/communication.service';
 import { SelectedFilesStatisticService } from './services/selected-files-statistic.service';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
-
+import { HistogramComponent } from './components/histogram/histogram.component';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { CommonModule } from '@angular/common'; //
 
 registerLocaleData(en);
 
@@ -44,6 +46,7 @@ FileUploaderComponent, AppTitleComponent,
 FilesComponent,
 DashboardComponent,
 DownloadFormatDialogComponent,
+HistogramComponent,
 
    ],
   imports: [
@@ -66,8 +69,9 @@ DownloadFormatDialogComponent,
       BrowserAnimationsModule,
       MatDialogModule,
       NzSelectModule,
-      NzFormModule
-      
+      NzFormModule,
+      NgxChartsModule,
+      CommonModule
     ],
   providers: [
     NzModalService,

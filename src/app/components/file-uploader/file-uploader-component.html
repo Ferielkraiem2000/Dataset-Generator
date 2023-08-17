@@ -1,5 +1,4 @@
 <p class="title-file">Upload Files</p>
-
 <div class="drag-area" (dragover)="onDragOver($event)" (dragleave)="onDragLeave()" (drop)="onFileDropped($event)">
    <div class="icon"><i class="fas fa-cloud-upload-alt"></i></div>
    <header *ngIf="!selectedFiles.length" class="center-content">
