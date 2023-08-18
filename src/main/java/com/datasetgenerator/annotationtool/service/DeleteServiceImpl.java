@@ -11,7 +11,7 @@ public class DeleteServiceImpl implements DeleteService {
     @Autowired
     FileRepository fileRepository;
 
-    public void deleteSegmentsByFileIds(List<Long> fileIds) {
+    public void deleteByFileIds(List<Long> fileIds) {
         for (Long fileId : fileIds) {
             if (fileRepository.findByFileId(fileId)) {
                 fileRepository.deleteSegmentsByFileId(fileId);

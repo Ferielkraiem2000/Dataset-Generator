@@ -1,7 +1,7 @@
 package com.datasetgenerator.annotationtool.controller;
-
-import com.datasetgenerator.annotationtool.datasetGenerator;
 import com.datasetgenerator.annotationtool.service.*;
+import com.datasetgenerator.annotationtool.util.HistogramData;
+
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -44,7 +44,8 @@ public class ReadFileController {
             if (!fileService.verifyType(file)) {
                 return ResponseEntity.badRequest().body("File extension not allowed. Only '.txt' and '.stm' files are accepted!");
             }
-            results.add(String.valueOf(dataService.extractFields(file, overwrite)));
+            results.add(String.valueOf(dataService.extractFields(file,overwrite)));
+            
         }
         return ResponseEntity.ok(String.valueOf(results));
     }
@@ -104,7 +105,13 @@ public class ReadFileController {
     @Operation(summary = "Delete file")
     @DeleteMapping("/file-parsing/{ids}")
     public ResponseEntity<String> deleteFiles(@RequestParam List<Long> fileIds) {
-        deleteService.deleteSegmentsByFileIds(fileIds);
-        return ResponseEntity.ok("Files deleted successfully.");
+        deleteService.deleteByFileIds(fileIds);
+        return ResponseEntity.ok("Files deleted successfully!");
     }
+ @GetMapping("/histogram")
+    public ResponseEntity<HistogramData> getHistogramData() {
+        HistogramData histogramData = statisticsService.getHistogramData();
+        return ResponseEntity.ok(histogramData);
+    }
+
 }

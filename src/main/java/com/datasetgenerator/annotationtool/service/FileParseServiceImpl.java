@@ -121,17 +121,7 @@ public class FileParseServiceImpl implements FileParseService {
             File existingFile = fileRepository.existsByFileName(fileName);
             if (existingFile != null) {
                 if (overwrite) {
-                    fileRepository.deleteSegmentsByFileId(existingFile.getFile_id());
-                    fileRepository.deleteByFileName(fileName);
-                    Segment segment = new Segment();
-                    segment.setSpeaker(outputLine.get("speaker"));
-                    segment.setSegment_start(Double.parseDouble(outputLine.get("segment_start")));
-                    segment.setSegment_end(Double.parseDouble(outputLine.get("segment_end")));
-                    segment.setDuration(duration);
-                    segment.setTranscription(outputLine.get("transcription"));
-                    segment.setFile(fileEntity);
-                    segment.setDuration(duration);
-                    segmentRepository.save(segment);
+               overwriteExistingFile(existingFile, fileName, fileEntity, outputLine, duration);
                 } else {
                     throw new RuntimeException("File already exists!");
                 }
@@ -158,6 +148,19 @@ public class FileParseServiceImpl implements FileParseService {
         }
         return outputLines;
     }
+    public void overwriteExistingFile(File file,String fileName, File fileEntity , Map<String, String> outputLine,double duration ){
+             fileRepository.deleteSegmentsByFileId(file.getFile_id());
+                    fileRepository.deleteByFileName(fileName);
+                    Segment segment = new Segment();
+                    segment.setSpeaker(outputLine.get("speaker"));
+                    segment.setSegment_start(Double.parseDouble(outputLine.get("segment_start")));
+                    segment.setSegment_end(Double.parseDouble(outputLine.get("segment_end")));
+                    segment.setDuration(duration);
+                    segment.setTranscription(outputLine.get("transcription"));
+                    segment.setFile(fileEntity);
+                    segment.setDuration(duration);
+                    segmentRepository.save(segment);
+    }
     public List<Map<String, String>> showContent(Long fileId){
         List<Segment> segments=segmentRepository.findAllById(fileId);
         List<Map<String, String>> outputLines = new ArrayList<>();
@@ -173,6 +176,7 @@ public class FileParseServiceImpl implements FileParseService {
         }
         return outputLines;
     }
+
 }
 
 

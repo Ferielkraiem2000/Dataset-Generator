@@ -1,11 +1,15 @@
 package com.datasetgenerator.annotationtool.service;
 
+import com.datasetgenerator.annotationtool.model.IntervalData;
 import com.datasetgenerator.annotationtool.model.Segment;
 import com.datasetgenerator.annotationtool.repository.FileRepository;
 import com.datasetgenerator.annotationtool.repository.IntervalDataRepository;
 import com.datasetgenerator.annotationtool.repository.SegmentRepository;
+import com.datasetgenerator.annotationtool.util.HistogramData;
+import com.datasetgenerator.annotationtool.util.Interval;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -93,6 +97,66 @@ public class StatisticsServiceImpl implements StatisticsService {
             filesStatistics.add(fileDetails);
         }
         return filesStatistics;
+    }
+
+    public HistogramData getHistogramData() {
+        List<Object[]> result = segmentRepository.getDurationsSegments();
+        List<IntervalData> intervalDataList = new ArrayList<>();
+        double intervalSize = 0.1;
+        double currentIntervalStart = 0.0;
+        double currentIntervalEnd = intervalSize;
+        int intervalFileCount = 0;
+    
+        for (Object[] row : result) {
+            double fileDuration = (double) row[0];
+            fileDuration = fileDuration / 1000;
+    
+            while (fileDuration >= currentIntervalEnd) {
+                IntervalData intervalData = new IntervalData();
+                intervalData.setStartInterval(currentIntervalStart);
+                intervalData.setEndInterval(currentIntervalEnd);
+                intervalData.setSegmentCount((long) intervalFileCount);
+                intervalDataList.add(intervalData);
+    
+                currentIntervalStart = currentIntervalEnd;
+                currentIntervalEnd += intervalSize;
+                intervalFileCount = 0;
+            }
+    
+            if (fileDuration >= currentIntervalStart) {
+                intervalFileCount++;
+            }
+        }
+    
+        if (intervalFileCount > 0) {
+            IntervalData intervalData = new IntervalData();
+            intervalData.setStartInterval(currentIntervalStart);
+            intervalData.setEndInterval(currentIntervalEnd);
+            intervalData.setSegmentCount((long) intervalFileCount);
+            intervalDataList.add(intervalData);
+        }
+    
+        for (IntervalData intervalData : intervalDataList) {
+            IntervalData existingIntervalData = intervalDataRepository.findByStartIntervalAndEndInterval(intervalData.getStartInterval(), intervalData.getEndInterval());
+            if (existingIntervalData == null) {
+                intervalDataRepository.save(intervalData);
+            } else {
+                existingIntervalData.setSegmentCount(existingIntervalData.getSegmentCount() + intervalData.getSegmentCount());
+                intervalDataRepository.save(existingIntervalData);
+            }
+        }
+    
+        List<Interval> durationIntervals = new ArrayList<>();
+        List<Long> fileCountPerInterval = new ArrayList<>();
+        for (IntervalData intervalData : intervalDataList) {
+            durationIntervals.add(new Interval(intervalData.getStartInterval(), intervalData.getEndInterval()));
+            fileCountPerInterval.add(intervalData.getSegmentCount());
+        }
+    
+        HistogramData histogramData = new HistogramData();
+        histogramData.setIntervals(durationIntervals);
+        histogramData.setSegmentCountPerInterval(fileCountPerInterval);
+        return histogramData;
     }
     
 }
