@@ -45,7 +45,8 @@ export class FileUploaderComponent {
         (error) => {
           if (error.status === 400) {
             this.nzMessageService.error('Only STM Files are allowed!');
-          } else {
+          }
+          else {
             console.error('Error uploading files', error);
           }
         }
@@ -60,16 +61,31 @@ export class FileUploaderComponent {
     this.selectedFiles = [];
 
   }
-
+existsFile(file:File):boolean{
+return this.selectedFiles.includes(file);
+}
 
   onFilesAdded(event: any): void {
     const files: FileList = event.target.files;
     for (let i = 0; i < files.length; i++) {
       const file: File = files[i];
-      this.selectedFiles.push(file);
+      if(this.existsFile(file)){
+        this.modalService.confirm({
+          nzTitle: 'Confirmation',
+          nzContent: 'File already exists, do you want to overwrite it?',
+          nzOkText: 'OK',
+          nzCancelText: 'Cancel',
+          nzOnOk: () => {
+          this.overwriteFile(file); },
+          nzOnCancel: () => {
+            this.nzMessageService.info('Try again!');  
+          }
+        });
     
     }
-  }
+    this.selectedFiles.push(file); 
+ 
+      }  }
 
   overwriteFile(newFile: File): void {
    

@@ -14,7 +14,7 @@
 .drag-area {
   display: flex;
   gap: 10px; 
-  border: 2px dashed black;
+  border: 2px dashed rgb(66, 66, 66);
   height: 350px; 
   width: 777px; 
   border-radius: 5px;
@@ -38,7 +38,7 @@
 {
   font-size: 35px;
   font-style: bold;
-  color:black;
+  color:rgb(66, 66, 66);
 }
 .plus-button {
   margin-left: 70px;
@@ -47,7 +47,7 @@
   height: 100px;
   border-radius: 50%;
   margin-bottom: 10px; 
-  color: black;
+  color: rgb(66, 66, 66);
 }
 .drag-area.active {
   border: 2px solid #fff;
@@ -70,7 +70,6 @@
 
 .drag-area button {
   background-color:transparent;
-  color: black;
   border: none;
   border-radius: 4px;
   padding: 5px 10px;
@@ -101,6 +100,6 @@
 
 .title-file {
   color:rgb(146, 142, 142);
-  margin-top :5%;  font-size: 30px;
+  margin-top :5%;  font-size: 40px;
   margin-left:3%;
 }

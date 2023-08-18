@@ -10,10 +10,6 @@ export class FileUploaderService {
   private baseUrl = 'http://localhost:8080/file-parsing';
   private overwriteValue: boolean = true; 
   constructor(private http: HttpClient) {}
-  getOverwriteValue(): boolean {
-    return this.overwriteValue;
-  }
-
   uploadFiles(files: File[]): Observable<any> {
     const formData: FormData = new FormData();
     for (let i = 0; i < files.length; i++) {

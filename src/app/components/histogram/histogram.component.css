@@ -3,6 +3,8 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
+    margin-left:2%;
+    margin-right: 70%;
   }
   
   ngx-charts {
@@ -13,5 +15,5 @@
     color:rgb(146, 142, 142);
   margin-top :10%;  font-size: 30px;
   margin-left:2.5%;
-  margin-bottom: -5%;
+  margin-bottom: -8%;
   }
