@@ -40,7 +40,6 @@ export class HistogramComponent implements OnInit {
       labels.push(`${intervalData.start}-${intervalData.end}`);
     }
    
-console.log(labels);
     const values = this.histogramData.segmentCountPerInterval;
     this.single = labels.map((label, index) => ({
       name: label,

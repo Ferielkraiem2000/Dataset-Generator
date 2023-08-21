@@ -3,8 +3,9 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin-left:2%;
-    margin-right: 70%;
+  text-align: center;
+  margin-left:-65%;
+
   }
   
   ngx-charts {

@@ -15,16 +15,18 @@
   </div>
 </ng-container>
 <ng-template #noHistogramData>
-  <ngx-charts-bar-vertical
-  [view]="view"
-  [scheme]="colorScheme"
-  [results]="chartData"
-  [xAxis]="true"
-  [yAxis]="true"
-  [showXAxisLabel]="true"
-  [showYAxisLabel]="true"
-  [xAxisLabel]="'Interval Durations'"
-  [yAxisLabel]="'SegmentCount Per Interval'"
->
-</ngx-charts-bar-vertical>
+  <div class="chart-container">
+    <ngx-charts-bar-vertical
+      [view]="[300, 400]"
+      [results]="[]"
+      [xAxis]="true"
+      [yAxis]="true"
+      [showXAxisLabel]="true"
+      [showYAxisLabel]="true"
+      [xAxisLabel]="'Interval Durations'"
+      [yAxisLabel]="'SegmentCount Per Interval'"    
+      [yScaleMax]="1000">
+    </ngx-charts-bar-vertical>
+  </div>
+
 </ng-template>

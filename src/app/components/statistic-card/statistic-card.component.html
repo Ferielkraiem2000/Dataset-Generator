@@ -1,14 +1,14 @@
 <p class="title-card">Overview</p>
-<div class="container">
-  
+  <div *ngIf="statistics.length > 0; else noStatistics" class="container">
+    <ng-container  *ngFor="let stat of statistics">
   <nz-card  
-    *ngFor="let stat of statistics"class="seg" class="seg hoverable-card">
+   class="seg" class="seg hoverable-card">
     <p class="value">{{ stat.segmentCount }}</p>
     <p class="card-title">Segments</p>
     <div class="card-icon"> <i nz-icon nzType="pie-chart" nzTheme="outline"></i> </div>
   </nz-card>
   <nz-card 
-    *ngFor="let stat of statistics" class="speak" class="speak hoverable-card">
+     class="speak" class="speak hoverable-card">
 
     <p class="value">{{ stat.speakerCount }}</p>
     <p class="card-title">Speakers</p>
@@ -16,18 +16,54 @@
   </nz-card>
 
   <nz-card 
-    *ngFor="let stat of statistics" class="total" class="total hoverable-card">
+    class="total" class="total hoverable-card">
 
     <p class="value">{{ stat.totalDuration }}</p>
     <p class="card-title"> Total duration(s)</p>
     <div class="card-icon"> <i nz-icon nzType="clock-circle" nzTheme="outline"></i></div>
   </nz-card>
   <nz-card 
-    *ngFor="let stat of statistics" class="average" class="average hoverable-card">
+     class="average" class="average hoverable-card">
 
     <p class="value">{{ stat.averageDuration }}</p>
     <p class="card-title"> Average duration(s)</p>
     <div class="card-icon"> <i nz-icon nzType="clock-circle" nzTheme="outline" ></i></div>
 
   </nz-card>
+  </ng-container>
 </div>
+<ng-template #noStatistics>
+  <div class="container">
+  <ng-container >
+    <nz-card  
+    class="seg" class="seg hoverable-card">
+     <p class="nullvalue">__</p>
+     <p class="card-title">Segments</p>
+     <div class="card-icon"> <i nz-icon nzType="pie-chart" nzTheme="outline"></i> </div>
+   </nz-card>
+   <nz-card 
+      class="speak" class="speak hoverable-card">
+ 
+     <p class="nullvalue">__</p>
+     <p class="card-title">Speakers</p>
+     <div class="card-icon"> <i nz-icon nzType="sound" nzTheme="outline"></i></div>
+   </nz-card>
+ 
+   <nz-card 
+     class="total" class="total hoverable-card">
+ 
+     <p class="nullvalue">__</p>
+     <p class="card-title"> Total duration(s)</p>
+     <div class="card-icon"> <i nz-icon nzType="clock-circle" nzTheme="outline"></i></div>
+   </nz-card>
+   <nz-card 
+      class="average" class="average hoverable-card">
+ 
+     <p class="nullvalue">__</p>
+     <p class="card-title"> Average duration(s)</p>
+     <div class="card-icon"> <i nz-icon nzType="clock-circle" nzTheme="outline" ></i></div>
+ 
+   </nz-card>
+  </ng-container>
+  </div>
+</ng-template>

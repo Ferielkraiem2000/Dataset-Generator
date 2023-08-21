@@ -36,12 +36,14 @@
 }
 .drop-text
 {
+  text-align: center;
   font-size: 35px;
   font-style: bold;
   color:rgb(66, 66, 66);
 }
 .plus-button {
-  margin-left: 70px;
+  margin-right:20%;
+  margin-left: 35%;
   font-size: 70px; 
   width: 900px;
   height: 100px;
@@ -81,8 +83,8 @@
   justify-content: center;
   align-items: center;
   display: flex;
-  margin-left:50%;
-  margin-right: 10%;
+  margin-top:2%;
+  margin-right: -18%;
   padding: 5%;
 }
 .cord button{

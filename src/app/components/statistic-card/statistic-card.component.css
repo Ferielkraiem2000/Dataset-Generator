@@ -1,8 +1,9 @@
 .container {
   display: flex;
   gap: 25px; 
-margin-right:35%;
-margin-left:1%
+  text-align: center;
+
+margin-left:-35%;
 }
 
 nz-card {
@@ -31,8 +32,7 @@ margin-left:-217%;
 
 .card-icon {
   font-size: 67px;
-margin-right:10%;
-margin-left:30%;
+text-align:center;
 margin-top:-10%;
 color:white;
 
@@ -41,15 +41,20 @@ color:white;
 .card-title {
   margin-top: 8%;
   font-size: 24px;
-  margin-right:-50%;
-  margin-left:10%;
+ text-align: center;
 }
 .value{
-  margin-right:10%;
-margin-left:30%;
+ text-align: center;
   font-weight:bold;
   font-size: 25px;
  
+}
+.nullvalue{
+  margin-top:-10%;
+
+    font-weight:bold;
+    font-size: 35px;
+    text-align: center;
 }
 
 .hoverable-card {
