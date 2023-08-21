@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { HistogramData} from 'src/app/interfaces/histogramdata.interface';
 import { IntervalData } from 'src/app/interfaces/interval.interface';
 import { HistogramService } from 'src/app/services/histogram.service';
@@ -7,13 +8,13 @@ import { HistogramService } from 'src/app/services/histogram.service';
   selector: 'app-histogram',
   templateUrl: './histogram.component.html',
   styleUrls: ['./histogram.component.css'],
-  providers: [HistogramService]
+  providers: [HistogramService,NzMessageService]
 })
 export class HistogramComponent implements OnInit {
   single: any[] = [];
   histogramData!: HistogramData;
 
-  constructor(private histogramService: HistogramService) {}
+  constructor(private histogramService: HistogramService,private nzMessageService:NzMessageService) {}
 
   ngOnInit(): void {
     this.fetchHistogramData();
@@ -23,7 +24,12 @@ export class HistogramComponent implements OnInit {
     this.histogramService.getHistogramData().subscribe(data => {
       this.histogramData = data;
       this.formatDataForChart();
-    });
+    }, 
+    error=>{
+      this.nzMessageService.error("Error Fetching Histogram Data!")
+    }
+    
+    );
  
   }
 

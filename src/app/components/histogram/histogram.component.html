@@ -1,4 +1,5 @@
 <p class="title-histogram">Distribution of Segment Counts by Duration Intervals</p>
+<ng-container *ngIf="histogramData!=null ; else noHistogramData">
    <div class="chart-container">
     <ngx-charts-bar-vertical
       [view]="[250, 400]"
@@ -12,4 +13,18 @@
       [legend]="true" 
     ></ngx-charts-bar-vertical>
   </div>
-  
+</ng-container>
+<ng-template #noHistogramData>
+  <ngx-charts-bar-vertical
+  [view]="view"
+  [scheme]="colorScheme"
+  [results]="chartData"
+  [xAxis]="true"
+  [yAxis]="true"
+  [showXAxisLabel]="true"
+  [showYAxisLabel]="true"
+  [xAxisLabel]="'Interval Durations'"
+  [yAxisLabel]="'SegmentCount Per Interval'"
+>
+</ngx-charts-bar-vertical>
+</ng-template>
