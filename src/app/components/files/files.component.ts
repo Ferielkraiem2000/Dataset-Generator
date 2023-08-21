@@ -56,9 +56,9 @@ export class FilesComponent implements OnInit {
 
 
   ngOnInit(): void {
-this.getStatistics();
+    this.getStatistics();
 
-}
+  }
   isDownloadView(): boolean {
     return this.communicationService.showDownloadInputs;
   }
@@ -148,10 +148,10 @@ this.getStatistics();
     a.remove();
   }
   changePage(offset: number): void {
-  
-      this.currentPage += offset;
-      this.getStatisticsPerPage(this.currentPage);
-    
+
+    this.currentPage += offset;
+    this.getStatisticsPerPage(this.currentPage);
+
   }
   getPages(): number {
     if (this.totalItemsCount <= this.pageSize) {
@@ -167,14 +167,11 @@ this.getStatistics();
     }
     return this.totalPages;
   }
-  getStatisticsPerPage(pageNumber:number) {
-  
+  getStatisticsPerPage(pageNumber: number) {
+
     let startIndex = (pageNumber - 1) * 5;
     let endIndex = Math.min(startIndex + 5, this.totalItemsCount);
-  for(let i=startIndex ;i<endIndex ;i++){
-  this.statisticsPerPage[i]=this.statistics[i];
- 
-  }
+    this.statisticsPerPage = this.statistics.slice(startIndex, endIndex);
 
   }
   getStatistics(): void {
@@ -183,22 +180,21 @@ this.getStatistics();
         this.statistics = result.data;
         this.totalItemsCount = result.totalCount;
         this.totalPages = this.getPages();
-
-   this.getStatisticsPerPage(this.currentPage);
+        this.getStatisticsPerPage(this.currentPage);
       },
       error => {
         this.nzMessageService.error("Error Fetching Files Statistics!");
       }
     );
   }
-  
+
   searchByFileName() {
     if (this.searchFileName.trim() === '') {
       this.getStatistics();
     } else {
       this.filesService.getStatisticsByFileName(this.searchFileName).subscribe(
         data => {
-          this.statistics = data;
+          this.statisticsPerPage = data;
         },
         error => {
           this.nzMessageService.error("Error Fetching File Statistics with this name!");
@@ -263,7 +259,8 @@ this.getStatistics();
       error => {
         if (error.status != 200) {
           this.nzMessageService.error('File Name should not be null!');
-           this.nzMessageService.error('Error Deleting File!');} 
+          this.nzMessageService.error('Error Deleting File!');
+        }
       }
     );
 
@@ -288,8 +285,9 @@ this.getStatistics();
         this.selectedStatistics = data;
       },
       error => {
-   this.nzMessageService.error("Error Fetching Combined Statistics!");
+        this.nzMessageService.error("Error Fetching Combined Statistics!");
       }
+
     );
   }
   showContent(stat: Statistics) {
@@ -368,7 +366,32 @@ this.getStatistics();
     });
   }
 
+  showMultipleDeletionAlert(): void {
+    let fileIds: number[] =[];
+    this.modalService.confirm({
+      nzTitle: 'Delete File',
+      nzContent: 'Are you sure to delete this file?',
+      nzOkText: 'OK',
+      nzCancelText: 'Cancel',
+      nzOnOk: () => {
+      fileIds= this.communicationService.selectedStats.map(stat => stat.fileId);
+    this.deleteFileService.deleteFile(fileIds)
+      .subscribe(
+        response => {
+       
+        },
+        error => {
 
+        }
+      );
+      this.statisticsPerPage = this.statisticsPerPage.filter(s => s !== this.selectedStat);
+
+      },
+
+      nzOnCancel: () => {
+      }
+    });
+  }
 
   showDeletionAlert(stat: Statistics): void {
     this.modalService.confirm({

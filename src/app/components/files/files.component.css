@@ -155,11 +155,22 @@ nz-card {
 
 .nz-option {
   padding: 8px; }
-
+  .tools{
+    margin-left: 60%;
+    
+  }
+  .delete-button{
+   
+    margin-right: 2%;
+    width: 60px;
+    height: 40px;
+    color:rgb(106, 105, 105);
+    border-radius: 10px;
+    border-color: rgb(146, 142, 142);
+  }
     .download-button{
-      margin-bottom: 20%;
-      margin-left: 45%;
-      width: 150px;
+    margin-right: 2%; 
+      width: 60px;
       height: 40px;
       color:rgb(106, 105, 105);
       border-radius: 10px;
@@ -224,5 +235,21 @@ nz-card {
   font-style: italic;
   font-size:18px;
 }
+.searchInput{
+  height: 40px;
+  width: 250px;
+}
+.searchButton{
+  margin-left: 2%;
+  width: 60px;
+    height: 40px;
+    color:rgb(106, 105, 105);
+    border-radius: 10px;
+    border-color: rgb(146, 142, 142);
+}
 
-
+.pagination-controls{
+  text-align:center;
+  margin-top:5%;
+  margin-bottom:3%
+}

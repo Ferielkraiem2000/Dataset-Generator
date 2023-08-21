@@ -1,134 +1,141 @@
 <nz-content>
   <ng-container *ngIf="isDownloadView()">
-  <p class="title-card">Download Combined manifest file</p></ng-container>
+    <p class="title-card">Download Combined manifest file</p>
+  </ng-container>
   <div class="glass-effect shadow">
-   <ng-container *ngIf="isDownloadView()">
-    <input nz-input placeholder="Tap the file's path" [(ngModel)]="path" class="input"/>
-    <div >
-      <nz-select [(ngModel)]="selectedFormat" [nzPlaceHolder]="'Select Format'"  class="select" >
-        <nz-option nzValue="ESPnet" nzLabel="ESPnet"></nz-option>
-        <nz-option nzValue="JSON" nzLabel="JSON"></nz-option>
-        <nz-option nzValue="CSV" nzLabel="CSV"></nz-option>
-      </nz-select>
-    </div>
-    <div>
-        <button class="button-glass" nz-button nzType="primary" (click)="selectedFormat?openProgressView():showTapMessage()" >Download</button>
-    </div>
-   </ng-container>
-  <ng-container *ngIf="isProgressView()">
-    <div class="download-container">
-      <img src="./assets/download.png" class="file-icon">
-      <div class="download-info">
-        <nz-progress [nzPercent]="percent"  *ngIf="!isCanceled ;else CancelDone"></nz-progress>
-        <ng-template #CancelDone>
-          <nz-progress [nzPercent]="percent" nzStatus="exception" ></nz-progress>
-        </ng-template>  
-        <div> <span class="download-text">downloading...</span> </div>
-        <div>
-          <button class="cancel-button" (click)="cancelDownload()">Cancel</button>
+    <ng-container *ngIf="isDownloadView()">
+      <input nz-input placeholder="Tap the file's path" [(ngModel)]="path" class="input" />
+      <div>
+        <nz-select [(ngModel)]="selectedFormat" [nzPlaceHolder]="'Select Format'" class="select">
+          <nz-option nzValue="ESPnet" nzLabel="ESPnet"></nz-option>
+          <nz-option nzValue="JSON" nzLabel="JSON"></nz-option>
+          <nz-option nzValue="CSV" nzLabel="CSV"></nz-option>
+        </nz-select>
+      </div>
+      <div>
+        <button class="button-glass" nz-button nzType="primary"
+          (click)="selectedFormat?openProgressView():showTapMessage()">Download</button>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="isProgressView()">
+      <div class="download-container">
+        <img src="./assets/download.png" class="file-icon">
+        <div class="download-info">
+          <nz-progress [nzPercent]="percent" *ngIf="!isCanceled ;else CancelDone"></nz-progress>
+          <ng-template #CancelDone>
+            <nz-progress [nzPercent]="percent" nzStatus="exception"></nz-progress>
+          </ng-template>
+          <div> <span class="download-text">downloading...</span> </div>
+          <div>
+            <button class="cancel-button" (click)="cancelDownload()">Cancel</button>
+          </div>
         </div>
       </div>
-    </div>
-  </ng-container>
-  
-</div>
+    </ng-container>
+
+  </div>
   <p class="title-card">Selected Files Statistics</p>
-    <div class="row">
-      <div class="col-lg-3 col-md-6 col-sm-6">
-        <div *ngIf="selectedStatistics.length > 0; else noStatistics" class="container">
-          <ng-container  *ngFor="let stat of selectedStatistics">
-        <nz-card class="custom-card">
-          <div class="card-header card-header-warning card-header-icon">
-            <div class="card-icon-top-left" style="background-color:rgb(190, 44, 151);">
-              <i nz-icon nzType="pie-chart"  class="centered-icon"></i>
-            </div>
-           
-            <p class="card-title">Segments</p>
-            <p class="value">{{ stat.segmentCount }}</p>
-          </div>
-        </nz-card>
-        <nz-card  class="custom-card">
-          <div class="card-header card-header-warning card-header-icon">
-            <div class="card-icon-top-left" style="background-color: blue">
-              <i nz-icon nzType="sound"  class="centered-icon"></i>
-            </div>
-          
-            <p class="card-title">Speakers</p>
-            <p class="value">{{ stat.speakerCount }}</p>
-          </div>
-        </nz-card>
-        <nz-card  class="custom-card">
-          <div class="card-header card-header-warning card-header-icon" >
-            <div class="card-icon-top-left" style="background-color: rgb(86, 188, 228)">
-              <i nz-icon nzType="clock-circle"  class="centered-icon"></i>
-            </div>
-            <p class="card-title">Total Duration(s)</p>
-            <p class="value">{{ stat.totalDuration }}</p>
-          </div>
-        </nz-card>
-        <nz-card class="custom-card">
-          <div class="card-header card-header-warning card-header-icon">
-            <div class="card-icon-top-left" style="background-color:rgb(243, 97, 197);">
-              <i nz-icon nzType="clock-circle"  class="centered-icon"></i>
-            </div>
-            <p class="card-title">Average Duration(s)</p>
-            <p class="value">{{ stat.averageDuration }}</p>
-          </div>
-        </nz-card>
-        </ng-container>
-      </div>
-      <ng-template #noStatistics>
-        <div class="container">
-        <ng-container >
+  <div class="row">
+    <div class="col-lg-3 col-md-6 col-sm-6">
+      <div *ngIf="selectedStatistics.length > 0; else noStatistics" class="container">
+        <ng-container *ngFor="let stat of selectedStatistics">
           <nz-card class="custom-card">
             <div class="card-header card-header-warning card-header-icon">
               <div class="card-icon-top-left" style="background-color:rgb(190, 44, 151);">
-                <i nz-icon nzType="pie-chart"  class="centered-icon"></i>
+                <i nz-icon nzType="pie-chart" class="centered-icon"></i>
               </div>
+
               <p class="card-title">Segments</p>
-              <p class="value">__</p>
+              <p class="value">{{ stat.segmentCount }}</p>
             </div>
           </nz-card>
-          <nz-card  class="custom-card">
+          <nz-card class="custom-card">
             <div class="card-header card-header-warning card-header-icon">
-              <div class="card-icon-top-left"  style="background-color: blue">
-                <i nz-icon nzType="sound"  class="centered-icon"></i>
+              <div class="card-icon-top-left" style="background-color: blue">
+                <i nz-icon nzType="sound" class="centered-icon"></i>
               </div>
+
               <p class="card-title">Speakers</p>
-              <p class="value">__</p>
+              <p class="value">{{ stat.speakerCount }}</p>
             </div>
           </nz-card>
-          <nz-card  class="custom-card">
+          <nz-card class="custom-card">
             <div class="card-header card-header-warning card-header-icon">
-              <div class="card-icon-top-left"  style="background-color: rgb(86, 188, 228)">
-                <i nz-icon nzType="clock-circle"  class="centered-icon"></i>
+              <div class="card-icon-top-left" style="background-color: rgb(86, 188, 228)">
+                <i nz-icon nzType="clock-circle" class="centered-icon"></i>
               </div>
               <p class="card-title">Total Duration(s)</p>
-              <p class="value">__</p>
+              <p class="value">{{ stat.totalDuration }}</p>
             </div>
           </nz-card>
           <nz-card class="custom-card">
             <div class="card-header card-header-warning card-header-icon">
               <div class="card-icon-top-left" style="background-color:rgb(243, 97, 197);">
-                <i nz-icon nzType="clock-circle"  class="centered-icon"></i>
+                <i nz-icon nzType="clock-circle" class="centered-icon"></i>
               </div>
               <p class="card-title">Average Duration(s)</p>
-              <p class="value">__</p>
+              <p class="value">{{ stat.averageDuration }}</p>
             </div>
           </nz-card>
+        </ng-container>
+      </div>
+      <ng-template #noStatistics>
+        <div class="container">
+          <ng-container>
+            <nz-card class="custom-card">
+              <div class="card-header card-header-warning card-header-icon">
+                <div class="card-icon-top-left" style="background-color:rgb(190, 44, 151);">
+                  <i nz-icon nzType="pie-chart" class="centered-icon"></i>
+                </div>
+                <p class="card-title">Segments</p>
+                <p class="value">__</p>
+              </div>
+            </nz-card>
+            <nz-card class="custom-card">
+              <div class="card-header card-header-warning card-header-icon">
+                <div class="card-icon-top-left" style="background-color: blue">
+                  <i nz-icon nzType="sound" class="centered-icon"></i>
+                </div>
+                <p class="card-title">Speakers</p>
+                <p class="value">__</p>
+              </div>
+            </nz-card>
+            <nz-card class="custom-card">
+              <div class="card-header card-header-warning card-header-icon">
+                <div class="card-icon-top-left" style="background-color: rgb(86, 188, 228)">
+                  <i nz-icon nzType="clock-circle" class="centered-icon"></i>
+                </div>
+                <p class="card-title">Total Duration(s)</p>
+                <p class="value">__</p>
+              </div>
+            </nz-card>
+            <nz-card class="custom-card">
+              <div class="card-header card-header-warning card-header-icon">
+                <div class="card-icon-top-left" style="background-color:rgb(243, 97, 197);">
+                  <i nz-icon nzType="clock-circle" class="centered-icon"></i>
+                </div>
+                <p class="card-title">Average Duration(s)</p>
+                <p class="value">__</p>
+              </div>
+            </nz-card>
           </ng-container>
         </div>
       </ng-template>
     </div>
+  </div>  
+
+  <p class="title-file">Files</p> 
+
+  <div class="tools">
+    <button nz-icon nzType="download" class="download-button" (click)="openView()"></button>
+    <button class="delete-button" nz-icon nzType="delete"
+      (click)=" this.isSelectedStats().length != 0?showMultipleDeletionAlert():showSelectMessage()"></button>
+    <input type="text" [(ngModel)]="searchFileName" placeholder="Search by Audio File Name" class="searchInput"/>
+    <button nz-icon nzType="search" (click)="searchByFileName()" class="searchButton"></button>
   </div>
- 
-  <p class="title-file">Files</p>
-  <div class="search-container">
-    <input type="text" [(ngModel)]="searchFileName" placeholder="Search by Audio File Name" />
-    <button nz-icon nzType="search" (click)="searchByFileName()" class="search-button"></button>
-  </div>
+
   <div class="custom-container">
-    <table class="custom-table" >
+    <table class="custom-table">
       <thead>
         <tr>
           <th class="text-center"></th>
@@ -145,48 +152,52 @@
       <tbody>
         <ng-container *ngIf="statisticsPerPage.length > 0; else noStatisticsWithFileName">
 
-        <tr *ngFor="let stat of statisticsPerPage" [ngClass]="{ 'selected-row': isSelected(stat) }">
-          <td class="text-center">
-            <input type="checkbox" [checked]="isSelected(stat)" (change)="toggleSelection(stat) ">
-          </td>
-          <td>
-            <span *ngIf="!editMode ">{{ stat.fileName.length <= 20 ? stat.fileName : stat.fileName.slice(0, 20) + '...' }}</span>
-            <div *ngIf="editMode && isSelected(stat)">
-              <input [(ngModel)]="newFileName" />
-              <button nz-icon nzType="check" (click)="onConfirm(stat)" style="margin-left:10%"></button>
-              <button nz-icon nzType="close"style="margin-left:12%" (click)="onCancel()"></button>
-            </div>
-            <i nz-icon nzType="edit"   [ngClass]="{'blinking': isSelected(stat)}" (click)="this.isSelectedStats().length!=0?onIconClick(stat):showSelectMessage()" *ngIf="!editMode" ></i>
-          </td>
-          <td>{{ stat.totalDuration }}</td>
-          <td class="text-center">{{ stat.averageDuration }}</td>
-          <td>{{ stat.segmentCount }}</td>
-          <td class="text-center">{{ stat.speakerCount }}</td>
-          <td>{{ stat.uploadTime }} </td>
-          <td >
-   <i nz-icon nzType="delete"  [ngClass]="{'blinking': isSelected(stat)}" style="margin-right: 6px;" (click)=" this.isSelectedStats().length != 0?showDeletionAlert(stat):showSelectMessage()"></i>
-   <i nz-icon nzType="download"  [ngClass]="{'blinking': isSelected(stat)}"(click)="this.isSelectedStats().length != 0?openFormatSelectionDialog():showSelectMessage()"  style=" margin-right:1.18px;"></i>
-   <i nz-icon nzType="eye"  [ngClass]="{'blinking': isSelected(stat)}" (click)="this.isSelectedStats().length!=0?showContent(stat):showSelectMessage()"></i>
-          </td>
-        </tr>
+          <tr *ngFor="let stat of statisticsPerPage" [ngClass]="{ 'selected-row': isSelected(stat) }">
+            <td class="text-center">
+              <input type="checkbox" [checked]="isSelected(stat)" (change)="toggleSelection(stat) ">
+            </td>
+            <td>
+              <span *ngIf="!editMode ">{{ stat.fileName.length <= 20 ? stat.fileName : stat.fileName.slice(0, 20)
+                  + '...' }}</span>
+                  <div *ngIf="editMode && isSelected(stat)">
+                    <input [(ngModel)]="newFileName" />
+                    <button nz-icon nzType="check" (click)="onConfirm(stat)" style="margin-left:10%"></button>
+                    <button nz-icon nzType="close" style="margin-left:12%" (click)="onCancel()"></button>
+                  </div>
+                  <i nz-icon nzType="edit" [ngClass]="{'blinking': isSelected(stat)}"
+                    (click)="this.isSelectedStats().length!=0?onIconClick(stat):showSelectMessage()"
+                    *ngIf="!editMode"></i>
+            </td>
+            <td>{{ stat.totalDuration }}</td>
+            <td class="text-center">{{ stat.averageDuration }}</td>
+            <td>{{ stat.segmentCount }}</td>
+            <td class="text-center">{{ stat.speakerCount }}</td>
+            <td>{{ stat.uploadTime }} </td>
+            <td>
+              <i nz-icon nzType="delete" [ngClass]="{'blinking': isSelected(stat)}" style="margin-right: 6px;"
+                (click)=" this.isSelectedStats().length != 0?showDeletionAlert(stat):showSelectMessage()"></i>
+              <i nz-icon nzType="download" [ngClass]="{'blinking': isSelected(stat)}"
+                (click)="this.isSelectedStats().length != 0?openFormatSelectionDialog():showSelectMessage()"
+                style=" margin-right:1.18px;"></i>
+              <i nz-icon nzType="eye" [ngClass]="{'blinking': isSelected(stat)}"
+                (click)="this.isSelectedStats().length!=0?showContent(stat):showSelectMessage()"></i>
+            </td>
+          </tr>
         </ng-container>
         <ng-template #noStatisticsWithFileName>
           <tr>
-            <td colspan="8" class="no-results-message" >No result displayed with this audio file name!</td>
+            <td colspan="8" class="no-results-message">No result displayed with this audio file name!</td>
           </tr>
         </ng-template>
       </tbody>
-  
+
     </table>
-   </div>
-   <div class="pagination-controls">
+  </div>
+  <div class="pagination-controls">
     <button (click)="changePage(-1)" [disabled]="currentPage === 1">Previous</button>
     <span>{{ currentPage }} / {{ totalPages }}</span>
     <button (click)="changePage(1)" [disabled]="currentPage === totalPages">Next</button>
   </div>
-  
-   <button class="download-button" (click)="openView()">download</button>
+
 
 </nz-content>
-
-  
