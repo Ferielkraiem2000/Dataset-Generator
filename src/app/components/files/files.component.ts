@@ -226,9 +226,6 @@ this.getStatistics();
     this.fetchStatistics();
   }
 
-  fileExists(fileName: string): boolean {
-    return this.statistics.some(stat => stat.fileName === fileName);
-  }
 
   onIconClick(stat: Statistics) {
     this.editMode = true;
@@ -264,7 +261,9 @@ this.getStatistics();
     this.deleteFileService.deleteFile(fileIds).subscribe(response => {
     },
       error => {
-        this.nzMessageService.error('Error Deleting File!');
+        if (error.status != 200) {
+          this.nzMessageService.error('File Name should not be null!');
+           this.nzMessageService.error('Error Deleting File!');} 
       }
     );
 
@@ -289,7 +288,7 @@ this.getStatistics();
         this.selectedStatistics = data;
       },
       error => {
-        this.nzMessageService.error("Error Fetching Combined Statistics!");
+   this.nzMessageService.error("Error Fetching Combined Statistics!");
       }
     );
   }
@@ -379,7 +378,7 @@ this.getStatistics();
       nzCancelText: 'Cancel',
       nzOnOk: () => {
         this.deleteFile(stat);
-        this.statistics = this.statistics.filter(s => s !== stat);
+        this.statisticsPerPage = this.statisticsPerPage.filter(s => s !== stat);
       },
       nzOnCancel: () => {
       }
