@@ -1,4 +1,4 @@
-import {  Component, OnInit , TemplateRef, ViewChild} from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Statistics } from 'src/app/interfaces/statistics.interface';
 import { DeleteFileService } from 'src/app/services/delete-file.service';
 import { FilesService } from 'src/app/services/files.service';
@@ -16,10 +16,16 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   selector: 'app-files',
   templateUrl: './files.component.html',
   styleUrls: ['./files.component.css'],
-  providers: [FilesService, UpdateFileService, DeleteFileService,NzMessageService ]
+  providers: [FilesService, UpdateFileService, DeleteFileService, NzMessageService]
 })
 export class FilesComponent implements OnInit {
   statistics: Statistics[] = [];
+  currentPage: number = 1;
+  startIndex: number = 0;
+  pageSize: number = 5;
+  statisticsPerPage: Statistics[] = [];
+  totalPages: number = 0;
+  totalItemsCount: number = 0;
   selectedStatistics: Statistics[] = [];
   selectedStat: Statistics | null = null;
   newFileName: string = '';
@@ -30,27 +36,29 @@ export class FilesComponent implements OnInit {
   downloadedFileData: any;
   downloadInterval: any;
   isCanceled: boolean = false;
-   isDownloadInProgress: boolean = false;
-    downloadSubscription: Subscription | undefined;
-    content:any[]=[];
-   percent = 0;
-    interval: any;
-    constructor(
+  isDownloadInProgress: boolean = false;
+  downloadSubscription: Subscription | undefined;
+  content: any[] = [];
+  percent = 0;
+  interval: any;
+  searchFileName: string = '';
+  constructor(
     private filesService: FilesService,
     private updateFileService: UpdateFileService,
     private deleteFileService: DeleteFileService,
     public modalService: NzModalService,
     private selectedFilesStatisticsService: SelectedFilesStatisticService,
-    public communicationService:CommunicationService,
-    private fileContentService:FilecontentService,
-    private fileDownloaderService:FileDownloaderService,
-    private nzMessageService:NzMessageService
-  ) {}
+    public communicationService: CommunicationService,
+    private fileContentService: FilecontentService,
+    private fileDownloaderService: FileDownloaderService,
+    private nzMessageService: NzMessageService
+  ) { }
 
 
   ngOnInit(): void {
-    this.getStatistics();
-  }
+this.getStatistics();
+
+}
   isDownloadView(): boolean {
     return this.communicationService.showDownloadInputs;
   }
@@ -61,46 +69,46 @@ export class FilesComponent implements OnInit {
     if (this.isSelectedStats().length === 0) {
       this.showSelectMessage();
     }
-    else{this.communicationService.showDownloadInputs=true;}
+    else { this.communicationService.showDownloadInputs = true; }
   }
   isProgressView(): boolean {
     return this.communicationService.showProgress;
   }
-  
+
   openProgressView(): void {
-    this.communicationService.showDownloadInputs=false;
+    this.communicationService.showDownloadInputs = false;
     this.communicationService.showProgress = true;
-    this.isCanceled = false; 
+    this.isCanceled = false;
     this.updatePercentAutomatically();
   }
-  
-    
-  
+
+
+
   onDownloadClick(): void {
     const fileIds: number[] = this.communicationService.selectedStats.map(stat => stat.fileId);
-    this.downloadSubscription=this.fileDownloaderService.downloadManifestFile(this.selectedFormat, fileIds, this.path)
+    this.downloadSubscription = this.fileDownloaderService.downloadManifestFile(this.selectedFormat, fileIds, this.path)
       .subscribe(
         response => {
           if (response.type === HttpEventType.Response) {
             this.downloadedFileData = response.body;
-            if (this.percent === 100 ) {
+            if (this.percent === 100) {
               this.downloadFile();
             }
-            
+
           }
         },
         error => {
-       
+
         }
       );
   }
   cancelDownload(): void {
     this.isCanceled = true;
-    clearInterval(this.interval); 
+    clearInterval(this.interval);
   }
-  
+
   updatePercentAutomatically(): void {
-    this.percent=0;
+    this.percent = 0;
     this.interval = setInterval(() => {
       if (!this.isCanceled && this.percent < 100) {
         this.percent += 10;
@@ -112,18 +120,19 @@ export class FilesComponent implements OnInit {
       }
     }, 1000);
   }
-  
+
+
   downloadFile(): void {
     if (!this.downloadedFileData) {
-      return; 
+      return;
     }
-  
+
     const blob = new Blob([this.downloadedFileData], { type: 'application/octet-stream' });
     const downloadUrl = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.style.display = 'none';
     a.href = downloadUrl;
-  
+
     if (this.selectedFormat.toLowerCase() === 'json') {
       a.download = 'combined_manifest.json';
     } else if (this.selectedFormat.toLowerCase() === 'csv') {
@@ -131,21 +140,73 @@ export class FilesComponent implements OnInit {
     } else if (this.selectedFormat.toLowerCase() === 'espnet') {
       a.download = 'fileForESPnet.zip';
     }
-  
+
     document.body.appendChild(a);
     a.click();
-  
+
     window.URL.revokeObjectURL(downloadUrl);
     a.remove();
   }
+  changePage(offset: number): void {
   
+      this.currentPage += offset;
+      this.getStatisticsPerPage(this.currentPage);
+    
+  }
+  getPages(): number {
+    if (this.totalItemsCount <= this.pageSize) {
+      this.totalPages += 1;
+    }
+    else {
+      if (this.totalItemsCount % 5 == 0) {
+        this.totalPages += Math.floor(this.totalItemsCount / 5);
+
+      } else {
+        this.totalPages += Math.floor(this.totalItemsCount / 5) + 1;
+      }
+    }
+    return this.totalPages;
+  }
+  getStatisticsPerPage(pageNumber:number) {
   
-  getStatistics(): void {
-    this.filesService.getStatistics().subscribe(data => {
-      this.statistics = data;
-    });
+    let startIndex = (pageNumber - 1) * 5;
+    let endIndex = Math.min(startIndex + 5, this.totalItemsCount);
+  for(let i=startIndex ;i<endIndex ;i++){
+  this.statisticsPerPage[i]=this.statistics[i];
+ 
   }
 
+  }
+  getStatistics(): void {
+    this.filesService.getStatistics().subscribe(
+      result => {
+        this.statistics = result.data;
+        this.totalItemsCount = result.totalCount;
+        this.totalPages = this.getPages();
+
+   this.getStatisticsPerPage(this.currentPage);
+      },
+      error => {
+        this.nzMessageService.error("Error Fetching Files Statistics!");
+      }
+    );
+  }
+  
+  searchByFileName() {
+    if (this.searchFileName.trim() === '') {
+      this.getStatistics();
+    } else {
+      this.filesService.getStatisticsByFileName(this.searchFileName).subscribe(
+        data => {
+          this.statistics = data;
+        },
+        error => {
+          this.nzMessageService.error("Error Fetching File Statistics with this name!");
+        },
+
+      );
+    }
+  }
 
 
   selectRow(stat: Statistics): void {
@@ -162,7 +223,7 @@ export class FilesComponent implements OnInit {
     } else {
       this.communicationService.selectedStats.push(stat);
     }
-    this.fetchStatistics(); 
+    this.fetchStatistics();
   }
 
   fileExists(fileName: string): boolean {
@@ -171,33 +232,40 @@ export class FilesComponent implements OnInit {
 
   onIconClick(stat: Statistics) {
     this.editMode = true;
-    this.newFileName=stat.fileName;
+    this.newFileName = stat.fileName;
   }
 
   updateFileName(stat: Statistics): void {
     this.updateFileService.updateFileName(stat.fileId, this.newFileName).subscribe(response => {
     },
-    error =>{console.log(error);});
+      error => {
+        if (error.status != 200) {
+          this.nzMessageService.error('File Name should not be null!');
+        }
+      });
   }
 
   onCancel() {
     this.editMode = false;
   }
-onConfirm(stat:Statistics){
-  this.updateFileName(stat);
-  stat.fileName = this.newFileName;
-  this.editMode = false;
-}
+  onConfirm(stat: Statistics) {
+    this.updateFileName(stat);
+    if (this.newFileName != "") {
+      stat.fileName = this.newFileName;
+      this.editMode = false;
+    }
+    this.editMode = false;
+  }
   deleteFile(stat: Statistics) {
-    const fileIds : number []=[];
+    const fileIds: number[] = [];
     for (const stat of this.communicationService.selectedStats) {
       fileIds.push(stat.fileId);
-  }
+    }
     this.deleteFileService.deleteFile(fileIds).subscribe(response => {
     },
-    error => {
-      console.error( error);
-    }
+      error => {
+        this.nzMessageService.error('Error Deleting File!');
+      }
     );
 
   }
@@ -212,34 +280,35 @@ onConfirm(stat:Statistics){
   }
 
   fetchStatistics() {
-      const fileIds : number []=[];
-      for (const stat of this.communicationService.selectedStats) {
-        fileIds.push(stat.fileId);     
+    const fileIds: number[] = [];
+    for (const stat of this.communicationService.selectedStats) {
+      fileIds.push(stat.fileId);
     }
-      this.selectedFilesStatisticsService.getStatistics(fileIds).subscribe(
-        data => {
-          this.selectedStatistics = data;
-        },
-        error => {
-          console.error( error);
-        }
-      );
-    } 
-    showContent(stat: Statistics) {
-      this.fileContentService.showContent(stat.fileId).subscribe(
-        (response) => {
-          this.content = response;
-          this.openContentDialog(); 
-        },
-        error => {
-          console.error(error);
-        }
-      );
-    }
-    
-    
-    openContentDialog(): void {
-      const tableRows = this.content.map(item => `
+    this.selectedFilesStatisticsService.getStatistics(fileIds).subscribe(
+      data => {
+        this.selectedStatistics = data;
+      },
+      error => {
+        this.nzMessageService.error("Error Fetching Combined Statistics!");
+      }
+    );
+  }
+  showContent(stat: Statistics) {
+    this.fileContentService.showContent(stat.fileId).subscribe(
+      (response) => {
+        this.content = response;
+        this.openContentDialog();
+      },
+      error => {
+        this.nzMessageService.error('Error Fetching File Content!');
+
+      }
+    );
+  }
+
+
+  openContentDialog(): void {
+    const tableRows = this.content.map(item => `
         <tr>
           <td>${item.file_name}</td>
           <td></td>
@@ -261,8 +330,8 @@ onConfirm(stat:Statistics){
           <td>${item.transcription}</td>
         </tr>
       `).join('');
-    
-      const tableHtml = `
+
+    const tableHtml = `
         <div class="table-container">
           <table>
             <thead>
@@ -291,38 +360,38 @@ onConfirm(stat:Statistics){
           </table>
         </div>
       `;
-    
-      this.modalService.create({
-        nzTitle: 'Audio File',
-        nzContent: tableHtml,
-        nzFooter: null,
-        nzStyle: { width: '1300px', height: '800px' },
-      });
-    }
-    
-    
-    
-    showDeletionAlert(stat:Statistics): void {
-      this.modalService.confirm({
-        nzTitle: 'Delete File',
-        nzContent: 'Are you sure to delete this file?',
-        nzOkText: 'OK',
-        nzCancelText: 'Cancel',
-        nzOnOk: () => {
+
+    this.modalService.create({
+      nzTitle: 'Audio File',
+      nzContent: tableHtml,
+      nzFooter: null,
+      nzStyle: { width: '1400px', height: '800px' },
+    });
+  }
+
+
+
+  showDeletionAlert(stat: Statistics): void {
+    this.modalService.confirm({
+      nzTitle: 'Delete File',
+      nzContent: 'Are you sure to delete this file?',
+      nzOkText: 'OK',
+      nzCancelText: 'Cancel',
+      nzOnOk: () => {
         this.deleteFile(stat);
         this.statistics = this.statistics.filter(s => s !== stat);
-        },
-        nzOnCancel: () => {
-        }
-      });
-    }
-showTapMessage(){
-  if(!this.selectedFormat){
-    this.nzMessageService.info('Format is required!')
+      },
+      nzOnCancel: () => {
+      }
+    });
   }
-}
-showSelectMessage(){
+  showTapMessage() {
+    if (!this.selectedFormat) {
+      this.nzMessageService.info('Format is required!')
+    }
+  }
+  showSelectMessage() {
     this.nzMessageService.info('Select desired Files!')
-}
- 
+  }
+
 }
