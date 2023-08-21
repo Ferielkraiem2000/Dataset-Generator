@@ -71,7 +71,7 @@ HistogramComponent,
       NzSelectModule,
       NzFormModule,
       NgxChartsModule,
-      CommonModule
+      CommonModule,
     ],
   providers: [
     NzModalService,

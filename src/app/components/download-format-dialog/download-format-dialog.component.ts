@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { FileDownloaderService } from 'src/app/services/file-downloader.service';
 import { CommunicationService } from 'src/app/services/communication.service';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-download-format-dialog',
   templateUrl: './download-format-dialog.component.html',
-  providers: [FileDownloaderService]
+  providers: [FileDownloaderService,NzMessageService]
 })
 export class DownloadFormatDialogComponent {
   path?: string;
@@ -15,7 +16,8 @@ export class DownloadFormatDialogComponent {
   constructor(
     private modalRef: NzModalRef,
     private fileDownloaderService: FileDownloaderService,
-    private communicationService: CommunicationService
+    private communicationService: CommunicationService,
+    private nzMessageService:NzMessageService
   ) {}
 
   onDownloadClick(): void {
@@ -44,7 +46,7 @@ export class DownloadFormatDialogComponent {
         a.remove();
       },
       error => {
-        console.error(error);
+         this.nzMessageService.error("Error downloading Manifest File")
       }
     );
   }

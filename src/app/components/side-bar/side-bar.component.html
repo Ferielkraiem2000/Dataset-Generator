@@ -2,7 +2,13 @@
     <div class="logo">
       <img src="./assets/elyadata.png" class="logo-image">
     </div>
-  
+   <div class="mode">
+    <span *ngIf="isDarkMode; else lightMode">
+      <i nz-icon nzType="moon"></i>
+    </span>
+    <ng-template #lightMode>
+      <i nz-icon nzType="ciel"></i>
+    </ng-template></div>
   </nz-header>
   <nz-layout>
   

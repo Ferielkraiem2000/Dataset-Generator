@@ -9,6 +9,6 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 export class SideBarComponent {
 
   isCollapsed = false;
- 
+  isDarkMode: boolean = false; 
 
 }
