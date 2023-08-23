@@ -1,20 +1,31 @@
-<table class="custom-table">
+<div class="table-container">
+  <table class="bordered-table">
     <thead>
       <tr>
         <th>File Name</th>
+       
         <th>Speaker</th>
+       
         <th>Segment Start</th>
+      
         <th>Segment End</th>
+        <th>Duration</th>
+   
         <th>Transcription</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let item of  communicationSrvice.content">
-        <td>{{ item.fileName }}</td>
+      <tr *ngFor="let item of content">
+        <td>{{ item.file_name }}</td>
+    
         <td>{{ item.speaker }}</td>
-        <td>{{ item.segmentStart }}</td>
-        <td>{{ item.segmentEnd }}</td>
+      
+        <td>{{ item.segment_start }}</td>
+       
+        <td>{{ item.segment_end }}</td>
+        <td>{{ item.duration }}</td>
         <td>{{ item.transcription }}</td>
       </tr>
     </tbody>
   </table>
+</div>
