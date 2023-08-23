@@ -34,7 +34,7 @@ import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { HistogramComponent } from './components/histogram/histogram.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { CommonModule } from '@angular/common'; //
-
+import { ContentFileComponent } from './components/content-file/content-file.component';
 registerLocaleData(en);
 
 @NgModule({
@@ -47,6 +47,7 @@ FilesComponent,
 DashboardComponent,
 DownloadFormatDialogComponent,
 HistogramComponent,
+ContentFileComponent
 
    ],
   imports: [

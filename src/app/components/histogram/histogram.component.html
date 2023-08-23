@@ -1,32 +1,36 @@
-<p class="title-histogram">Distribution of Segment Counts by Duration Intervals</p>
-<ng-container *ngIf="histogramData!=null ; else noHistogramData">
-   <div class="chart-container">
+<p class="title-histogram">Distribution of Segment Duration</p>
+
+<ng-container *ngIf="histogramData != null; else noHistogramData">
+  <div class="chart-container">
     <ngx-charts-bar-vertical
-      [view]="[250, 400]"
+      [view]="[300, 400]"
       [results]="single"
       [xAxis]="true"
       [yAxis]="true"
       [showXAxisLabel]="true"
       [showYAxisLabel]="true"
-      [xAxisLabel]="'Interval Durations'"
-      [yAxisLabel]="'SegmentCount Per Interval'"
-      [legend]="true" 
+      [xAxisLabel]="'Duration'"
+      [yAxisLabel]="'SegmentCount'"
     ></ngx-charts-bar-vertical>
   </div>
 </ng-container>
+
 <ng-template #noHistogramData>
   <div class="chart-container">
+    <p class="noDataText">No Data displayed!</p>
     <ngx-charts-bar-vertical
-      [view]="[300, 400]"
-      [results]="[]"
+      [view]="[1000, 400]"
+      [results]="noDataResult"
+      [scheme]="colorScheme"
       [xAxis]="true"
       [yAxis]="true"
       [showXAxisLabel]="true"
       [showYAxisLabel]="true"
-      [xAxisLabel]="'Interval Durations'"
-      [yAxisLabel]="'SegmentCount Per Interval'"    
-      [yScaleMax]="1000">
-    </ngx-charts-bar-vertical>
-  </div>
-
+      [xAxisLabel]="'Duration'"
+      [yAxisLabel]="'SegmentCount'"
+      [yScaleMax]="1000"
+      class="bar"    >
+   
+    </ngx-charts-bar-vertical >
+  </div>  
 </ng-template>

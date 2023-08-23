@@ -13,7 +13,12 @@ import { HistogramService } from 'src/app/services/histogram.service';
 export class HistogramComponent implements OnInit {
   single: any[] = [];
   histogramData!: HistogramData;
-
+  noDataResult = [
+  {name: '0.0',
+   value:0,
+}
+  ];
+  colorScheme ='black';
   constructor(private histogramService: HistogramService,private nzMessageService:NzMessageService) {}
 
   ngOnInit(): void {
@@ -43,7 +48,7 @@ export class HistogramComponent implements OnInit {
     const values = this.histogramData.segmentCountPerInterval;
     this.single = labels.map((label, index) => ({
       name: label,
-      value: values[index]
+      value:parseInt(values[index].toString(),10)
     }));
   }
   
