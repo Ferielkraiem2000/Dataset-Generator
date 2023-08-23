@@ -67,7 +67,7 @@ export class FileUploaderComponent {
         nzCancelText: 'Cancel',
         nzOnOk: () => {
           for(let file of files){
-        this.fileOverwriteService.overwriteFiles(file).subscribe((response: any)=>{},
+        this.fileOverwriteService.overwriteFile(file).subscribe((response: any)=>{},
           error=>{})
           }
       },

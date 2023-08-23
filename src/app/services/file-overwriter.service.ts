@@ -6,12 +6,11 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class FileOverwriterService {
-
-  private baseUrl = 'http://localhost:8080/file-overwriting';
-  constructor(private http: HttpClient) {}
-  overwriteFiles(file: File): Observable<any> {
-    const formData: FormData = new FormData();
-      formData.append('file', file, file.name);
-    return this.http.put(`${this.baseUrl}`, formData);
-  }
+ private baseUrl='http://localhost:8080//file-overwriting';
+ constructor(private http: HttpClient) {}
+ overwriteFile(file: File): Observable<any> {
+   const formData: FormData = new FormData();
+     formData.append('file', file, file.name);
+   return this.http.put(`${this.baseUrl}`, formData);
+ }
 }

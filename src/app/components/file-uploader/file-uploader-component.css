@@ -25,7 +25,6 @@
   margin-right:10%;
   margin-left:25%;
   margin-top:10%;
-  margin-bottom:5%;
  
   background-color: transparent;
 }
@@ -82,10 +81,11 @@
 .cord {
   justify-content: center;
   align-items: center;
+  text-align:center;
   display: flex;
-  margin-top:2%;
+  margin-top:0.2%;
   margin-right: -18%;
-  padding: 5%;
+  padding: 6%;
 }
 .cord button{
   width: 150px; 
@@ -104,4 +104,10 @@
   color:rgb(146, 142, 142);
   margin-top :5%;  font-size: 40px;
   margin-left:3%;
+}
+.file_name{
+  font-weight: bold;
+  font-size:50px;
+font-family:'Times New Roman', Times, serif;
+color:#BE2C97;
 }

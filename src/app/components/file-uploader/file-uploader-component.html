@@ -7,7 +7,7 @@
       <div class="drop-text">Drop STM Files Here</div>
    </header>   
    <div *ngIf="selectedFiles.length>0 ">
-      <p *ngFor="let file of selectedFiles">{{ file.name }}</p>
+      <p class="file_name" *ngFor="let file of selectedFiles">{{ file.name }}</p>
    </div>
    
 </div>
