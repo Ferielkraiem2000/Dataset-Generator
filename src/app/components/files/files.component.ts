@@ -12,6 +12,7 @@ import { FileDownloaderService } from 'src/app/services/file-downloader.service'
 import { HttpEventType } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { ContentFileComponent } from '../content-file/content-file.component';
 @Component({
   selector: 'app-files',
   templateUrl: './files.component.html',
@@ -19,6 +20,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   providers: [FilesService, UpdateFileService, DeleteFileService, NzMessageService]
 })
 export class FilesComponent implements OnInit {
+
   statistics: Statistics[] = [];
   currentPage: number = 1;
   startIndex: number = 0;
@@ -38,10 +40,10 @@ export class FilesComponent implements OnInit {
   isCanceled: boolean = false;
   isDownloadInProgress: boolean = false;
   downloadSubscription: Subscription | undefined;
-  content: any[] = [];
   percent = 0;
   interval: any;
   searchFileName: string = '';
+  isSearchButtonClicked: boolean = false;
   constructor(
     private filesService: FilesService,
     private updateFileService: UpdateFileService,
@@ -108,7 +110,6 @@ export class FilesComponent implements OnInit {
   }
 
   updatePercentAutomatically(): void {
-    this.percent = 0;
     this.interval = setInterval(() => {
       if (!this.isCanceled && this.percent < 100) {
         this.percent += 10;
@@ -189,8 +190,9 @@ export class FilesComponent implements OnInit {
   }
 
   searchByFileName() {
-    if (this.searchFileName.trim() === '') {
-      this.getStatistics();
+    this.isSearchButtonClicked = true;
+    if (this.searchFileName === '') {
+      this.getStatisticsPerPage(this.currentPage);
     } else {
       this.filesService.getStatisticsByFileName(this.searchFileName).subscribe(
         data => {
@@ -203,7 +205,6 @@ export class FilesComponent implements OnInit {
       );
     }
   }
-
 
   selectRow(stat: Statistics): void {
     this.selectedStat = stat;
@@ -293,7 +294,7 @@ export class FilesComponent implements OnInit {
   showContent(stat: Statistics) {
     this.fileContentService.showContent(stat.fileId).subscribe(
       (response) => {
-        this.content = response;
+        this.communicationService.content = response;
         this.openContentDialog();
       },
       error => {
@@ -305,92 +306,41 @@ export class FilesComponent implements OnInit {
 
 
   openContentDialog(): void {
-    const tableRows = this.content.map(item => `
-        <tr>
-          <td>${item.file_name}</td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td>${item.speaker}</td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td>${item.segment_start}</td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td>${item.segment_end}</td>
-          <td></td>
-          <td></td>
-          <td></td>
-
-          <td>${item.transcription}</td>
-        </tr>
-      `).join('');
-
-    const tableHtml = `
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>File Name</th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th>Speaker</th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th>Segment Start</th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th>Segment End</th>
-                <th></th>
-                <th></th><th></th>
-                <th>Transcription</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${tableRows}
-            </tbody>
-          </table>
-        </div>
-      `;
 
     this.modalService.create({
-      nzTitle: 'Audio File',
-      nzContent: tableHtml,
+      nzTitle: 'File Content',
+      nzContent: ContentFileComponent,
       nzFooter: null,
       nzStyle: { width: '1400px', height: '800px' },
     });
   }
 
   showMultipleDeletionAlert(): void {
-    let fileIds: number[] =[];
+    let fileIds: number[] = [];
     this.modalService.confirm({
       nzTitle: 'Delete File',
       nzContent: 'Are you sure to delete this file?',
       nzOkText: 'OK',
       nzCancelText: 'Cancel',
       nzOnOk: () => {
-      fileIds= this.communicationService.selectedStats.map(stat => stat.fileId);
-    this.deleteFileService.deleteFile(fileIds)
-      .subscribe(
-        response => {
-       
-        },
-        error => {
+        fileIds = this.communicationService.selectedStats.map(stat => stat.fileId);
+        this.deleteFileService.deleteFile(fileIds)
+          .subscribe(
+            response => {
 
-        }
-      );
-      this.statisticsPerPage = this.statisticsPerPage.filter(s => s !== this.selectedStat);
+            },
+            error => {
 
-      },
+            }
+          );
+        this.statisticsPerPage = this.statisticsPerPage.filter(stat => !fileIds.includes(stat.fileId));
+        this.statistics=this.statistics.filter(stat => !fileIds.includes(stat.fileId))   ;
+       },
 
       nzOnCancel: () => {
       }
     });
+
   }
 
   showDeletionAlert(stat: Statistics): void {
@@ -401,6 +351,7 @@ export class FilesComponent implements OnInit {
       nzCancelText: 'Cancel',
       nzOnOk: () => {
         this.deleteFile(stat);
+        console.log(this.totalItemsCount);
         this.statisticsPerPage = this.statisticsPerPage.filter(s => s !== stat);
       },
       nzOnCancel: () => {

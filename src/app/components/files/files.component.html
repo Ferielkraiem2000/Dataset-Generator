@@ -27,7 +27,9 @@
           </ng-template>
           <div> <span class="download-text">downloading...</span> </div>
           <div>
-            <button class="cancel-button" (click)="cancelDownload()">Cancel</button>
+            <button class="cancel-button" (click)="cancelDownload()" *ngIf="!isCanceled" [disabled]="percent === 100">Cancel</button>
+            <button class="continue-button" (click)="openProgressView()" *ngIf="isCanceled">Continue</button>
+
           </div>
         </div>
       </div>
@@ -64,7 +66,7 @@
               <div class="card-icon-top-left" style="background-color: rgb(86, 188, 228)">
                 <i nz-icon nzType="clock-circle" class="centered-icon"></i>
               </div>
-              <p class="card-title">Total Duration(s)</p>
+              <p class="card-title">Total Duration</p>
               <p class="value">{{ stat.totalDuration }}</p>
             </div>
           </nz-card>
@@ -73,7 +75,7 @@
               <div class="card-icon-top-left" style="background-color:rgb(243, 97, 197);">
                 <i nz-icon nzType="clock-circle" class="centered-icon"></i>
               </div>
-              <p class="card-title">Average Duration(s)</p>
+              <p class="card-title">Average Duration</p>
               <p class="value">{{ stat.averageDuration }}</p>
             </div>
           </nz-card>
@@ -105,7 +107,7 @@
                 <div class="card-icon-top-left" style="background-color: rgb(86, 188, 228)">
                   <i nz-icon nzType="clock-circle" class="centered-icon"></i>
                 </div>
-                <p class="card-title">Total Duration(s)</p>
+                <p class="card-title">Total Duration</p>
                 <p class="value">__</p>
               </div>
             </nz-card>
@@ -114,7 +116,7 @@
                 <div class="card-icon-top-left" style="background-color:rgb(243, 97, 197);">
                   <i nz-icon nzType="clock-circle" class="centered-icon"></i>
                 </div>
-                <p class="card-title">Average Duration(s)</p>
+                <p class="card-title">Average Duration</p>
                 <p class="value">__</p>
               </div>
             </nz-card>
@@ -130,8 +132,9 @@
     <button nz-icon nzType="download" class="download-button" (click)="openView()"></button>
     <button class="delete-button" nz-icon nzType="delete"
       (click)=" this.isSelectedStats().length != 0?showMultipleDeletionAlert():showSelectMessage()"></button>
-    <input type="text" [(ngModel)]="searchFileName" placeholder="Search by Audio File Name" class="searchInput"/>
-    <button nz-icon nzType="search" (click)="searchByFileName()" class="searchButton"></button>
+    <input type="text" [(ngModel)]="searchFileName"     *ngIf="isSearchButtonClicked"
+     placeholder="Search by Audio File Name" class="searchInput"/>
+    <button nz-icon nzType="search" (click)="searchByFileName()"    class="searchButton"></button>
   </div>
 
   <div class="custom-container">
@@ -140,8 +143,8 @@
         <tr>
           <th class="text-center"></th>
           <th>File Name</th>
-          <th>Total Duration (s)</th>
-          <th class="text-center">Average Duration (s)</th>
+          <th>Total Duration</th>
+          <th class="text-center">Average Duration </th>
           <th>Number Of Segments</th>
           <th class="text-center">Number Of Speakers</th>
           <th style="width: 17%;">Upload Time</th>
@@ -165,7 +168,7 @@
                     <button nz-icon nzType="close" style="margin-left:12%" (click)="onCancel()"></button>
                   </div>
                   <i nz-icon nzType="edit" [ngClass]="{'blinking': isSelected(stat)}"
-                    (click)="this.isSelectedStats().length!=0?onIconClick(stat):showSelectMessage()"
+                    (click)="this.isSelectedStats().length!=0 && this.isSelected(stat)?onIconClick(stat):showSelectMessage()"
                     *ngIf="!editMode"></i>
             </td>
             <td>{{ stat.totalDuration }}</td>
@@ -175,18 +178,18 @@
             <td>{{ stat.uploadTime }} </td>
             <td>
               <i nz-icon nzType="delete" [ngClass]="{'blinking': isSelected(stat)}" style="margin-right: 6px;"
-                (click)=" this.isSelectedStats().length != 0?showDeletionAlert(stat):showSelectMessage()"></i>
+                (click)=" this.isSelectedStats().length != 0 && this.isSelected(stat) ?showDeletionAlert(stat):showSelectMessage()"></i>
               <i nz-icon nzType="download" [ngClass]="{'blinking': isSelected(stat)}"
-                (click)="this.isSelectedStats().length != 0?openFormatSelectionDialog():showSelectMessage()"
+                (click)="this.isSelectedStats().length != 0 && this.isSelected(stat)?openFormatSelectionDialog():showSelectMessage()"
                 style=" margin-right:1.18px;"></i>
               <i nz-icon nzType="eye" [ngClass]="{'blinking': isSelected(stat)}"
-                (click)="this.isSelectedStats().length!=0?showContent(stat):showSelectMessage()"></i>
+                (click)="this.isSelectedStats().length!=0 && this.isSelected(stat)?showContent(stat):showSelectMessage()"></i>
             </td>
           </tr>
         </ng-container>
         <ng-template #noStatisticsWithFileName>
           <tr>
-            <td colspan="8" class="no-results-message">No result displayed with this audio file name!</td>
+            <td colspan="8" class="no-results-message">No result displayed!</td>
           </tr>
         </ng-template>
       </tbody>
@@ -194,10 +197,14 @@
     </table>
   </div>
   <div class="pagination-controls">
-    <button (click)="changePage(-1)" [disabled]="currentPage === 1">Previous</button>
-    <span>{{ currentPage }} / {{ totalPages }}</span>
-    <button (click)="changePage(1)" [disabled]="currentPage === totalPages">Next</button>
+    <button (click)="changePage(-1)" [disabled]="currentPage === 1">
+      <i  nz-icon nzType="left" nzTheme="outline"></i>
+    </button>
+    <span> {{ currentPage }} / {{ totalPages }} </span>
+    <button (click)="changePage(1)" [disabled]="currentPage === totalPages">
+      <i nz-icon nzType="right" nzTheme="outline"></i>
+    </button>
   </div>
-
+  
 
 </nz-content>

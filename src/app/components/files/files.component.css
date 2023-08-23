@@ -46,6 +46,7 @@ nz-card {
    margin-bottom:2%;
    border-radius: 10px;
    border-color: #e7dddd;
+   position: relative;
   }
 
   .custom-table th,
@@ -161,7 +162,6 @@ nz-card {
   }
   .delete-button{
    
-    margin-right: 2%;
     width: 60px;
     height: 40px;
     color:rgb(106, 105, 105);
@@ -183,11 +183,11 @@ nz-card {
     .download-text{
       margin-bottom: 12%;
       font-size:30px;
-      margin-left: 30%;
+      margin-left: 37%;
     }
     .cancel-button{
       margin-bottom:2%;
-      margin-left: 35%;
+      margin-left: 42%;
       width: 100px;
       height: 40px;
       color:rgb(106, 105, 105);
@@ -195,13 +195,27 @@ nz-card {
       border-color: rgb(146, 142, 142);
     }
  
- 
+    .cancel-button:hover{
+      color:red;
+    }
+    .continue-button{
+      margin-bottom:2%;
+      margin-left: 42%;
+      width: 100px;
+      height: 40px;
+      color:rgb(106, 105, 105);
+      border-radius: 10px;
+      border-color: rgb(146, 142, 142);
+    }
+ .continue-button:hover {
+  color:green;
+ }
 
     .glass-effect {
       background-color:white;
       backdrop-filter: blur(5px);
       border-radius: 10px;
-     margin-left: 31%;
+     margin-left: 25%;
      margin-right: 5%;
      height:max-content;
      width: 650px;
@@ -222,23 +236,25 @@ nz-card {
 
  .file-icon{
   margin-left:35%;
-
   margin-right:25%;
  }
- .table-container {
-  width: 100%;
-  border-collapse: collapse;
-}
+
 
 .no-results-message {
   text-align: center;
   font-style: italic;
   font-size:18px;
 }
-.searchInput{
+.searchInput {
+  position: relative;
   height: 40px;
   width: 250px;
+  border: none;
+  padding: 0 10px;
+  transition: width 0.3s ease-in-out;
+  margin-left:2%;
 }
+
 .searchButton{
   margin-left: 2%;
   width: 60px;
@@ -251,5 +267,7 @@ nz-card {
 .pagination-controls{
   text-align:center;
   margin-top:5%;
-  margin-bottom:3%
+  margin-bottom:3%;
+  margin-left:10%;
+
 }
