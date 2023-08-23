@@ -73,6 +73,29 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
         return filesStatistics;
     }
+     public List<Map<String, Object>> getFilesStatisticsByFileName(String Name) {
+        List<Object[]> result = segmentRepository.getFilesStatisticsByFileName(Name);
+        List<Map<String, Object>> filesStatistics = new ArrayList<>();
+        for (Object[] row : result) {
+            Long fileId=(Long) row[0];
+            String fileName = (String) row[1];
+            Double totalDuration = (Double) row[2];
+            Double averageDuration = (Double) row[3];
+            Long segmentCount = (Long) row[4];
+            Long speakerCount = (Long) row[5];
+            LocalDateTime uploadTime = (LocalDateTime) row[6];
+            Map<String, Object> fileDetails = new LinkedHashMap<>();
+            fileDetails.put("fileId", fileId);
+            fileDetails.put("fileName", fileName);
+            fileDetails.put("totalDuration", totalDuration);
+            fileDetails.put("averageDuration", averageDuration);
+            fileDetails.put("segmentCount", segmentCount);
+            fileDetails.put("speakerCount", speakerCount);
+            fileDetails.put("uploadTime", objectMapper.convertValue(uploadTime, String.class));
+            filesStatistics.add(fileDetails);
+        }
+        return filesStatistics;
+    }
     public List<Map<String, Object>> getFilesStatistics(List<Long> fileIds) {
         List<Segment> segments = segmentRepository.findAll();
         for (Long fileId : fileIds) {
@@ -102,7 +125,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     public HistogramData getHistogramData() {
         List<Object[]> result = segmentRepository.getDurationsSegments();
         List<IntervalData> intervalDataList = new ArrayList<>();
-        double intervalSize = 0.1;
+        double intervalSize = 0.01;
         double currentIntervalStart = 0.0;
         double currentIntervalEnd = intervalSize;
         int intervalFileCount = 0;

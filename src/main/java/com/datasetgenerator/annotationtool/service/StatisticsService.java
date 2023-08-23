@@ -8,6 +8,7 @@ import com.datasetgenerator.annotationtool.util.HistogramData;
 public interface StatisticsService {
     public List<Map<String, Object>> getDatasetStatistics();
     List<Map<String, Object>> getFilesStatistics();
+    public List<Map<String, Object>> getFilesStatisticsByFileName(String Name);
     List<Map<String, Object>> getFilesStatistics(List<Long> fileIds);
      HistogramData getHistogramData();
 }

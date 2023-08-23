@@ -11,7 +11,7 @@ public class UpdateUploadedFileServiceImpl implements UpdateUploadedFileService 
     private FileRepository fileRepository;
 
     public void updateFileName(Long file_id, String fileName) {
-        if (fileRepository.findByFileId(file_id)) {
+        if (fileRepository.findByFileId(file_id) && !fileName.equals("")) {
             fileRepository.updateFileName(file_id, fileName);
         }
     }

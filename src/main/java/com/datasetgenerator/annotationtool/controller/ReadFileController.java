@@ -1,4 +1,5 @@
 package com.datasetgenerator.annotationtool.controller;
+
 import com.datasetgenerator.annotationtool.service.*;
 import com.datasetgenerator.annotationtool.util.HistogramData;
 
@@ -25,8 +26,10 @@ public class ReadFileController {
     private final StatisticsService statisticsService;
     private final DeleteService deleteService;
 
-
-    public ReadFileController(FileParseService dataService, ExtractFileContentsService fileService, DownloadManifestFileService downloadManifestFileService, UpdateUploadedFileService updateUploadedFileService, StatisticsService statisticsService, DeleteService deleteService) {
+    public ReadFileController(FileParseService dataService, ExtractFileContentsService fileService,
+            DownloadManifestFileService downloadManifestFileService,
+            UpdateUploadedFileService updateUploadedFileService, StatisticsService statisticsService,
+            DeleteService deleteService) {
         this.dataService = dataService;
         this.fileService = fileService;
         this.downloadManifestFileService = downloadManifestFileService;
@@ -37,28 +40,41 @@ public class ReadFileController {
 
     @Operation(summary = "Parse File")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/file-parsing")
-    public ResponseEntity<String> readFile(@RequestParam("files") List<MultipartFile> files, @RequestParam(value = "overwrite") Boolean overwrite)
+    public ResponseEntity<String> uploadFile(@RequestParam("files") List<MultipartFile> files)
             throws IOException {
-        List<String> results = new ArrayList<>();
         for (MultipartFile file : files) {
             if (!fileService.verifyType(file)) {
-                return ResponseEntity.badRequest().body("File extension not allowed. Only '.txt' and '.stm' files are accepted!");
+                return ResponseEntity.badRequest()
+                        .body("File extension not allowed. Only '.txt' and '.stm' files are accepted!");
             }
-            results.add(String.valueOf(dataService.extractFields(file,overwrite)));
-            
+           dataService.uploadFile(file);
+
         }
-        return ResponseEntity.ok(String.valueOf(results));
+        return ResponseEntity.ok("File uploaded Successfully");
+    }
+
+    @Operation(summary = "Overwrite Uploaded File")
+    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/file-overwriting")
+    public ResponseEntity<String> overwriteFile(@RequestParam("file") MultipartFile file) throws IOException {
+        if (!fileService.verifyType(file)) {
+            return ResponseEntity.badRequest()
+                    .body("File extension not allowed. Only '.txt' and '.stm' files are accepted!");
+        }
+        dataService.overwriteExistingFile(file);
+        return ResponseEntity.ok("File overwrited successfully!");
     }
 
     @Operation(summary = "Get File Content ")
     @GetMapping(path = "/file-parsing/{id}")
-    public ResponseEntity<List<Map<String, String>>>showContent(@RequestParam("fileId") Long fileId) {
+    public ResponseEntity<List<Map<String, String>>> showContent(@RequestParam("fileId") Long fileId) {
         return ResponseEntity.ok(dataService.showContent(fileId));
     }
 
     @Operation(summary = "Download Manifest File")
     @GetMapping(path = "/file-parsing/{format}/{ids}/{path}")
-    public ResponseEntity<?> downloadManifestFile(@RequestParam(name = "format", required = true) String format, @RequestParam(name = "file_id") List<Long> fileIds, @RequestParam(name = "path", required = false) String path) throws IOException {
+    public ResponseEntity<?> downloadManifestFile(@RequestParam(name = "format", required = true) String format,
+            @RequestParam(name = "file_id") List<Long> fileIds,
+            @RequestParam(name = "path", required = false) String path) throws IOException {
 
         ByteArrayResource combinedManifest = downloadManifestFileService.createCombinedManifest(format, path, fileIds);
         HttpHeaders headers = new HttpHeaders();
@@ -81,11 +97,16 @@ public class ReadFileController {
         return ResponseEntity.ok(statisticsService.getDatasetStatistics());
     }
 
-
     @Operation(summary = "Get Files statistics")
     @GetMapping("/files/statistics")
     public ResponseEntity<List<Map<String, Object>>> getFilesStatistics() {
         return ResponseEntity.ok(statisticsService.getFilesStatistics());
+    }
+
+    @Operation(summary = "Get File statistics By File Name")
+    @GetMapping("/files/statistics/{name}")
+    public ResponseEntity<List<Map<String, Object>>> getFilesStatistics(String fileName) {
+        return ResponseEntity.ok(statisticsService.getFilesStatisticsByFileName(fileName));
     }
 
     @Operation(summary = "Get the statistics of one or more selected uploaded dataset  manifests")
@@ -96,8 +117,12 @@ public class ReadFileController {
 
     @Operation(summary = "Update File name")
     @PutMapping(path = "/file-parsing/{id}/{name}")
-    public ResponseEntity<String> updateFileName(@RequestParam("fileId") Long fileId, @RequestParam("fileName") String fileName) {
+    public ResponseEntity<String> updateFileName(@RequestParam("fileId") Long fileId,
+            @RequestParam("fileName") String fileName) {
         updateUploadedFileService.updateFileName(fileId, fileName);
+        if (fileName.equals("")) {
+            return ResponseEntity.badRequest().body("Error updating Audio File Name!");
+        }
         return ResponseEntity.ok("fileName updated successfully!");
 
     }
@@ -108,7 +133,8 @@ public class ReadFileController {
         deleteService.deleteByFileIds(fileIds);
         return ResponseEntity.ok("Files deleted successfully!");
     }
- @GetMapping("/histogram")
+
+    @GetMapping("/histogram")
     public ResponseEntity<HistogramData> getHistogramData() {
         HistogramData histogramData = statisticsService.getHistogramData();
         return ResponseEntity.ok(histogramData);
