@@ -27,7 +27,8 @@
           </ng-template>
           <div> <span class="download-text">downloading...</span> </div>
           <div>
-            <button class="cancel-button" (click)="cancelDownload()" *ngIf="!isCanceled" [disabled]="percent === 100">Cancel</button>
+            <button class="cancel-button" (click)="cancelDownload()" *ngIf="!isCanceled"
+              [disabled]="percent === 100">Cancel</button>
             <button class="continue-button" (click)="openProgressView()" *ngIf="isCanceled">Continue</button>
 
           </div>
@@ -124,17 +125,17 @@
         </div>
       </ng-template>
     </div>
-  </div>  
+  </div>
 
-  <p class="title-file">Files</p> 
+  <p class="title-file">Files</p>
 
   <div class="tools">
     <button nz-icon nzType="download" class="download-button" (click)="openView()"></button>
     <button class="delete-button" nz-icon nzType="delete"
       (click)=" this.isSelectedStats().length != 0?showMultipleDeletionAlert():showSelectMessage()"></button>
-    <input type="text" [(ngModel)]="searchFileName"     *ngIf="isSearchButtonClicked"
-     placeholder="Search by Audio File Name" class="searchInput"/>
-    <button nz-icon nzType="search" (click)="searchByFileName()"    class="searchButton"></button>
+    <input type="text" [(ngModel)]="searchFileName" *ngIf="isSearchButtonClicked"
+      placeholder="Search by Audio File Name" class="searchInput" />
+    <button nz-icon nzType="search" (click)="searchByFileName()" class="searchButton"></button>
   </div>
 
   <div class="custom-container">
@@ -168,7 +169,7 @@
                     <button nz-icon nzType="close" style="margin-left:12%" (click)="onCancel()"></button>
                   </div>
                   <i nz-icon nzType="edit" [ngClass]="{'blinking': isSelected(stat)}"
-                    (click)="this.isSelectedStats().length!=0 && this.isSelected(stat)?onIconClick(stat):showSelectMessage()"
+                    (click)="this.isSelectedStats().length==1 && this.isSelected(stat)?onIconClick(stat):showSelectFileMessage()"
                     *ngIf="!editMode"></i>
             </td>
             <td>{{ stat.totalDuration }}</td>
@@ -178,12 +179,12 @@
             <td>{{ stat.uploadTime }} </td>
             <td>
               <i nz-icon nzType="delete" [ngClass]="{'blinking': isSelected(stat)}" style="margin-right: 6px;"
-                (click)=" this.isSelectedStats().length != 0 && this.isSelected(stat) ?showDeletionAlert(stat):showSelectMessage()"></i>
+                (click)=" this.isSelectedStats().length == 1 && this.isSelected(stat) ?showDeletionAlert(stat):showSelectFileMessage()"></i>
               <i nz-icon nzType="download" [ngClass]="{'blinking': isSelected(stat)}"
-                (click)="this.isSelectedStats().length != 0 && this.isSelected(stat)?openFormatSelectionDialog():showSelectMessage()"
+                (click)="this.isSelectedStats().length == 1 && this.isSelected(stat)?openFormatSelectionDialog():showSelectFileMessage()"
                 style=" margin-right:1.18px;"></i>
               <i nz-icon nzType="eye" [ngClass]="{'blinking': isSelected(stat)}"
-                (click)="this.isSelectedStats().length!=0 && this.isSelected(stat)?showContent(stat):showSelectMessage()"></i>
+                (click)="this.isSelectedStats().length==1 && this.isSelected(stat)?showContent(stat):showSelectFileMessage()"></i>
             </td>
           </tr>
         </ng-container>
@@ -196,15 +197,51 @@
 
     </table>
   </div>
-  <div class="pagination-controls">
-    <button (click)="changePage(-1)" [disabled]="currentPage === 1">
-      <i  nz-icon nzType="left" nzTheme="outline"></i>
-    </button>
-    <span> {{ currentPage }} / {{ totalPages }} </span>
-    <button (click)="changePage(1)" [disabled]="currentPage === totalPages">
-      <i nz-icon nzType="right" nzTheme="outline"></i>
-    </button>
+  <ng-container *ngIf="this.statisticsPerPage.length>0 ;else noPages">
+    <div class="pagination-controls">
+      <button (click)="changePage(-1)" [disabled]="currentPage === 1">
+        <i nz-icon nzType="left" nzTheme="outline"></i>
+      </button>
+      <span> {{ currentPage }} / {{ totalPages }} </span>
+      <button (click)="changePage(1)" [disabled]="currentPage === totalPages">
+        <i nz-icon nzType="right" nzTheme="outline"></i>
+      </button>
+    </div>
+  </ng-container>
+  <ng-template #noPages>
+   
+  </ng-template>
+  <p class="title-histogram">Histogram of Selected Files</p>
+  <div class="slider-container">
+    <input type="range"
+           min="0.01"
+           max="1.0"
+           step="0.01"
+           [(ngModel)]="sliderValue"
+           (ngModelChange)="updateSliderValue()"
+           class="slider" >
+    <div class="slider-value" *ngIf="sliderClicked">Interval Size : {{ sliderValue }}</div>
   </div>
   
+  
+  <ng-container *ngIf="combinedHistogramData != null && selectedStatistics.length > 0; else noHistogramData">
+    <div class="chart-container">
+      <ngx-charts-bar-vertical [view]="[300, 400]" [results]="single" [xAxis]="true" [yAxis]="true"
+        [showXAxisLabel]="true" [showYAxisLabel]="true" [xAxisLabel]="'Duration'"
+        [yAxisLabel]="'SegmentCount'"></ngx-charts-bar-vertical>
+    </div>
+  </ng-container>
+
+  <ng-template #noHistogramData>
+    <div class="chart-container">
+      <p class="noDataText">No Data displayed!</p>
+      <ngx-charts-bar-vertical [view]="[1000, 400]" [results]="noDataResult" [scheme]="colorScheme" [xAxis]="true"
+        [yAxis]="true" [showXAxisLabel]="true" [showYAxisLabel]="true" [xAxisLabel]="'Duration'"
+        [yAxisLabel]="'SegmentCount'" [yScaleMax]="1000" class="bar">
+
+      </ngx-charts-bar-vertical>
+    </div>
+  </ng-template>
+
 
 </nz-content>

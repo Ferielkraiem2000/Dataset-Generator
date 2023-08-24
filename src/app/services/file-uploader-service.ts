@@ -10,13 +10,13 @@ export class FileUploaderService {
   private baseUrl = 'http://localhost:8080/file-parsing';
 
   constructor(private http: HttpClient) {}
-  uploadFiles(files: File[]): Observable<any> {
+  uploadFiles(files: File[]): Observable<String> {
     const formData: FormData = new FormData();
     for (let i = 0; i < files.length; i++) {
       formData.append('files', files[i], files[i].name);
     }
 
-    return this.http.post(`${this.baseUrl}`, formData);
+    return this.http.post<String>(`${this.baseUrl}`, formData);
   }
 
 }

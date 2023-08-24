@@ -11,7 +11,7 @@ export class FilecontentService {
   constructor(private http: HttpClient) {}
 
   showContent(fileId: number): Observable<any[]> {
-    let url = `${this.baseUrl}/{id}?&fileId=${fileId}`;
+    let url = `${this.baseUrl}/{id}?fileId=${fileId}`;
     return this.http.get<any[]>(url, );
   }
 }

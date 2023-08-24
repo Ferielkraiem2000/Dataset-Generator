@@ -1,4 +1,14 @@
 <p class="title-histogram">Distribution of Segment Duration</p>
+<div class="slider-container">
+  <input type="range"
+         min="0.01"
+         max="1.0"
+         step="0.01"
+         [(ngModel)]="sliderValue"
+         (ngModelChange)="updateSliderValue()"
+         class="slider" >
+  <div class="slider-value" *ngIf="sliderClicked">Interval Size : {{ sliderValue }}</div>
+</div>
 
 <ng-container *ngIf="histogramData != null; else noHistogramData">
   <div class="chart-container">

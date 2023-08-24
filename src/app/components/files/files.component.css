@@ -16,7 +16,7 @@ nz-card {
 }
 .card-title {
  margin-left: 95px;
- margin-top: 1%;
+ margin-top: -20%;
   font-size: 17px;
   color:grey;
 }
@@ -24,7 +24,7 @@ nz-card {
   color:#000000;
   font-size: 20px;
   margin-left: 115px;
-  margin-top:-13%;
+  margin-top:-12%;
 }
   .custom-container {
     background-color: transparent;
@@ -42,7 +42,7 @@ nz-card {
     border-collapse: separate;
     border-spacing: 0;
     background: white; 
-    margin-top: 5%;
+    margin-top: 2%;
    margin-bottom:2%;
    border-radius: 10px;
    border-color: #e7dddd;
@@ -108,8 +108,8 @@ nz-card {
       position: absolute;
       top: -10px;
       left: 10px;
-      width: 90px;
-      height:90px;
+      width: 100px;
+      height:100px;
       padding: 5px;
       display: flex;
       align-items: center;
@@ -125,7 +125,7 @@ nz-card {
     .title-file {
       font-size: 30px;
       color:rgb(146, 142, 142);
-      padding-top:2.5%;
+      margin-top:7%;
       margin-left:2%;
     }
     .title-card {
@@ -270,4 +270,57 @@ nz-card {
   margin-bottom:3%;
   margin-left:10%;
 
+}
+.chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+text-align: center;
+width:100%;
+}
+
+
+.title-histogram {
+  color:rgb(146, 142, 142);
+margin-top :5%;  font-size: 30px;
+margin-left:2.5%;
+
+}
+.bar {
+fill: var(--color);
+width:100%;
+font-size:16px;
+position:absolute;
+margin-left:40%;
+text-align:center;
+}
+.noDataText{
+position:absolute;
+font-size: 35px;
+font-weight:bold;
+margin-left:-1%
+}
+.slider {
+  width: 70%;
+  margin-left: 20%;
+  background: linear-gradient(to right, rgb(160, 191, 237), rgb(13, 13, 223)) no-repeat center/100% 30px;
+  appearance: none;
+  border-radius:20px;
+}
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: rgb(10, 10, 115);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+
+.slider-value {
+  color: blue;
+  font-size: 16px;
+  margin-left:52%
 }

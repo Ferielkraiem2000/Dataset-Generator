@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Statistics } from 'src/app/interfaces/statistics.interface';
 import { DeleteFileService } from 'src/app/services/delete-file.service';
 import { FilesService } from 'src/app/services/files.service';
@@ -13,11 +13,14 @@ import { HttpEventType } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { ContentFileComponent } from '../content-file/content-file.component';
+import { HistogramData } from 'src/app/interfaces/histogramdata.interface';
+import { IntervalData } from 'src/app/interfaces/interval.interface';
+import { HistogramCombinedService } from 'src/app/services/histogram-combined.service';
 @Component({
   selector: 'app-files',
   templateUrl: './files.component.html',
   styleUrls: ['./files.component.css'],
-  providers: [FilesService, UpdateFileService, DeleteFileService, NzMessageService]
+  providers: [FilesService, UpdateFileService, DeleteFileService, NzMessageService,HistogramCombinedService]
 })
 export class FilesComponent implements OnInit {
 
@@ -42,8 +45,19 @@ export class FilesComponent implements OnInit {
   downloadSubscription: Subscription | undefined;
   percent = 0;
   interval: any;
+  single: any[] = [];
   searchFileName: string = '';
   isSearchButtonClicked: boolean = false;
+  combinedHistogramData!:HistogramData;
+  sliderValue: number = 0.01;
+  sliderClicked: boolean = false;
+  prevSliderValue: number = 0.01;  noDataResult = [
+    {
+      name: '0.0',
+      value: 0,
+    }
+  ];
+  colorScheme = 'black';
   constructor(
     private filesService: FilesService,
     private updateFileService: UpdateFileService,
@@ -53,7 +67,9 @@ export class FilesComponent implements OnInit {
     public communicationService: CommunicationService,
     private fileContentService: FilecontentService,
     private fileDownloaderService: FileDownloaderService,
-    private nzMessageService: NzMessageService
+    private nzMessageService: NzMessageService,
+    private histogramCombinedService:HistogramCombinedService,
+    private cdr: ChangeDetectorRef
   ) { }
 
 
@@ -221,6 +237,7 @@ export class FilesComponent implements OnInit {
       this.communicationService.selectedStats.push(stat);
     }
     this.fetchStatistics();
+    this.fetchCombinedHistogramData();
   }
 
 
@@ -366,5 +383,44 @@ export class FilesComponent implements OnInit {
   showSelectMessage() {
     this.nzMessageService.info('Select desired Files!')
   }
+
+  showSelectFileMessage() {
+    this.nzMessageService.info('Only one file should be selected!')
+  }
+  fetchCombinedHistogramData(): void {
+    const fileIds: number[] = [];
+    for (const stat of this.communicationService.selectedStats) {
+      fileIds.push(stat.fileId);
+    }
+    this.histogramCombinedService.getCombinedHistogramData(fileIds,this.sliderValue).subscribe(data => {
+      this.combinedHistogramData = data;
+      this.formatDataForChart();
+    }, 
+    error=>{
+      this.nzMessageService.error("Error Fetching Histogram Data!")
+    }
+    
+    );
+ 
+  }
+
+  formatDataForChart(): void {
+    const labels: string[] = [];
+    const intervals:IntervalData[]=this.combinedHistogramData.intervals;
+    for (const intervalData of intervals) {
+      labels.push(`${intervalData.start}-${intervalData.end}`);
+    }
+    const values = this.combinedHistogramData.segmentCountPerInterval;
+    this.single = labels.map((label, index) => ({
+      name: label,
+      value:parseInt(values[index].toString(),10)
+    }));
+  }
+  updateSliderValue() {
+    this.cdr.detectChanges();
+    this.sliderClicked = true;
+    this.fetchCombinedHistogramData();
+   
+}
 
 }

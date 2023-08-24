@@ -4,18 +4,18 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { FileUploaderComponent } from './components/file-uploader/file-uploader-component';
 import { AppTitleComponent } from './components/app-title/app-title.component';
-import {  HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzTableModule } from 'ng-zorro-antd/table'; 
+import { NzTableModule } from 'ng-zorro-antd/table';
 import { SideBarComponent } from './components/side-bar/side-bar.component';
 import { StatisticCardComponent } from './components/statistic-card/statistic-card.component';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import { NzFormModule } from 'ng-zorro-antd/form'; 
+import { NzFormModule } from 'ng-zorro-antd/form';
 
 import { FilesComponent } from './components/files/files.component';
 import { CardModule, TableModule, TabsModule } from '@coreui/angular';
@@ -33,47 +33,47 @@ import { SelectedFilesStatisticService } from './services/selected-files-statist
 import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { HistogramComponent } from './components/histogram/histogram.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { CommonModule } from '@angular/common'; //
+import { CommonModule } from '@angular/common';
 import { ContentFileComponent } from './components/content-file/content-file.component';
 registerLocaleData(en);
 
 @NgModule({
   declarations: [
- AppComponent,
-FileUploaderComponent, AppTitleComponent,
- SideBarComponent,
- StatisticCardComponent,
-FilesComponent,
-DashboardComponent,
-DownloadFormatDialogComponent,
-HistogramComponent,
-ContentFileComponent
+    AppComponent,
+    FileUploaderComponent, AppTitleComponent,
+    SideBarComponent,
+    StatisticCardComponent,
+    FilesComponent,
+    DashboardComponent,
+    DownloadFormatDialogComponent,
+    HistogramComponent,
+    ContentFileComponent,
 
-   ],
+  ],
   imports: [
-      HttpClientModule,
-      BrowserModule,
-      AppRoutingModule,
-      NzLayoutModule,
-      NzMenuModule,
-      NzIconModule,
-      NzCardModule,
-      NzAvatarModule,
-      NzTableModule,
-      NzUploadModule,
-      NzProgressModule,
-      CardModule,
-      TableModule,
-      TabsModule,
-      RouterModule,
-      FormsModule,
-      BrowserAnimationsModule,
-      MatDialogModule,
-      NzSelectModule,
-      NzFormModule,
-      NgxChartsModule,
-      CommonModule,
-    ],
+    HttpClientModule,
+    BrowserModule,
+    AppRoutingModule,
+    NzLayoutModule,
+    NzMenuModule,
+    NzIconModule,
+    NzCardModule,
+    NzAvatarModule,
+    NzTableModule,
+    NzUploadModule,
+    NzProgressModule,
+    CardModule,
+    TableModule,
+    TabsModule,
+    RouterModule,
+    FormsModule,
+    BrowserAnimationsModule,
+    MatDialogModule,
+    NzSelectModule,
+    NzFormModule,
+    NgxChartsModule,
+    CommonModule,
+  ],
   providers: [
     NzModalService,
     SelectedFilesStatisticService,
