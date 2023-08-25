@@ -78,7 +78,7 @@ public class FileParseServiceImpl implements FileParseService {
         return fileName;
     }
 
-    public StringBuilder extractTranscription(List<String> fields) {
+    public String extractTranscription(List<String> fields) {
         StringBuilder transcription = new StringBuilder();
         boolean afterField4 = false;
         for (String field : fields) {
@@ -89,8 +89,9 @@ public class FileParseServiceImpl implements FileParseService {
                 afterField4 = true;
             }
         }
-        return transcription;
+        return transcription.toString();
     }
+    
 
     public void uploadFile(MultipartFile file) throws IOException {
         List<String> validLines = extractValidLines(file);
@@ -112,7 +113,7 @@ public class FileParseServiceImpl implements FileParseService {
             double segmentStart = Double.parseDouble(outputLine.get("segment_start"));
             double segmentEnd = Double.parseDouble(outputLine.get("segment_end"));
             double duration = segmentEnd - segmentStart;
-            StringBuilder transcription = extractTranscription(fields);
+            String transcription = extractTranscription(fields);
             outputLine.put("transcription", String.valueOf(transcription));
             outputLines.add(outputLine);
             existingFile = fileRepository.existsByFileName(fileName);
@@ -136,8 +137,7 @@ public class FileParseServiceImpl implements FileParseService {
             fileEntity.setUpload_time(LocalDateTime.now());
             fileRepository.save(fileEntity);
         } else {
-            throw new IOException("File already exists!");
-
+            throw new IllegalArgumentException("file already exists!");
         }
     }
 
@@ -162,7 +162,7 @@ public class FileParseServiceImpl implements FileParseService {
             double segmentStart = Double.parseDouble(outputLine.get("segment_start"));
             double segmentEnd = Double.parseDouble(outputLine.get("segment_end"));
             double duration = segmentEnd - segmentStart;
-            StringBuilder transcription = extractTranscription(fields);
+            String transcription = extractTranscription(fields);
             outputLine.put("transcription", String.valueOf(transcription));
             existingFile = fileRepository.existsByFileName(fileName);
             if (existingFile != null) {
@@ -186,7 +186,7 @@ public class FileParseServiceImpl implements FileParseService {
         }
     }
 
-    public List<Map<String, String>> showContent(Long fileId) {
+    public List<Map<String, String>> showFileContent(Long fileId) {
         List<Segment> segments = segmentRepository.findAllById(fileId);
         List<Map<String, String>> outputLines = new ArrayList<>();
         for (Segment segment : segments) {

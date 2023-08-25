@@ -10,17 +10,18 @@ import java.util.Map;
 
 public interface FileParseService {
 
+  List<String> extractValidLines(MultipartFile file) throws IOException;
 
-    List<String> extractValidLines(MultipartFile file) throws IOException;
+  List<List<String>> extractLineContent(MultipartFile file) throws IOException;
 
-    List<List<String>> extractLineContent(MultipartFile file) throws IOException;
+  String extractFileName(List<String> fields) throws IOException;
 
-    String extractFileName(List<String> fields) throws IOException;
+  String extractTranscription(List<String> fields);
 
-    StringBuilder extractTranscription(List<String> fields);
+  void uploadFile(MultipartFile file) throws IOException;
 
-   void uploadFile(MultipartFile file) throws IOException ;
-     void overwriteExistingFile(MultipartFile file) throws IOException;
-     List<Map<String, String>> showContent(Long fileId);
+  void overwriteExistingFile(MultipartFile file) throws IOException;
+
+  List<Map<String, String>> showFileContent(Long fileId);
 
 }
