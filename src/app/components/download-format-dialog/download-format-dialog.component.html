@@ -1,5 +1,5 @@
 <nz-form-item>
-    <input nz-input placeholder="Tap destination" [(ngModel)]="path" />
+    <input nz-input placeholder="Tap the audio file's path" [(ngModel)]="path" />
   </nz-form-item>
   <nz-form-item style="margin-top: 10px;">
     <nz-select [(ngModel)]="selectedFormat" [nzPlaceHolder]="'Select Format'" style="width: 350px;">
@@ -10,6 +10,6 @@
   </nz-form-item>
   <div style="margin-top: 20px;">
     <button nz-button nzType="primary" (click)="onDownloadClick()">Download</button>
-    <button nz-button nzType="default" style="margin-right: 10px;" (click)="onNoClick()">Cancel</button>
+    <button nz-button nzType="default" style="margin-right: 10px; margin-left:5px" (click)="onNoClick()">Cancel</button>
   </div>
   
