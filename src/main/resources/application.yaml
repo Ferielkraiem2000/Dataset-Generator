@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/dataset_generator
+    url: jdbc:postgresql://database-postgres:5432/dataset_generator
     username: root
     password: root
-
+    driver-class-name: org.postgresql.Driver
   jpa:
     properties:
       hibernate:
