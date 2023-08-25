@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -42,15 +41,15 @@ public class ReadFileController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/file-parsing")
     public ResponseEntity<String> uploadFile(@RequestParam("files") List<MultipartFile> files)
             throws IOException {
-        for (MultipartFile file : files) {
+       for (MultipartFile file : files) {
             if (!fileService.verifyType(file)) {
                 return ResponseEntity.badRequest()
                         .body("File extension not allowed. Only '.txt' and '.stm' files are accepted!");
             }
-           dataService.uploadFile(file);
+            dataService.uploadFile(file);
 
         }
-        return ResponseEntity.ok("File uploaded Successfully");
+   return ResponseEntity.ok("File uploaded Successfully!");
     }
 
     @Operation(summary = "Overwrite Uploaded File")
@@ -67,7 +66,7 @@ public class ReadFileController {
     @Operation(summary = "Get File Content ")
     @GetMapping(path = "/file-parsing/{id}")
     public ResponseEntity<List<Map<String, String>>> showContent(@RequestParam("fileId") Long fileId) {
-        return ResponseEntity.ok(dataService.showContent(fileId));
+        return ResponseEntity.ok(dataService.showFileContent(fileId));
     }
 
     @Operation(summary = "Download Manifest File")
@@ -109,7 +108,7 @@ public class ReadFileController {
         return ResponseEntity.ok(statisticsService.getFilesStatisticsByFileName(fileName));
     }
 
-    @Operation(summary = "Get the statistics of one or more selected uploaded dataset  manifests")
+    @Operation(summary = "Get the statistics of one or more selected uploaded STM files")
     @GetMapping("/files/statistics/{ids}")
     public ResponseEntity<List<Map<String, Object>>> getFilesStatistics(@RequestParam("fileIds") List<Long> fileIds) {
         return ResponseEntity.ok(statisticsService.getFilesStatistics(fileIds));
@@ -134,10 +133,15 @@ public class ReadFileController {
         return ResponseEntity.ok("Files deleted successfully!");
     }
 
-    @GetMapping("/histogram")
-    public ResponseEntity<HistogramData> getHistogramData() {
-        HistogramData histogramData = statisticsService.getHistogramData();
+    @GetMapping("/histogram/{size}")
+    public ResponseEntity<HistogramData> getHistogramData(@RequestParam("intervalSize") double intervalSize) {
+        HistogramData histogramData = statisticsService.getHistogramData(intervalSize);
         return ResponseEntity.ok(histogramData);
     }
 
+        @GetMapping("/histogram/{ids}/{size}")
+    public ResponseEntity<HistogramData> getHistogramData(@RequestParam("fileIds") List<Long>fileIds, @RequestParam("intervalSize") double intervalSize) {
+        HistogramData histogramData = statisticsService.getHistogramDataForSelectedFiles(fileIds, intervalSize);
+        return ResponseEntity.ok(histogramData);
+    }
 }
