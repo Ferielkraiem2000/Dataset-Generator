@@ -13,21 +13,21 @@
 <ng-container *ngIf="histogramData != null; else noHistogramData">
   <div class="chart-container">
     <ngx-charts-bar-vertical
-      [view]="[300, 400]"
+      [view]="[1000, 400]"
       [results]="single"
       [xAxis]="true"
       [yAxis]="true"
       [showXAxisLabel]="true"
       [showYAxisLabel]="true"
       [xAxisLabel]="'Duration'"
-      [yAxisLabel]="'SegmentCount'"
+      [yAxisLabel]="'Segment Count'"
     ></ngx-charts-bar-vertical>
   </div>
 </ng-container>
 
 <ng-template #noHistogramData>
   <div class="chart-container">
-    <p class="noDataText">No Data displayed!</p>
+    <p class="noDataText">No Data to be displayed</p>
     <ngx-charts-bar-vertical
       [view]="[1000, 400]"
       [results]="noDataResult"
@@ -37,7 +37,7 @@
       [showXAxisLabel]="true"
       [showYAxisLabel]="true"
       [xAxisLabel]="'Duration'"
-      [yAxisLabel]="'SegmentCount'"
+      [yAxisLabel]="'Segment Count'"
       [yScaleMax]="1000"
       class="bar"    >
    

@@ -276,7 +276,6 @@ export class FilesComponent implements OnInit {
     },
       error => {
         if (error.status != 200) {
-          this.nzMessageService.error('File Name should not be null!');
           this.nzMessageService.error('Error Deleting File!');
         }
       }
@@ -289,7 +288,7 @@ export class FilesComponent implements OnInit {
       nzTitle: 'Download Manifest File',
       nzContent: DownloadFormatDialogComponent,
       nzFooter: null,
-      nzStyle: { width: '800px', 'align-items': 'center', 'justify-content': 'center' },
+      nzStyle: { width: '400px', 'align-items': 'center', 'justify-content': 'center' ,'text-align':'center'},
     });
   }
 
@@ -328,7 +327,7 @@ export class FilesComponent implements OnInit {
       nzTitle: 'File Content',
       nzContent: ContentFileComponent,
       nzFooter: null,
-      nzStyle: { width: '1400px', height: '800px' },
+      nzStyle: { width: 'max-content', height: 'max-content' },
     });
   }
 
@@ -385,7 +384,7 @@ export class FilesComponent implements OnInit {
   }
 
   showSelectFileMessage() {
-    this.nzMessageService.info('Only one file should be selected!')
+    this.nzMessageService.info('One file should be selected!')
   }
   fetchCombinedHistogramData(): void {
     const fileIds: number[] = [];
