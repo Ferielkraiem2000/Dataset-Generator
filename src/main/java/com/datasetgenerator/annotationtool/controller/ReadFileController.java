@@ -1,5 +1,6 @@
 package com.datasetgenerator.annotationtool.controller;
 
+import com.datasetgenerator.annotationtool.model.File;
 import com.datasetgenerator.annotationtool.service.*;
 import com.datasetgenerator.annotationtool.util.HistogramData;
 
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -39,28 +42,43 @@ public class ReadFileController {
 
     @Operation(summary = "Parse File")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/file-parsing")
-    public ResponseEntity<String> uploadFile(@RequestParam("files") List<MultipartFile> files)
+    public ResponseEntity<String> uploadFiles(@RequestParam("files") List<MultipartFile> files)
             throws IOException {
-       for (MultipartFile file : files) {
+        String result = "";
+        for (MultipartFile file : files) {
             if (!fileService.verifyType(file)) {
                 return ResponseEntity.badRequest()
                         .body("File extension not allowed. Only '.txt' and '.stm' files are accepted!");
             }
-            dataService.uploadFile(file);
+            File existingFile = dataService.existsFile(file);
+            if (existingFile == null) {
+                dataService.uploadFile(file, false, existingFile);
+                result = "File Uploaded Successfully!";
+            } else {
+                result = "file exists";
 
+            }
         }
-   return ResponseEntity.ok("File uploaded Successfully!");
+        return ResponseEntity.ok(result);
     }
 
-    @Operation(summary = "Overwrite Uploaded File")
+    @Operation(summary = "Overwrite File")
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/file-overwriting")
-    public ResponseEntity<String> overwriteFile(@RequestParam("file") MultipartFile file) throws IOException {
-        if (!fileService.verifyType(file)) {
-            return ResponseEntity.badRequest()
-                    .body("File extension not allowed. Only '.txt' and '.stm' files are accepted!");
+    public ResponseEntity<String> overwriteFiles(@RequestParam("files") List<MultipartFile> files)
+            throws IOException {
+        String result = "";
+        for (MultipartFile file : files) {
+            if (!fileService.verifyType(file)) {
+                return ResponseEntity.badRequest()
+                        .body("File extension not allowed. Only '.txt' and '.stm' files are accepted!");
+            }
+            File existingFile = dataService.existsFile(file);
+            if (existingFile != null) {
+                dataService.uploadFile(file, true, existingFile);
+                result = "File Overwritten Successfully!";
+            }
         }
-        dataService.overwriteExistingFile(file);
-        return ResponseEntity.ok("File overwrited successfully!");
+        return ResponseEntity.ok(result);
     }
 
     @Operation(summary = "Get File Content ")
@@ -133,14 +151,17 @@ public class ReadFileController {
         return ResponseEntity.ok("Files deleted successfully!");
     }
 
+    @Operation(summary = "Get the histogram data of all uploaded STM files")
     @GetMapping("/histogram/{size}")
-    public ResponseEntity<HistogramData> getHistogramData(@RequestParam("intervalSize") double intervalSize) {
+    public ResponseEntity<HistogramData> getHistogramData(@RequestParam("size") double intervalSize) {
         HistogramData histogramData = statisticsService.getHistogramData(intervalSize);
         return ResponseEntity.ok(histogramData);
     }
 
-        @GetMapping("/histogram/{ids}/{size}")
-    public ResponseEntity<HistogramData> getHistogramData(@RequestParam("fileIds") List<Long>fileIds, @RequestParam("intervalSize") double intervalSize) {
+    @Operation(summary = "Get the histogram data of one or more selected uploaded STM files")
+    @GetMapping("/histogram/{ids}/{size}")
+    public ResponseEntity<HistogramData> getHistogramData(@RequestParam("fileIds") List<Long> fileIds,
+            @RequestParam("intervalSize") double intervalSize) {
         HistogramData histogramData = statisticsService.getHistogramDataForSelectedFiles(fileIds, intervalSize);
         return ResponseEntity.ok(histogramData);
     }

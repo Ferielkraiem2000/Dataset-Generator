@@ -22,8 +22,8 @@ public interface SegmentRepository extends JpaRepository<Segment, Long> {
     @Query("SELECT s , f.file_id from Segment s JOIN  s.file f where f.file_id= :fileId")
     List<Segment> findAllById(@Param("fileId") Long fileId);
 
-    @Query("SELECT s.duration , f.file_id FROM Segment s JOIN s.file f group by f.file_id , s.duration")
-    List<Object[]> getDurationsSegments();
-    @Query("SELECT s.duration , f.file_id FROM Segment s JOIN s.file f WHERE f.file_id IN :fileIds group by f.file_id , s.duration ")
-    List<Object[]> getDurationsSegmentsForFiles(@Param("fileIds") List<Long> fileIds);
+    @Query("SELECT s.duration FROM Segment s ")
+    List<Double> getDurationsSegments();
+    @Query("SELECT s.duration  FROM Segment s JOIN s.file f WHERE f.file_id IN :fileIds ")
+    List<Double> getDurationsSegmentsForFiles(@Param("fileIds") List<Long> fileIds);
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,11 +27,13 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    StatisticsServiceImpl(SegmentRepository segmentRepository, IntervalDataRepository intervalDataRepository, FileRepository fileRepository) {
+    StatisticsServiceImpl(SegmentRepository segmentRepository, IntervalDataRepository intervalDataRepository,
+            FileRepository fileRepository) {
         this.segmentRepository = segmentRepository;
         this.intervalDataRepository = intervalDataRepository;
         this.fileRepository = fileRepository;
     }
+
     public List<Map<String, Object>> getDatasetStatistics() {
         List<Object[]> result = fileRepository.getDatasetStatistics();
         List<Map<String, Object>> filesStatistics = new ArrayList<>();
@@ -54,7 +57,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         List<Object[]> result = segmentRepository.getFilesStatistics();
         List<Map<String, Object>> filesStatistics = new ArrayList<>();
         for (Object[] row : result) {
-            Long fileId=(Long) row[0];
+            Long fileId = (Long) row[0];
             String fileName = (String) row[1];
             Double totalDuration = (Double) row[2];
             Double averageDuration = (Double) row[3];
@@ -73,11 +76,12 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
         return filesStatistics;
     }
-     public List<Map<String, Object>> getFilesStatisticsByFileName(String Name) {
+
+    public List<Map<String, Object>> getFilesStatisticsByFileName(String Name) {
         List<Object[]> result = segmentRepository.getFilesStatisticsByFileName(Name);
         List<Map<String, Object>> filesStatistics = new ArrayList<>();
         for (Object[] row : result) {
-            Long fileId=(Long) row[0];
+            Long fileId = (Long) row[0];
             String fileName = (String) row[1];
             Double totalDuration = (Double) row[2];
             Double averageDuration = (Double) row[3];
@@ -96,6 +100,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
         return filesStatistics;
     }
+
     public List<Map<String, Object>> getFilesStatistics(List<Long> fileIds) {
         List<Segment> segments = segmentRepository.findAll();
         for (Long fileId : fileIds) {
@@ -123,125 +128,145 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     public HistogramData getHistogramData(double intervalSize) {
-        List<Object[]> result = segmentRepository.getDurationsSegments();
+        List<Double> result = segmentRepository.getDurationsSegments();
+        Collections.sort(result);
         List<IntervalData> intervalDataList = new ArrayList<>();
         double currentIntervalStart = 0.0;
         double currentIntervalEnd = intervalSize;
         int intervalSegmentCount = 0;
-    
-        for (Object[] row : result) {
-            double fileDuration = (double) row[0];
-            fileDuration = fileDuration / 1000;
-    
-            while (fileDuration >= currentIntervalEnd) {
-               
+        for (Double duration : result) {
+            double segmentDuration = roundToTwoDecimal(duration);
+            List<IntervalData> segmentIntervalDataList = new ArrayList<>();
+
+            while (segmentDuration > currentIntervalEnd) {
                 IntervalData intervalData = new IntervalData();
-                intervalData.setStartInterval(currentIntervalStart);
-                intervalData.setEndInterval(currentIntervalEnd);
+                intervalData.setStartInterval(roundToTwoDecimal(currentIntervalStart));
+                intervalData.setEndInterval(roundToTwoDecimal(currentIntervalEnd));
                 intervalData.setSegmentCount((long) intervalSegmentCount);
-                intervalDataList.add(intervalData);
-    
+                segmentIntervalDataList.add(intervalData);
                 currentIntervalStart = currentIntervalEnd;
-                currentIntervalEnd += intervalSize;
+                currentIntervalEnd = roundToTwoDecimal(currentIntervalEnd + intervalSize);
                 intervalSegmentCount = 0;
             }
-    
-            if (fileDuration >= currentIntervalStart) {
+            if (segmentDuration >= currentIntervalStart) {
                 intervalSegmentCount++;
             }
+            intervalDataList.addAll(segmentIntervalDataList);
+
         }
-    
-        if (intervalSegmentCount > 0) {
-          
+        List<IntervalData> segmentIntervalDataList = new ArrayList<>();
+
+        if (intervalSegmentCount >= 0) {
             IntervalData intervalData = new IntervalData();
-            intervalData.setStartInterval(currentIntervalStart);
-            intervalData.setEndInterval(currentIntervalEnd);
+            intervalData.setStartInterval(roundToTwoDecimal(currentIntervalStart));
+            intervalData.setEndInterval(roundToTwoDecimal(currentIntervalEnd));
             intervalData.setSegmentCount((long) intervalSegmentCount);
             intervalDataList.add(intervalData);
+            segmentIntervalDataList.add(intervalData);
+
         }
-    
+        intervalDataList.addAll(segmentIntervalDataList);
+
         for (IntervalData intervalData : intervalDataList) {
-            IntervalData existingIntervalData = intervalDataRepository.findByStartIntervalAndEndInterval(intervalData.getStartInterval(), intervalData.getEndInterval());
+            IntervalData existingIntervalData = intervalDataRepository.findByStartIntervalAndEndInterval(
+                    intervalData.getStartInterval(), intervalData.getEndInterval());
+
             if (existingIntervalData == null) {
                 intervalDataRepository.save(intervalData);
             } else {
-                existingIntervalData.setSegmentCount(existingIntervalData.getSegmentCount() + intervalData.getSegmentCount());
+                existingIntervalData
+                        .setSegmentCount(existingIntervalData.getSegmentCount() + intervalData.getSegmentCount());
                 intervalDataRepository.save(existingIntervalData);
             }
         }
-    
+
+        List<Interval> durationIntervals = new ArrayList<>();
+        List<Long> segmentCountPerInterval = new ArrayList<>();
+
+        for (IntervalData intervalData : intervalDataList) {
+            durationIntervals.add(new Interval(intervalData.getStartInterval(), intervalData.getEndInterval()));
+            segmentCountPerInterval.add(intervalData.getSegmentCount());
+        }
+
+        HistogramData histogramData = new HistogramData();
+        histogramData.setIntervals(durationIntervals);
+        histogramData.setSegmentCountPerInterval(segmentCountPerInterval);
+        return histogramData;
+    }
+
+    public HistogramData getHistogramDataForSelectedFiles(List<Long> fileIds, double intervalSize) {
+        List<Double> result = segmentRepository.getDurationsSegmentsForFiles(fileIds);
+        Collections.sort(result);
+        double currentIntervalStart = 0.0;
+        double currentIntervalEnd = intervalSize;
+        int intervalSegmentCount = 0;
+        List<IntervalData> intervalDataList = new ArrayList<>();
+
+       for (Double duration : result){
+            double segmentDuration = roundToTwoDecimal((double) duration);
+
+            List<IntervalData> segmentIntervalDataList = new ArrayList<>();
+
+            while (segmentDuration > currentIntervalEnd) {
+                IntervalData intervalData = new IntervalData();
+                intervalData.setStartInterval(roundToTwoDecimal(currentIntervalStart));
+                intervalData.setEndInterval(roundToTwoDecimal(currentIntervalEnd));
+                intervalData.setSegmentCount((long) intervalSegmentCount);
+                segmentIntervalDataList.add(intervalData);
+                currentIntervalStart = currentIntervalEnd;
+                currentIntervalEnd = roundToTwoDecimal(currentIntervalEnd + intervalSize);
+                intervalSegmentCount = 0;
+
+            }
+
+            if (segmentDuration >= currentIntervalStart) {
+                intervalSegmentCount++;
+            }
+
+            intervalDataList.addAll(segmentIntervalDataList);
+
+        }
+        List<IntervalData> segmentIntervalDataList = new ArrayList<>();
+        if (intervalSegmentCount >= 0) {
+            IntervalData intervalData = new IntervalData();
+            intervalData.setStartInterval(roundToTwoDecimal(currentIntervalStart));
+            intervalData.setEndInterval(roundToTwoDecimal(currentIntervalEnd));
+            intervalData.setSegmentCount((long) intervalSegmentCount);
+            segmentIntervalDataList.add(intervalData);
+        }
+        intervalDataList.addAll(segmentIntervalDataList);
+
+        for (IntervalData intervalData : intervalDataList) {
+
+            IntervalData existingIntervalData = intervalDataRepository.findByStartIntervalAndEndInterval(
+                    intervalData.getStartInterval(), intervalData.getEndInterval());
+
+            if (existingIntervalData == null) {
+                intervalDataRepository.save(intervalData);
+            } else {
+
+                existingIntervalData
+                        .setSegmentCount(existingIntervalData.getSegmentCount() + intervalData.getSegmentCount());
+                intervalDataRepository.save(existingIntervalData);
+
+            }
+        }
+
         List<Interval> durationIntervals = new ArrayList<>();
         List<Long> segmentCountPerInterval = new ArrayList<>();
         for (IntervalData intervalData : intervalDataList) {
             durationIntervals.add(new Interval(intervalData.getStartInterval(), intervalData.getEndInterval()));
             segmentCountPerInterval.add(intervalData.getSegmentCount());
         }
-    
+
         HistogramData histogramData = new HistogramData();
         histogramData.setIntervals(durationIntervals);
         histogramData.setSegmentCountPerInterval(segmentCountPerInterval);
         return histogramData;
     }
-      public HistogramData getHistogramDataForSelectedFiles(List<Long> fileIds, double intervalSize) {
-        List<Object[]> result = segmentRepository.getDurationsSegmentsForFiles(fileIds);
-        List<IntervalData> intervalDataList = new ArrayList<>();
-        double currentIntervalStart = 0.0;
-        double currentIntervalEnd = intervalSize;
-        int intervalSegmentCount = 0;
-    
-        for (Object[] row : result) {
-            double fileDuration = (double) row[0];
-            fileDuration = fileDuration / 1000;
-    
-            while (fileDuration >= currentIntervalEnd) {
-           
-                IntervalData intervalData = new IntervalData();
-                intervalData.setStartInterval(currentIntervalStart);
-                intervalData.setEndInterval(currentIntervalEnd);
-                intervalData.setSegmentCount((long) intervalSegmentCount);
-                intervalDataList.add(intervalData);
-    
-                currentIntervalStart = currentIntervalEnd;
-                currentIntervalEnd += intervalSize;
-                intervalSegmentCount = 0;
-            }
-    
-            if (fileDuration >= currentIntervalStart) {
-                intervalSegmentCount++;
-            }
-        }
-    
-        if (intervalSegmentCount > 0) {
-           
-            IntervalData intervalData = new IntervalData();
-            intervalData.setStartInterval(currentIntervalStart);
-            intervalData.setEndInterval(currentIntervalEnd);
-            intervalData.setSegmentCount((long) intervalSegmentCount);
-            intervalDataList.add(intervalData);
-        }
-    
-        for (IntervalData intervalData : intervalDataList) {
-            IntervalData existingIntervalData = intervalDataRepository.findByStartIntervalAndEndInterval(intervalData.getStartInterval(), intervalData.getEndInterval());
-            if (existingIntervalData == null) {
-                intervalDataRepository.save(intervalData);
-            } else {
-                existingIntervalData.setSegmentCount(existingIntervalData.getSegmentCount() + intervalData.getSegmentCount());
-                intervalDataRepository.save(existingIntervalData);
-            }
-        }
-    
-        List<Interval> durationIntervals = new ArrayList<>();
-        List<Long> fileCountPerInterval = new ArrayList<>();
-        for (IntervalData intervalData : intervalDataList) {
-            durationIntervals.add(new Interval(intervalData.getStartInterval(), intervalData.getEndInterval()));
-            fileCountPerInterval.add(intervalData.getSegmentCount());
-        }
-    
-        HistogramData histogramData = new HistogramData();
-        histogramData.setIntervals(durationIntervals);
-        histogramData.setSegmentCountPerInterval(fileCountPerInterval);
-        return histogramData;
+
+    private double roundToTwoDecimal(double value) {
+        return Math.round(value * 100.0) / 100.0;
     }
 
-    
 }

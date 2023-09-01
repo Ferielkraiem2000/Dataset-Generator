@@ -17,10 +17,10 @@ public interface FileParseService {
   String extractFileName(List<String> fields) throws IOException;
 
   String extractTranscription(List<String> fields);
+  public File existsFile(MultipartFile file) throws IOException;
 
-  void uploadFile(MultipartFile file) throws IOException;
+  void uploadFile(MultipartFile file, boolean overwrite,File existingFile) throws IOException;
 
-  void overwriteExistingFile(MultipartFile file) throws IOException;
 
   List<Map<String, String>> showFileContent(Long fileId);
 
