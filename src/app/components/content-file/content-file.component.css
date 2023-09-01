@@ -1,15 +1,17 @@
 .bordered-table {
     border-collapse: collapse;
     width: 100%;
+    height:100%;
+    text-align: center;
   }
   
   .bordered-table th, .bordered-table td {
     border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
+    padding: 4px;
+    text-align: center;
   }
   
   .bordered-table th {
     background-color: #f2f2f2;
   }
-  
+ 

@@ -15,10 +15,10 @@ export class StatisticCardComponent  {
     ) {}
 
   ngOnInit(): void {
-    this.getStatistics();
+    this.getDatasetStatistics();
   }
 
-  getStatistics(): void {
+  getDatasetStatistics(): void {
     this.datasetService.getStatistics().subscribe(data => {
       this.statistics = data;
     },

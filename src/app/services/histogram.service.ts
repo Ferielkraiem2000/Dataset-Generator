@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HistogramData } from '../interfaces/histogramdata.interface';
 
@@ -8,11 +8,10 @@ import { HistogramData } from '../interfaces/histogramdata.interface';
 })
 export class HistogramService {
 
-  private url = 'http://localhost:8080/histogram/{size}'; 
+  private baseUrl = 'http://localhost:8080/histogram/{size}'; 
   constructor(private http: HttpClient) { }
   getHistogramData(intervalSize: number): Observable<HistogramData> {
-    let params = new HttpParams();
-    params = params.set('intervalSize', intervalSize.toString());
-    return this.http.get<HistogramData>(`${this.url}`,{ params });
+    let url = `${this.baseUrl}?size=${intervalSize}`;
+    return this.http.get<HistogramData>(url);
   }
 }

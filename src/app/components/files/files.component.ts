@@ -24,7 +24,6 @@ import { HistogramCombinedService } from 'src/app/services/histogram-combined.se
 })
 export class FilesComponent implements OnInit {
 
-  statistics: Statistics[] = [];
   currentPage: number = 1;
   startIndex: number = 0;
   pageSize: number = 5;
@@ -49,9 +48,9 @@ export class FilesComponent implements OnInit {
   searchFileName: string = '';
   isSearchButtonClicked: boolean = false;
   combinedHistogramData!:HistogramData;
-  sliderValue: number = 0.01;
+  sliderValue: number =1;
   sliderClicked: boolean = false;
-  prevSliderValue: number = 0.01;  noDataResult = [
+  noDataResult = [
     {
       name: '0.0',
       value: 0,
@@ -74,6 +73,7 @@ export class FilesComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.communicationService.selectedStats = [];
     this.getStatistics();
 
   }
@@ -84,7 +84,7 @@ export class FilesComponent implements OnInit {
     return this.communicationService.selectedStats;
   }
   openView(): void {
-    if (this.isSelectedStats().length === 0) {
+    if (this.isSelectedStats().length <=1) {
       this.showSelectMessage();
     }
     else { this.communicationService.showDownloadInputs = true; }
@@ -188,13 +188,13 @@ export class FilesComponent implements OnInit {
 
     let startIndex = (pageNumber - 1) * 5;
     let endIndex = Math.min(startIndex + 5, this.totalItemsCount);
-    this.statisticsPerPage = this.statistics.slice(startIndex, endIndex);
+    this.statisticsPerPage = this.communicationService.statistics.slice(startIndex, endIndex);
 
   }
   getStatistics(): void {
     this.filesService.getStatistics().subscribe(
       result => {
-        this.statistics = result.data;
+        this.communicationService.statistics = result.data;
         this.totalItemsCount = result.totalCount;
         this.totalPages = this.getPages();
         this.getStatisticsPerPage(this.currentPage);
@@ -236,8 +236,8 @@ export class FilesComponent implements OnInit {
     } else {
       this.communicationService.selectedStats.push(stat);
     }
-    this.fetchStatistics();
-    this.fetchCombinedHistogramData();
+    this.fetchStatistics(this.communicationService.selectedStats);
+    this.fetchCombinedHistogramData(this.communicationService.selectedStats);
   }
 
 
@@ -292,9 +292,9 @@ export class FilesComponent implements OnInit {
     });
   }
 
-  fetchStatistics() {
+  fetchStatistics(selectedFiles: Statistics[]) {
     const fileIds: number[] = [];
-    for (const stat of this.communicationService.selectedStats) {
+    for (const stat of selectedFiles) {
       fileIds.push(stat.fileId);
     }
     this.selectedFilesStatisticsService.getStatistics(fileIds).subscribe(
@@ -302,7 +302,6 @@ export class FilesComponent implements OnInit {
         this.selectedStatistics = data;
       },
       error => {
-        this.nzMessageService.error("Error Fetching Combined Statistics!");
       }
 
     );
@@ -334,8 +333,8 @@ export class FilesComponent implements OnInit {
   showMultipleDeletionAlert(): void {
     let fileIds: number[] = [];
     this.modalService.confirm({
-      nzTitle: 'Delete File',
-      nzContent: 'Are you sure to delete this file?',
+      nzTitle: 'Delete Files',
+      nzContent: 'Are you sure to delete those files?',
       nzOkText: 'OK',
       nzCancelText: 'Cancel',
       nzOnOk: () => {
@@ -350,7 +349,7 @@ export class FilesComponent implements OnInit {
             }
           );
         this.statisticsPerPage = this.statisticsPerPage.filter(stat => !fileIds.includes(stat.fileId));
-        this.statistics=this.statistics.filter(stat => !fileIds.includes(stat.fileId))   ;
+        this.communicationService.statistics=this.communicationService.statistics.filter(stat => !fileIds.includes(stat.fileId))   ;
        },
 
       nzOnCancel: () => {
@@ -367,7 +366,6 @@ export class FilesComponent implements OnInit {
       nzCancelText: 'Cancel',
       nzOnOk: () => {
         this.deleteFile(stat);
-        console.log(this.totalItemsCount);
         this.statisticsPerPage = this.statisticsPerPage.filter(s => s !== stat);
       },
       nzOnCancel: () => {
@@ -386,9 +384,9 @@ export class FilesComponent implements OnInit {
   showSelectFileMessage() {
     this.nzMessageService.info('One file should be selected!')
   }
-  fetchCombinedHistogramData(): void {
+  fetchCombinedHistogramData(selectedFiles: Statistics[]): void {
     const fileIds: number[] = [];
-    for (const stat of this.communicationService.selectedStats) {
+    for (const stat of selectedFiles) {
       fileIds.push(stat.fileId);
     }
     this.histogramCombinedService.getCombinedHistogramData(fileIds,this.sliderValue).subscribe(data => {
@@ -396,9 +394,7 @@ export class FilesComponent implements OnInit {
       this.formatDataForChart();
     }, 
     error=>{
-      this.nzMessageService.error("Error Fetching Histogram Data!")
-    }
-    
+    }  
     );
  
   }
@@ -418,8 +414,7 @@ export class FilesComponent implements OnInit {
   updateSliderValue() {
     this.cdr.detectChanges();
     this.sliderClicked = true;
-    this.fetchCombinedHistogramData();
-   
+    this.fetchCombinedHistogramData(this.communicationService.selectedStats);
 }
 
 }

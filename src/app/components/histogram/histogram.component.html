@@ -1,26 +1,26 @@
 <p class="title-histogram">Distribution of Segment Duration</p>
-<div class="slider-container">
+<div class="slider-container" *ngIf="histogramData!=null &&this.isStats().length > 0">
   <input type="range"
-         min="0.01"
-         max="1.0"
-         step="0.01"
+         min="0.5"
+         max="20.0"
+         step="0.5"
          [(ngModel)]="sliderValue"
          (ngModelChange)="updateSliderValue()"
          class="slider" >
   <div class="slider-value" *ngIf="sliderClicked">Interval Size : {{ sliderValue }}</div>
 </div>
 
-<ng-container *ngIf="histogramData != null; else noHistogramData">
+<ng-container *ngIf="histogramData != null && this.isStats().length > 0; else noHistogramData">
   <div class="chart-container">
     <ngx-charts-bar-vertical
-      [view]="[1000, 400]"
+      [view]="[1050, 600]"
       [results]="single"
       [xAxis]="true"
       [yAxis]="true"
       [showXAxisLabel]="true"
       [showYAxisLabel]="true"
       [xAxisLabel]="'Duration'"
-      [yAxisLabel]="'Segment Count'"
+      [yAxisLabel]="'Segment count'"
     ></ngx-charts-bar-vertical>
   </div>
 </ng-container>
@@ -29,7 +29,7 @@
   <div class="chart-container">
     <p class="noDataText">No Data to be displayed</p>
     <ngx-charts-bar-vertical
-      [view]="[1000, 400]"
+      [view]="[1200, 600]"
       [results]="noDataResult"
       [scheme]="colorScheme"
       [xAxis]="true"
@@ -37,7 +37,7 @@
       [showXAxisLabel]="true"
       [showYAxisLabel]="true"
       [xAxisLabel]="'Duration'"
-      [yAxisLabel]="'Segment Count'"
+      [yAxisLabel]="'Segment count'"
       [yScaleMax]="1000"
       class="bar"    >
    

@@ -2,6 +2,9 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { HistogramData } from 'src/app/interfaces/histogramdata.interface';
 import { IntervalData } from 'src/app/interfaces/interval.interface';
+import { Statistics } from 'src/app/interfaces/statistics.interface';
+import { CommunicationService } from 'src/app/services/communication.service';
+import { FilesService } from 'src/app/services/files.service';
 import { HistogramService } from 'src/app/services/histogram.service';
 
 @Component({
@@ -20,14 +23,17 @@ export class HistogramComponent implements OnInit {
     }
   ];
   colorScheme = 'black';
-  sliderValue: number = 0.01;
+  sliderValue: number = 1;
   sliderClicked: boolean = false;
-  prevSliderValue: number = 0.01;
-  constructor(private histogramService: HistogramService, private nzMessageService: NzMessageService, private cdr: ChangeDetectorRef
+  constructor(    private filesService: FilesService,
+    private histogramService: HistogramService, private nzMessageService: NzMessageService, private cdr: ChangeDetectorRef   , public communicationService: CommunicationService,
+
   ) { }
 
   ngOnInit(): void {
+    this.getStatistics();
     this.fetchHistogramData();
+  
   }
 
   fetchHistogramData(): void {
@@ -36,7 +42,7 @@ export class HistogramComponent implements OnInit {
       this.formatDataForChart();
     },
       error => {
-        this.nzMessageService.error("Error Fetching Histogram Data!")
+        if(this.histogramData!=null){this.nzMessageService.error("Error Fetching Histogram Data!",error);}
       }
 
     );
@@ -59,8 +65,19 @@ export class HistogramComponent implements OnInit {
   updateSliderValue() {
     this.cdr.detectChanges();
     this.sliderClicked = true;
-    this.fetchHistogramData();
-   
+    this.fetchHistogramData();   
+}
+getStatistics(): void {
+  this.filesService.getStatistics().subscribe(
+    result => {
+      this.communicationService.statistics = result.data;     
+    },
+    error => {
+    }
+  );
 }
 
+isStats(): Statistics[] {
+  return this.communicationService.statistics;
+}
 }

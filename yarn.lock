@@ -2705,6 +2705,14 @@ ajv@^8.0.0, ajv@^8.8.2, ajv@^8.9.0, ajv@8.12.0:
     require-from-string "^2.0.2"
     uri-js "^4.2.2"
 
+angular-server-side-configuration@^16.0.0:
+  version "16.0.0"
+  resolved "https://registry.npmjs.org/angular-server-side-configuration/-/angular-server-side-configuration-16.0.0.tgz"
+  integrity sha512-iMaC/ScvaYtyY1A1iR08iq+imSaj/tooWpixjG2DhAp2nBZPH1cRDzvr6cC05rG8Sa73w74kHnmAgNQPXk2Uiw==
+  dependencies:
+    glob "^10.0.0"
+    tslib "^2.3.0"
+
 ansi-colors@4.1.3:
   version "4.1.3"
   resolved "https://registry.npmjs.org/ansi-colors/-/ansi-colors-4.1.3.tgz"
@@ -4194,7 +4202,7 @@ glob-to-regexp@^0.4.1:
   resolved "https://registry.npmjs.org/glob-to-regexp/-/glob-to-regexp-0.4.1.tgz"
   integrity sha512-lkX1HJXwyMcprw/5YUZc2s7DrpAiHB21/V+E1rHUrVNokkvB6bqMzT0VfV6/86ZNabt1k14YOIaT7nDvOX3Iiw==
 
-glob@^10.2.2:
+glob@^10.0.0, glob@^10.2.2:
   version "10.3.3"
   resolved "https://registry.npmjs.org/glob/-/glob-10.3.3.tgz"
   integrity sha512-92vPiMb/iqpmEgsOoIDvTjc50wf9CCCvMzsi6W0JLPeUKE8TWP1a73PgqSrqy7iAZxaSD1YdzU7QZR5LF51MJw==

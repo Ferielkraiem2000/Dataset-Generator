@@ -2,13 +2,7 @@
     <div class="logo">
       <img src="./assets/elyadata.png" class="logo-image">
     </div>
-   <div class="mode">
-    <span *ngIf="isDarkMode; else lightMode">
-      <i nz-icon nzType="moon"></i>
-    </span>
-    <ng-template #lightMode>
-      <i nz-icon nzType="ciel"></i>
-    </ng-template></div>
+  
   </nz-header>
   <nz-layout>
   
@@ -16,25 +10,29 @@
       
       <ul  nz-menu nzTheme="dark" nzMode="inline">
         <li nz-menu-item>
-          <a routerLink="/dashboard" ><span nz-icon nzType="home"   routerLinkActive="active"></span>
-          <span>Dashboard</span></a>
+          <a routerLink="/dashboard">
+            <span nz-icon nzType="home" routerLinkActive="active" style="margin-bottom: 5px; font-size: 17px;"></span>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li nz-menu-item>
+          <a routerLink="/upload-files">
+            <span nz-icon nzType="upload" routerLink="/upload-files" routerLinkActive="active" style="margin-bottom: 5px; font-size: 17px;"></span>
+            <span>Upload Files</span>
+          </a>
+        </li>
+        <li nz-menu-item>
+          <a routerLink="/files">
+            <span nz-icon nzType="file" routerLink="/files" routerLinkActive="active" style="font-size: 17px;"></span>
+            <span>Files</span>
+          </a>
+        </li>
         
-        </li>
-        <li nz-menu-item>
-          <a routerLink="/upload-files">   <span nz-icon nzType="upload"  routerLink="/upload-files"   routerLinkActive="active"></span>
-            <span>Upload Files</span></a>
-      
-        </li>
-        <li nz-menu-item>
-          <a routerLink="/files">   <span nz-icon nzType="file"  routerLink="/files"   routerLinkActive="active"></span>
-            <span>Files</span></a>
-      
-        </li>
-        <li nz-menu-item>
+        <!-- <li nz-menu-item>
           <a routerLink="/about"> 
           <span nz-icon nzType="flag"></span>
           <span>About Us</span></a>
-        </li>
+        </li> -->
       </ul>
     </nz-sider>
   <router-outlet></router-outlet>

@@ -46,7 +46,7 @@ export class DownloadFormatDialogComponent {
         a.remove();
       },
       error => {
-         this.nzMessageService.error("Error downloading Manifest File")
+         this.nzMessageService.error("Error downloading Manifest File!")
       }
     );
   }

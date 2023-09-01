@@ -8,5 +8,6 @@ export class CommunicationService {
   showDownloadInputs = false;
   showProgress=false;
   content: any[] = [];
+  statistics: Statistics[] = [];
 
 }

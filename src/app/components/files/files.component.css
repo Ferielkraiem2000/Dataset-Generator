@@ -134,6 +134,12 @@ nz-card {
       font-size: 30px;
     margin-left:2%;
     }
+    .title-cardprog {
+      color:rgb(146, 142, 142);
+     padding-top:1%;
+      font-size: 30px;
+    margin-left:2%;
+    }
     .input{
       margin-left:8% ; margin-top:8% ; width:450px; height:40px; 
     }
@@ -276,9 +282,9 @@ nz-card {
   justify-content: center;
   align-items: center;
   height: 100vh;
-text-align: center;
-width:100%;
+  text-align: center;
 }
+
 
 
 .title-histogram {

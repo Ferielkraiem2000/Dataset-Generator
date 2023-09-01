@@ -13,16 +13,15 @@ export class FilesService {
   constructor(private http: HttpClient) {}
 
   getStatistics(): Observable<{ data: Statistics[], totalCount: number }> {
+    
    
     return this.http.get<any[]>(this.baseUrl).pipe(
       map(data => {
         const statistics = data.map(item => {
-          const totalDurationInSeconds = parseFloat(item.totalDuration) / 1000; 
-          const averageDurationInSeconds = parseFloat(item.averageDuration) / 1000; 
           return {
             fileName: item.fileName,
-            totalDuration: totalDurationInSeconds.toFixed(3),
-            averageDuration:averageDurationInSeconds.toFixed(3), 
+            totalDuration: item.totalDuration.toFixed(3),
+            averageDuration:item.averageDuration.toFixed(3), 
             segmentCount: item.segmentCount,
             speakerCount: item.speakerCount,
             uploadTime:item.uploadTime,

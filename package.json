@@ -26,6 +26,7 @@
     "@coreui/utils": "^2.0.2",
     "@popperjs/core": "^2.11.8",
     "@swimlane/ngx-charts": "^20.4.1",
+    "angular-server-side-configuration": "^16.0.0",
     "chart.js": "^4.3.3",
     "cors": "^2.8.5",
     "ng-zorro-antd": "^16.1.0",

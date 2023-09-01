@@ -17,12 +17,10 @@ export class DatasetsService {
     return this.http.get<any[]>(this.baseUrl).pipe(
       map(data => {
         return data.map(item => {
-          const totalDurationInSeconds = parseFloat(item.totalDuration) / 1000; 
-          const averageDurationInSeconds = parseFloat(item.averageDuration) / 1000; 
           return {
             speakerCount: item.speakerCount,
-            totalDuration:  totalDurationInSeconds.toFixed(3),
-            averageDuration: averageDurationInSeconds.toFixed(3),
+            totalDuration:  item.totalDuration.toFixed(3),
+            averageDuration: item.averageDuration.toFixed(3),
             segmentCount: item.segmentCount,
           } as unknown as DatasetStatistics;
         });
