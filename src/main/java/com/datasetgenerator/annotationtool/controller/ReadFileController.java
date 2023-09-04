@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +39,7 @@ public class ReadFileController {
     }
 
     @Operation(summary = "Parse File")
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/file-parsing")
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/file-parsing/{files}")
     public ResponseEntity<String> uploadFiles(@RequestParam("files") List<MultipartFile> files)
             throws IOException {
         String result = "";
@@ -63,7 +61,7 @@ public class ReadFileController {
     }
 
     @Operation(summary = "Overwrite File")
-    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/file-overwriting")
+    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/file-overwriting/{files}")
     public ResponseEntity<String> overwriteFiles(@RequestParam("files") List<MultipartFile> files)
             throws IOException {
         String result = "";
@@ -80,11 +78,64 @@ public class ReadFileController {
         }
         return ResponseEntity.ok(result);
     }
+  @Operation(summary = "Get Dataset statistics")
+    @GetMapping("/dataset/statistics")
+    public ResponseEntity<List<Map<String, Object>>> getDatasetStatistics() {
+        return ResponseEntity.ok(statisticsService.getDatasetStatistics());
+    }
 
+    @Operation(summary = "Get Files statistics")
+    @GetMapping("/files/statistics")
+    public ResponseEntity<List<Map<String, Object>>> getFilesStatistics() {
+        return ResponseEntity.ok(statisticsService.getFilesStatistics());
+    }
+    @Operation(summary = "Get the statistics of one or more selected uploaded STM files")
+    @GetMapping("/files/statistics/{ids}")
+    public ResponseEntity<List<Map<String, Object>>> getFilesStatistics(@RequestParam("fileIds") List<Long> fileIds) {
+        return ResponseEntity.ok(statisticsService.getFilesStatistics(fileIds));
+    }
+    @Operation(summary = "Get the histogram data of all uploaded STM files")
+    @GetMapping("/histogram/{size}")
+    public ResponseEntity<HistogramData> getHistogramData(@RequestParam("size") double intervalSize) {
+        HistogramData histogramData = statisticsService.getHistogramData(intervalSize);
+        return ResponseEntity.ok(histogramData);
+    }
+
+    @Operation(summary = "Get the histogram data of one or more selected uploaded STM files")
+    @GetMapping("/histogram/{ids}/{size}")
+    public ResponseEntity<HistogramData> getHistogramData(@RequestParam("fileIds") List<Long> fileIds,
+            @RequestParam("intervalSize") double intervalSize) {
+        HistogramData histogramData = statisticsService.getHistogramDataForSelectedFiles(fileIds, intervalSize);
+        return ResponseEntity.ok(histogramData);
+    }
     @Operation(summary = "Get File Content ")
     @GetMapping(path = "/file-parsing/{id}")
     public ResponseEntity<List<Map<String, String>>> showContent(@RequestParam("fileId") Long fileId) {
         return ResponseEntity.ok(dataService.showFileContent(fileId));
+    }
+
+    @Operation(summary = "Update File name")
+    @PutMapping(path = "/file-parsing/{id}/{name}")
+    public ResponseEntity<String> updateFileName(@RequestParam("fileId") Long fileId,
+            @RequestParam("fileName") String fileName) {
+        updateUploadedFileService.updateFileName(fileId, fileName);
+        if (fileName.equals("")) {
+            return ResponseEntity.badRequest().body("Error updating Audio File Name!");
+        }
+        return ResponseEntity.ok("fileName updated successfully!");
+
+    }
+
+    @Operation(summary = "Delete file")
+    @DeleteMapping("/file-parsing/{ids}")
+    public ResponseEntity<String> deleteFiles(@RequestParam List<Long> fileIds) {
+        deleteService.deleteByFileIds(fileIds);
+        return ResponseEntity.ok("Files deleted successfully!");
+    }
+    @Operation(summary = "Search Files By Audio File Name")
+    @GetMapping("/files/statistics/{name}")
+    public ResponseEntity<List<Map<String, Object>>> getFilesStatistics(String fileName) {
+        return ResponseEntity.ok(statisticsService.getFilesStatisticsByFileName(fileName));
     }
 
     @Operation(summary = "Download Manifest File")
@@ -108,61 +159,4 @@ public class ReadFileController {
         return ResponseEntity.ok().headers(headers).body(combinedManifest);
     }
 
-    @Operation(summary = "Get Dataset statistics")
-    @GetMapping("/dataset/statistics")
-    public ResponseEntity<List<Map<String, Object>>> getDatasetStatistics() {
-        return ResponseEntity.ok(statisticsService.getDatasetStatistics());
-    }
-
-    @Operation(summary = "Get Files statistics")
-    @GetMapping("/files/statistics")
-    public ResponseEntity<List<Map<String, Object>>> getFilesStatistics() {
-        return ResponseEntity.ok(statisticsService.getFilesStatistics());
-    }
-
-    @Operation(summary = "Get File statistics By File Name")
-    @GetMapping("/files/statistics/{name}")
-    public ResponseEntity<List<Map<String, Object>>> getFilesStatistics(String fileName) {
-        return ResponseEntity.ok(statisticsService.getFilesStatisticsByFileName(fileName));
-    }
-
-    @Operation(summary = "Get the statistics of one or more selected uploaded STM files")
-    @GetMapping("/files/statistics/{ids}")
-    public ResponseEntity<List<Map<String, Object>>> getFilesStatistics(@RequestParam("fileIds") List<Long> fileIds) {
-        return ResponseEntity.ok(statisticsService.getFilesStatistics(fileIds));
-    }
-
-    @Operation(summary = "Update File name")
-    @PutMapping(path = "/file-parsing/{id}/{name}")
-    public ResponseEntity<String> updateFileName(@RequestParam("fileId") Long fileId,
-            @RequestParam("fileName") String fileName) {
-        updateUploadedFileService.updateFileName(fileId, fileName);
-        if (fileName.equals("")) {
-            return ResponseEntity.badRequest().body("Error updating Audio File Name!");
-        }
-        return ResponseEntity.ok("fileName updated successfully!");
-
-    }
-
-    @Operation(summary = "Delete file")
-    @DeleteMapping("/file-parsing/{ids}")
-    public ResponseEntity<String> deleteFiles(@RequestParam List<Long> fileIds) {
-        deleteService.deleteByFileIds(fileIds);
-        return ResponseEntity.ok("Files deleted successfully!");
-    }
-
-    @Operation(summary = "Get the histogram data of all uploaded STM files")
-    @GetMapping("/histogram/{size}")
-    public ResponseEntity<HistogramData> getHistogramData(@RequestParam("size") double intervalSize) {
-        HistogramData histogramData = statisticsService.getHistogramData(intervalSize);
-        return ResponseEntity.ok(histogramData);
-    }
-
-    @Operation(summary = "Get the histogram data of one or more selected uploaded STM files")
-    @GetMapping("/histogram/{ids}/{size}")
-    public ResponseEntity<HistogramData> getHistogramData(@RequestParam("fileIds") List<Long> fileIds,
-            @RequestParam("intervalSize") double intervalSize) {
-        HistogramData histogramData = statisticsService.getHistogramDataForSelectedFiles(fileIds, intervalSize);
-        return ResponseEntity.ok(histogramData);
-    }
 }
