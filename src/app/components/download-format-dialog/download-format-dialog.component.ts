@@ -46,7 +46,9 @@ export class DownloadFormatDialogComponent {
         a.remove();
       },
       error => {
-         this.nzMessageService.error("Error downloading Manifest File!")
+        if (!this.selectedFormat) {
+          this.nzMessageService.info('Format is required!')
+        }
       }
     );
   }

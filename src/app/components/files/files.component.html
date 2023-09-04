@@ -1,7 +1,9 @@
 <nz-content>
   <ng-container *ngIf="isDownloadView()">
     <p class="title-card" *ngIf="isDownloadView();else noView ">Download Combined manifest file</p>
-   <ng-template #noView> <p class="title-cardprog">Download Combined manifest file</p></ng-template>
+    <ng-template #noView>
+      <p class="title-cardprog">Download Combined manifest file</p>
+    </ng-template>
   </ng-container>
   <div class="glass-effect shadow">
     <ng-container *ngIf="isDownloadView()">
@@ -169,8 +171,8 @@
                     <button nz-icon nzType="check" (click)="onConfirm(stat)" style="margin-left:10%"></button>
                     <button nz-icon nzType="close" style="margin-left:12%" (click)="onCancel()"></button>
                   </div>
-                  <i nz-icon nzType="edit" [ngClass]="{'blinking': isSelected(stat)}"
-                    (click)="this.isSelectedStats().length==1 && this.isSelected(stat)?onIconClick(stat):showSelectFileMessage()"
+                  <i nz-icon nzType="edit" [ngClass]="{}"
+                    (click)="this.isSelectedStats().length==1 && this.isSelected(stat)?onIconClick(stat):showSelectFileMessage()" style=" margin-right:1.18px;"
                     *ngIf="!editMode"></i>
             </td>
             <td>{{ stat.totalDuration }}</td>
@@ -179,13 +181,13 @@
             <td class="text-center">{{ stat.speakerCount }}</td>
             <td>{{ stat.uploadTime }} </td>
             <td>
-              <i nz-icon nzType="delete" [ngClass]="{'blinking': isSelected(stat)}" style="margin-right: 6px;"
+              <i nz-icon nzType="delete" [ngClass]="{}" style="margin-right: 6px;"
                 (click)=" this.isSelectedStats().length == 1 && this.isSelected(stat) ?showDeletionAlert(stat):showSelectFileMessage()"></i>
-              <i nz-icon nzType="download" [ngClass]="{'blinking': isSelected(stat)}"
+              <i nz-icon nzType="download" [ngClass]="{}" 
                 (click)="this.isSelectedStats().length == 1 && this.isSelected(stat)?openFormatSelectionDialog():showSelectFileMessage()"
                 style=" margin-right:1.18px;"></i>
-              <i nz-icon nzType="eye" [ngClass]="{'blinking': isSelected(stat)}"
-                (click)="this.isSelectedStats().length==1 && this.isSelected(stat)?showContent(stat):showSelectFileMessage()"></i>
+              <i nz-icon nzType="eye" [ngClass]="{}"
+                (click)="this.isSelectedStats().length==1 && this.isSelected(stat)?showContent(stat):showSelectFileMessage ()" ></i>
             </td>
           </tr>
         </ng-container>
@@ -210,26 +212,21 @@
     </div>
   </ng-container>
   <ng-template #noPages>
-   
+
   </ng-template>
   <p class="title-histogram">Histogram of Selected Files</p>
   <div class="slider-container" *ngIf="combinedHistogramData != null && this.isSelectedStats().length>0">
-    <input type="range"
-           min="0.5"
-           max="20.0"
-           step="0.5"
-           [(ngModel)]="sliderValue"
-           (ngModelChange)="updateSliderValue()"
-           class="slider" >
+    <input type="range" min="0.5" max="20.0" step="0.5" [(ngModel)]="sliderValue" (ngModelChange)="updateSliderValue()"
+      class="slider">
     <div class="slider-value" *ngIf="sliderClicked">Interval Size : {{ sliderValue }}</div>
   </div>
-  
-  
+
+
   <ng-container *ngIf="combinedHistogramData != null && this.isSelectedStats().length > 0; else noHistogramData">
     <div class="chart-container">
       <ngx-charts-bar-vertical [view]="[1100, 600]" [results]="single" [xAxis]="true" [yAxis]="true"
         [showXAxisLabel]="true" [showYAxisLabel]="true" [xAxisLabel]="'Duration'"
-        [yAxisLabel]="'Segment count'"  ></ngx-charts-bar-vertical>
+        [yAxisLabel]="'Segment count'"></ngx-charts-bar-vertical>
     </div>
   </ng-container>
 

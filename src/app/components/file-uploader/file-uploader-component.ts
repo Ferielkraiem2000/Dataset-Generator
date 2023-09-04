@@ -99,7 +99,6 @@ this.selectedFiles=[]  }
 onCancel(): void {
   if (this.selectedFiles.length > 0) {
     this.showConfirmationAlert();
-    this.confirmationAlertVisible = true;
   }
 }
 
@@ -113,9 +112,9 @@ onCancel(): void {
 
 
   onConfirm(): void {
-
-
     this.onUpload();
+    this.confirmationAlertVisible = true;
+
   }
   showConfirmationAlert(): void {
     this.modalService.confirm({
