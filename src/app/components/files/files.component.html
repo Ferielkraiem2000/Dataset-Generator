@@ -7,7 +7,7 @@
   </ng-container>
   <div class="glass-effect shadow">
     <ng-container *ngIf="isDownloadView()">
-      <input nz-input placeholder="Tap the file's path" [(ngModel)]="path" class="input" />
+      <input nz-input placeholder="Tap the audio file's path" [(ngModel)]="path" class="input" />
       <div>
         <nz-select [(ngModel)]="selectedFormat" [nzPlaceHolder]="'Select Format'" class="select">
           <nz-option nzValue="ESPnet" nzLabel="ESPnet"></nz-option>
@@ -171,7 +171,7 @@
                     <button nz-icon nzType="check" (click)="onConfirm(stat)" style="margin-left:10%"></button>
                     <button nz-icon nzType="close" style="margin-left:12%" (click)="onCancel()"></button>
                   </div>
-                  <i nz-icon nzType="edit" [ngClass]="{}"
+                  <i nz-icon nzType="edit" [ngClass]="{'blinking': isSelected(stat)}"
                     (click)="this.isSelectedStats().length==1 && this.isSelected(stat)?onIconClick(stat):showSelectFileMessage()" style=" margin-right:1.18px;"
                     *ngIf="!editMode"></i>
             </td>
@@ -181,12 +181,12 @@
             <td class="text-center">{{ stat.speakerCount }}</td>
             <td>{{ stat.uploadTime }} </td>
             <td>
-              <i nz-icon nzType="delete" [ngClass]="{}" style="margin-right: 6px;"
+              <i nz-icon nzType="delete" [ngClass]="{'blinking': isSelected(stat)}"  style="margin-right: 6px;"
                 (click)=" this.isSelectedStats().length == 1 && this.isSelected(stat) ?showDeletionAlert(stat):showSelectFileMessage()"></i>
-              <i nz-icon nzType="download" [ngClass]="{}" 
+              <i nz-icon nzType="download" [ngClass]="{'blinking': isSelected(stat)}"  
                 (click)="this.isSelectedStats().length == 1 && this.isSelected(stat)?openFormatSelectionDialog():showSelectFileMessage()"
                 style=" margin-right:1.18px;"></i>
-              <i nz-icon nzType="eye" [ngClass]="{}"
+              <i nz-icon nzType="eye" [ngClass]="{'blinking': isSelected(stat)}"
                 (click)="this.isSelectedStats().length==1 && this.isSelected(stat)?showContent(stat):showSelectFileMessage ()" ></i>
             </td>
           </tr>
@@ -200,7 +200,7 @@
 
     </table>
   </div>
-  <ng-container *ngIf="this.statisticsPerPage.length>0 ;else noPages">
+  <ng-container *ngIf="this.communicationService.statistics.length>0 ;else noPages">
     <div class="pagination-controls">
       <button (click)="changePage(-1)" [disabled]="currentPage === 1">
         <i nz-icon nzType="left" nzTheme="outline"></i>

@@ -15,18 +15,16 @@ import { HttpResponse } from '@angular/common/http';
 export class FileUploaderComponent implements OnInit {
   confirmationAlertVisible = false;
   overwriteAlertVisible = false;
-
   selectedFiles!: File[];
   dropAreaActive = false;
+  
   constructor(private fileUploadService: FileUploaderService,private fileOverwriteService: FileOverwriterService, private modalService: NzModalService, private nzMessageService: NzMessageService, private filesComponent: FilesComponent) { }
   ngOnInit(): void {
-this.selectedFiles=[]  }
-
+  this.selectedFiles=[]  }
   onDragOver(event: any): void {
     event.preventDefault();
     this.dropAreaActive = true;
   }
-
   onDragLeave(): void {
     this.dropAreaActive = false;
   }
@@ -113,7 +111,6 @@ onCancel(): void {
 
   onConfirm(): void {
     this.onUpload();
-    this.confirmationAlertVisible = true;
 
   }
   showConfirmationAlert(): void {

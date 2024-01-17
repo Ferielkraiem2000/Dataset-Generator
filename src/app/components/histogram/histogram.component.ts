@@ -25,10 +25,8 @@ export class HistogramComponent implements OnInit {
   colorScheme = 'black';
   sliderValue: number = 1;
   sliderClicked: boolean = false;
-  constructor(    private filesService: FilesService,
-    private histogramService: HistogramService, private nzMessageService: NzMessageService, private cdr: ChangeDetectorRef   , public communicationService: CommunicationService,
-
-  ) { }
+  constructor(private filesService: FilesService,
+    private histogramService: HistogramService, private nzMessageService: NzMessageService, private cdr: ChangeDetectorRef   , public communicationService: CommunicationService) { }
 
   ngOnInit(): void {
     this.getStatistics();
