@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-//this is our controller Class
 @RestController
 public class ReadFileController {
 
