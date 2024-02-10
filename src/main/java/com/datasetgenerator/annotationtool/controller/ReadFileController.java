@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-//Update Controller Class for Update stage on Pipeline Jenkins
+//Updating controller to view a build triggered automatically on Jenkins
 @RestController
 public class ReadFileController {
 
