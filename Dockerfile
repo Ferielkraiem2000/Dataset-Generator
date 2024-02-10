@@ -1,6 +1,6 @@
+//this is the docker file change
 FROM azul/zulu-openjdk:17
 WORKDIR /app
 COPY target/UploadFile-0.0.1-SNAPSHOT.jar /app/app.jar
 EXPOSE 80
 CMD ["java","-jar","app.jar"]
-//this is the docker file change
