@@ -22,11 +22,12 @@ pipeline {
                     sshagent(credentials: ['SSH_Agent'], keyFileVariable: '/var/lib/jenkins/workspace/FirstTask/id_rsa') {
                         withCredentials([usernamePassword(credentialsId: 'git_token', passwordVariable: 'git_token', usernameVariable: 'Ferielkraiem2000')]) {                      
                             sh """
-                                if ssh -o StrictHostKeyChecking=no -i /var/lib/jenkins/workspace/FirstTask/id_rsa vagrant@192.168.1.13 "[ ! -d '${REMOTE_PATH}' ]"; then
-                                    ssh -o StrictHostKeyChecking=no -i /var/lib/jenkins/workspace/FirstTask/id_rsa vagrant@192.168.1.13 "git clone -b develop --single-branch ${GIT_REPO_URL}"
-                                else
-                                    ssh -o StrictHostKeyChecking=no -i /var/lib/jenkins/workspace/FirstTask/id_rsa vagrant@192.168.1.13 "cd ${REMOTE_PATH} && git pull origin develop"
-                                fi
+                                ssh -o StrictHostKeyChecking=no -i /var/lib/jenkins/workspace/FirstTask/id_rsa vagrant@192.168.1.13 "mkdir -p ${REMOTE_PATH} && cd ${REMOTE_PATH} && \
+                                if [ ! -d '.git' ]; then \
+                                    git clone -b develop --single-branch ${GIT_REPO_URL} .; \
+                                else \
+                                    git pull origin develop; \
+                                fi"
                             """
                         }
                     }
