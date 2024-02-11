@@ -23,7 +23,7 @@ pipeline {
                         withCredentials([usernamePassword(credentialsId: 'git_token', passwordVariable: 'git_token', usernameVariable: 'Ferielkraiem2000')]) {                      
                             sh """
                                 if ssh -o StrictHostKeyChecking=no -i /var/lib/jenkins/workspace/FirstTask/id_rsa vagrant@192.168.1.13 "[ ! -d '${REMOTE_PATH}' ]"; then
-                                    ssh -o StrictHostKeyChecking=no -i /var/lib/jenkins/workspace/FirstTask/id_rsa vagrant@192.168.1.13 "git clone -b develop --single-branch ${GIT_REPO_URL}"
+                                    ssh -o StrictHostKeyChecking=no -i /var/lib/jenkins/workspace/FirstTask/id_rsa vagrant@192.168.1.13 "cd ${REMOTE_PATH} && git clone -b develop --single-branch ${GIT_REPO_URL}"
                                 else
                                     ssh -o StrictHostKeyChecking=no -i /var/lib/jenkins/workspace/FirstTask/id_rsa vagrant@192.168.1.13 "cd ${REMOTE_PATH} && git pull origin develop"
                                 fi
