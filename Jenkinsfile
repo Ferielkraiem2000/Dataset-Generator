@@ -1,7 +1,7 @@
 pipeline {
     agent any
-
-    parameters {
+    
+     parameters {
         string(name: 'CHEMIN', defaultValue: '/var/lib/jenkins/workspace/FirstTask', description: 'Chemin du répertoire à créer')
     }
 
