@@ -1,0 +1,48 @@
+name: Cleanup Expired Repositories
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+    
+jobs:
+  cleanup-repositories:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Fetch all repositories
+      run: |
+        sudo apt install jq -y
+        REPOS=$(curl -H "Authorization: token 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" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/orgs/comweave/repos)
+        #  for REPO in $(echo "${REPOS}" | jq -r '.[] | .name'); do
+        #     if [[ "$REPO" == *temp-repo* ]]; then
+        #       echo "Deleting repository: $REPO"
+        #       curl -X DELETE -H "Authorization: token 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" \
+        #        "https://api.github.com/repos/comweave/${REPO}"
+        #     fi
+        # done
+        for REPO in $(echo "${REPOS}" | jq -r '.[] | .name'); do
+            # if [[ "$REPO" != "test-devops-v1" && "$REPO" != "Pipelines_Version2" && "$REPO" != "Pipelines_Version1" ]]; then
+            if [[ "$REPO" == *"temp-repo"* ]]; then
+              echo "Processing repository: $REPO"
+              COMMIT_SHA=$(curl -s -H "Authorization: token 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" \
+                   -H "Accept: application/vnd.github.v3+json" \
+                   "https://api.github.com/repos/comweave/${REPO}/commits" \
+                   | jq -r '.[0].sha')
+             echo "Most recent commit SHA: $COMMIT_SHA"
+             commit_date=$(curl -s -H "Authorization: token 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" \
+                   "https://api.github.com/repos/comweave/${REPO}/commits/${COMMIT_SHA}" \
+                   | jq -r '.commit.author.date')
+             echo "Commit date: $commit_date"
+             COMMIT_DATE_TIMESTAMP=$(date -d "${commit_date}" +%s)
+             CURRENT_TIMESTAMP=$(date +%s)
+             if [[ ${COMMIT_DATE_TIMESTAMP} -le $((${CURRENT_TIMESTAMP} - 60)) ]]; then
+               echo "Deleting repository ${REPO} as it was last committed more than 1 minute ago"
+               curl -X DELETE -H "Authorization: token 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" \
+                    "https://api.github.com/repos/comweave/${REPO}"
+             fi
+           else
+            echo "Skipping repository: $REPO"
+           fi
+        done
